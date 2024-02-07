@@ -6,6 +6,7 @@
 *   
 */
 
+using Shard.Shard;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,6 +25,7 @@ namespace Shard
         private static InputSystem input;
         private static PhysicsManager phys;
         private static AssetManagerBase asset;
+        private static AnimationSystem animation;
 
         private static int targetFrameRate;
         private static int millisPerFrame;
@@ -102,6 +104,11 @@ namespace Shard
             return asset;
         }
 
+        public static AnimationSystem getAnimmationSystem()
+        {
+            return animation;
+        }
+
         public static Game getRunningGame()
         {
             return runningGame;
@@ -153,7 +160,10 @@ namespace Shard
                         input = (InputSystem)ob;
                         input.initialize();
                         break;
-
+                    case "animation":
+                        animation = (AnimationSystem)ob;
+                        animation.initialize();
+                        break;
                 }
 
                 Debug.getInstance().log("Config file... setting " + kvp.Key + " to " + kvp.Value);
@@ -311,6 +321,11 @@ namespace Shard
                         phys.drawDebugColliders();
                     }
 
+                }
+
+                if (Bootstrap.getAnimmationSystem() != null) 
+                {
+                    Bootstrap.getAnimmationSystem().update();
                 }
 
                 // Render the screen.
