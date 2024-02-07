@@ -1,0 +1,3 @@
+Shard/.vs/*
+Shard/ConsoleApp1/obj/*
+Shard/ConsoleApp1/bin/*
