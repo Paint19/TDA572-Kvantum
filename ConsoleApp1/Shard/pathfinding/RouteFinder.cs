@@ -13,13 +13,23 @@ namespace Shard.Shard.pathfinding
         private Scorer<T> nextNodeScorer;
         private Scorer<T> targetScorer;
 
+        public void setNextNodeScorer(Scorer<T> scorer)
+        {
+            this.nextNodeScorer = scorer;
+        }
+
+        public void setTargetScorer(Scorer<T> scorer)
+        {
+            this.targetScorer = scorer;
+        }
+
         List<T> findRoute(T from, T to)
         {
             PriorityQueue<RouteNode<T>, double> openSet = new PriorityQueue<RouteNode<T>, double>();
             Dictionary<T, RouteNode<T>> allNodes = new Dictionary<T, RouteNode<T>>();
 
             RouteNode<T> start = new RouteNode<T>(from, default, 0d, targetScorer.computeCost(from, to));
-            openSet.Enqueue(start, start.getEstimatedScore());
+            openSet.Enqueue(start, start.getRouteScore());
             allNodes.Add(from, start);
 
             while (openSet.Count > 0)
@@ -46,7 +56,7 @@ namespace Shard.Shard.pathfinding
                         nextNode.setPrevious(next.getCurrent());
                         nextNode.setRouteScore(newScore);
                         nextNode.setEstimatedScore(newScore + targetScorer.computeCost(connection, to));
-                        openSet.Enqueue(nextNode, nextNode.getEstimatedScore());
+                        openSet.Enqueue(nextNode, nextNode.getRouteScore());
                     }
                 });
             }
