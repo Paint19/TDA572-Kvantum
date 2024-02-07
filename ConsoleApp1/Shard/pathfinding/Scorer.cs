@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Shard.Shard.pathfinding
 {
-    interface Scorer
+    interface Scorer<T> where T : GraphNode
     {
+        double computeCost(T from, T to);
     }
 }

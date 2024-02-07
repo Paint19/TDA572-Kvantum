@@ -8,5 +8,6 @@ namespace Shard.Shard.pathfinding
 {
     interface GraphNode
     {
+        string getId();
     }
 }
