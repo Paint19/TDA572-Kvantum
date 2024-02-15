@@ -6,6 +6,21 @@
 *   
 */
 
+/*
+When using OpenTK, the GameWindow class has a function Run() which starts the game loop.
+Hence Bootstrap probably needs to extend this class, and Bootstrap gets the game loop
+and the display functionality. There might be a better way to do this.
+
+At this point, this is mostly a proof of concept for running OpenTK in this program.
+
+Much left todo, including fixing display class, inputframework, and the game.
+ */
+
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,10 +28,12 @@ using System.Threading;
 
 namespace Shard
 {
-    class Bootstrap
+    class Bootstrap : GameWindow
     {
-        public static string DEFAULT_CONFIG = "config.cfg";
 
+        public Bootstrap(GameWindowSettings gws, NativeWindowSettings nws) : base(gws, nws){ }
+
+        public static string DEFAULT_CONFIG = "config.cfg";
 
         private static Game runningGame;
         private static Display displayEngine;
@@ -34,6 +51,15 @@ namespace Shard
         private static long startTime;
         private static string baseDir;
         private static Dictionary<string,string> enVars;
+
+        // I haven't considered these yet, but a lot of this should be redundant since we no longer have to create the timing/fps functionality
+        private static long timeInMillisecondsStart, lastTick;
+        private static long interval;
+        private static int sleep;
+        private static int tfro = 1;
+        private static bool physUpdate = false;
+        private static bool physDebug = false;
+        private static long timeInMillisecondsEnd;
 
         public static bool checkEnvironmentalVariable (string id) {
             return enVars.ContainsKey (id);
@@ -233,28 +259,137 @@ namespace Shard
             return frames;
         }
 
-        static void Main(string[] args)
+        protected override void OnUpdateFrame(FrameEventArgs args) // Runs when GameWindow updates frame
         {
-            long timeInMillisecondsStart, lastTick, timeInMillisecondsEnd;
-            long interval;
-            int sleep;
-            int tfro = 1;
-            bool physUpdate = false;
-            bool physDebug = false;
+            base.OnUpdateFrame(args);
+
+            int i = 0; // TODO: Remove
+            Console.WriteLine("Update Frequency: " + UpdateFrequency); // TODO: Remove
+
+            if (KeyboardState.IsKeyDown(Keys.Escape)) // Esc - Closes window
+            {
+                Close();
+            }
+
+            /* ------- Everything below is from the original code, used to be in Main method. Much should be redundant ------- */
+            
+            long timeInMillisecondsStart = getCurrentMillis();
+
+            frames += 1; 
+
+            // Clear the screen.
+            // Bootstrap.getDisplay().clearDisplay(); // TODO: Fix Display class
+
+            // Update 
+            // runningGame.update(); // TODO: Fix game class
+            
+            // Input // TODO: Fix game class
+
+            if (runningGame.isRunning() == true)
+            {
+
+                // Get input, which works at 50 FPS to make sure it doesn't interfere with the 
+                // variable frame rates.
+                input.getInput();
+
+                // Update runs as fast as the system lets it.  Any kind of movement or counter 
+                // increment should be based then on the deltaTime variable.
+                GameObjectManager.getInstance().update();
+
+                // This will update every 20 milliseconds or thereabouts.  Our physics system aims 
+                // at a 50 FPS cycle.
+                if (phys.willTick())
+                {
+                    GameObjectManager.getInstance().prePhysicsUpdate();
+                }
+
+                // Update the physics.  If it's too soon, it'll return false.   Otherwise 
+                // it'll return true.
+                physUpdate = phys.update();
+
+                if (physUpdate)
+                {
+                    // If it did tick, give every object an update
+                    // that is pinned to the timing of the physics system.
+                    GameObjectManager.getInstance().physicsUpdate();
+                }
+
+                if (physDebug)
+                {
+                    phys.drawDebugColliders();
+                }
+
+            }
+
+            // Render the screen.
+            // Bootstrap.getDisplay().display(); // TODO: Fix display class
+
+            timeInMillisecondsEnd = getCurrentMillis();
+
+            frameTimes.Add(timeInMillisecondsEnd);
+
+            interval = timeInMillisecondsEnd - timeInMillisecondsStart;
+
+            sleep = (int)(millisPerFrame - interval);
 
 
+            TimeElapsed += deltaTime;
 
+            if (sleep >= 0)
+            {
+                // Frame rate regulator.  Bear in mind since this is millisecond precision, and we 
+                // only get whole numbers from our interval, it will only rarely match a target 
+                // FPS.  Milliseconds just aren't precise enough.
+                //
+                //  (I'm hinting if this bothers you, you might have found an engine modification to make...)
+                Thread.Sleep(sleep);
+            }
+
+            timeInMillisecondsEnd = getCurrentMillis();
+            deltaTime = (timeInMillisecondsEnd - timeInMillisecondsStart) / 1000.0f;
+
+            millisPerFrame = 1000 / targetFrameRate;
+
+            lastTick = timeInMillisecondsStart;
+
+        }
+
+        protected override void OnLoad() // Runs when GameWindow loads the window
+        {
+            base.OnLoad();
+           
             // Setup the engine.
             setup();
+        }
 
-            // When we start the program running.
-            startTime = getCurrentMillis();
+        static void Main(string[] args)
+        {
             frames = 0;
             frameTimes = new List<long>();
+            // time for when we start the program running.
+            startTime = getCurrentMillis();
+
+            // -------  New stuff for OpenTK, to start the game loop etc:
+
+            GameWindowSettings gws = GameWindowSettings.Default;
+            NativeWindowSettings nws = NativeWindowSettings.Default;
+
+            gws.UpdateFrequency = 60;
+
+            nws.Size = new Vector2i(1280, 720);
+            nws.Title = "Hello wOrld!";
+
+            Bootstrap window = new Bootstrap(gws, nws);
+
+            window.Run();
+
+
+            // --- old stuff:
+            
             // Start the game running.
             runningGame.initialize();
 
-            timeInMillisecondsStart = startTime;
+            // timeInMillisecondsStart = startTime; Should be OK to remove
             lastTick = startTime;
 
             phys.GravityModifier = 0.1f;
@@ -264,88 +399,6 @@ namespace Shard
             {
                 physDebug = true;
             }
-
-            while (true)
-            {
-                frames += 1;
-
-                timeInMillisecondsStart = getCurrentMillis();
-                
-                // Clear the screen.
-                Bootstrap.getDisplay().clearDisplay();
-
-                // Update 
-                runningGame.update();
-                // Input
-
-                if (runningGame.isRunning() == true)
-                {
-
-                    // Get input, which works at 50 FPS to make sure it doesn't interfere with the 
-                    // variable frame rates.
-                    input.getInput();
-
-                    // Update runs as fast as the system lets it.  Any kind of movement or counter 
-                    // increment should be based then on the deltaTime variable.
-                    GameObjectManager.getInstance().update();
-
-                    // This will update every 20 milliseconds or thereabouts.  Our physics system aims 
-                    // at a 50 FPS cycle.
-                    if (phys.willTick())
-                    {
-                        GameObjectManager.getInstance().prePhysicsUpdate();
-                    }
-
-                    // Update the physics.  If it's too soon, it'll return false.   Otherwise 
-                    // it'll return true.
-                    physUpdate = phys.update();
-
-                    if (physUpdate)
-                    {
-                        // If it did tick, give every object an update
-                        // that is pinned to the timing of the physics system.
-                        GameObjectManager.getInstance().physicsUpdate();
-                    }
-
-                    if (physDebug) {
-                        phys.drawDebugColliders();
-                    }
-
-                }
-
-                // Render the screen.
-                Bootstrap.getDisplay().display();
-
-                timeInMillisecondsEnd = getCurrentMillis();
-
-                frameTimes.Add (timeInMillisecondsEnd);
-
-                interval = timeInMillisecondsEnd - timeInMillisecondsStart;
-
-                sleep = (int)(millisPerFrame - interval);
-
-
-                TimeElapsed += deltaTime;
-
-                if (sleep >= 0)
-                {
-                    // Frame rate regulator.  Bear in mind since this is millisecond precision, and we 
-                    // only get whole numbers from our interval, it will only rarely match a target 
-                    // FPS.  Milliseconds just aren't precise enough.
-                    //
-                    //  (I'm hinting if this bothers you, you might have found an engine modification to make...)
-                    Thread.Sleep(sleep);
-                }
-
-                timeInMillisecondsEnd = getCurrentMillis();
-                deltaTime = (timeInMillisecondsEnd - timeInMillisecondsStart) / 1000.0f;
-
-                millisPerFrame = 1000 / targetFrameRate;
-
-                lastTick = timeInMillisecondsStart;
-
-            } 
-
 
         }
     }
