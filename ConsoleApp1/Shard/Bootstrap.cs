@@ -7,20 +7,16 @@
 */
 
 /*
-When using OpenTK, the GameWindow class has a function Run() which starts the game loop.
-Hence Bootstrap probably needs to extend this class, and Bootstrap gets the game loop
-and the display functionality. There might be a better way to do this.
-
-At this point, this is mostly a proof of concept for running OpenTK in this program.
-
-Much left todo, including fixing display class, inputframework, and the game.
+When using OpenTK, the GameWindow has a function Run() which starts the game loop.
+And there are functions for regulating the update frequency, and functions which are called when updating/rendering.
  */
 
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-
+using Shard.Shard;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -263,8 +259,6 @@ namespace Shard
         {
             base.OnUpdateFrame(args);
 
-            int i = 0; // TODO: Remove
-            Console.WriteLine("Update Frequency: " + UpdateFrequency); // TODO: Remove
 
             if (KeyboardState.IsKeyDown(Keys.Escape)) // Esc - Closes window
             {
@@ -272,7 +266,7 @@ namespace Shard
             }
 
             /* ------- Everything below is from the original code, used to be in Main method. Much should be redundant ------- */
-            
+
             long timeInMillisecondsStart = getCurrentMillis();
 
             frames += 1; 
@@ -354,12 +348,72 @@ namespace Shard
 
         }
 
-        protected override void OnLoad() // Runs when GameWindow loads the window
+        protected override void OnRenderFrame(FrameEventArgs args)
+        {
+            base.OnRenderFrame(args);
+
+            GL.Clear(ClearBufferMask.ColorBufferBit); // Clear screen before re-rendering
+
+            shader.Use();
+            GL.BindVertexArray(VertexArrayObject);
+            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+
+            SwapBuffers(); // Display what has been rendering. Must be last. Double-buffering avoids screen tearing.
+        }
+
+        int VertexBufferObject;
+        int VertexArrayObject;
+        float[] vertices = {    // TODO: Remove. This is a temporary test object to be displayed.
+            -0.5f, -0.5f, 0.0f, //Bottom-left vertex
+            0.5f, -0.5f, 0.0f,  //Bottom-right vertex
+            0.0f,  0.5f, 0.0f   //Top vertex
+        };
+        Shader shader;
+        protected override void OnLoad() // Runs when GameWindow loads the window (only runs once)
         {
             base.OnLoad();
-           
+
+
+            shader = new Shader("../../../Shard/shader.vert", "../../../Shard/shader.frag");
+
+            VertexBufferObject = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
+
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw); // Move this
+
+            GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f); // Sets the color of the window "between frames"
+
+            VertexArrayObject = GL.GenVertexArray();
+
+            // ..:: Initialization code (done once (unless your object frequently changes)) :: ..
+            // 1. bind Vertex Array Object
+            GL.BindVertexArray(VertexArrayObject);
+            // 2. copy our vertices array in a buffer for OpenGL to use
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
+            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+            // 3. then set our vertex attributes pointers
+            // Takes data from the latest bound VBO (memory buffer) bound to ArrayBuffer.
+            // The first parameter is the location of the vertex attribute. Dynamically retrieving shader layout would require some changes.
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(0);
+
             // Setup the engine.
             setup();
+        }
+
+        protected override void OnUnload()
+        {
+            base.OnUnload();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0); // Redundant?
+            GL.DeleteBuffer(VertexBufferObject);        // Redundant?
+            shader.Dispose();
+        }
+
+        protected override void OnResize(ResizeEventArgs e) // TODO: ? Remove or implement further? Doesn't seem to make a difference as it is now.
+        {
+            base.OnResize(e);
+
+            GL.Viewport(0, 0, e.Width, e.Height);
         }
 
         static void Main(string[] args)
