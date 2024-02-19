@@ -21,13 +21,18 @@ namespace Shard
     {
 
         private static int VertexBufferObject;
+        private static int ElementBufferObject;
         private static int VertexArrayObject;
+
+        private static int indicesLength;
 
         Shader shader;
 
         public WindowOTK(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
         {
         }
+
+        public void setIndicesLength(int length) { indicesLength = length; }
 
         protected override void OnUpdateFrame(FrameEventArgs args) // Runs when GameWindow updates frame
         {
@@ -83,12 +88,16 @@ namespace Shard
 
             // Copy our vertices array in a buffer for OpenGL to use:
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-            // GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
+            // GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw); TODO: Remove
+
+            ElementBufferObject = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
+            //GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw); TODO: Remove
 
             // Set our vertex attributes pointers
             // Takes data from the latest bound VBO (memory buffer) bound to ArrayBuffer.
             // The first parameter is the location of the vertex attribute. Defined in shader.vert. Dynamically retrieving shader layout would require some changes.
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0); // TODO: Fix
             GL.EnableVertexAttribArray(0);
 
             // GL.BufferData(..) should be called in update() in a game, to add data to be buffered
@@ -110,7 +119,8 @@ namespace Shard
             // Magic OpenGL rendering stuff
             shader.Use();
             GL.BindVertexArray(VertexArrayObject);
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+            // GL.DrawArrays(PrimitiveType.Triangles, 0, 3); // TODO: Remove
+            GL.DrawElements(PrimitiveType.Triangles, indicesLength, DrawElementsType.UnsignedInt, 0); // For DrawShape rather than drawtriangle
 
             // Display what has been rendering. Must be last. Double-buffering avoids screen tearing.
             SwapBuffers(); 

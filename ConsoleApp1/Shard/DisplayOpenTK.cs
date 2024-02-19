@@ -9,10 +9,12 @@ namespace Shard
 {
     class DisplayOpenTK : Display
     {
-        
-        public override void drawTriangle(float[] vertices)
+
+        public override void drawShape(float[] vertices, uint[] indices)
         {
+            Bootstrap.getWindow().setIndicesLength(indices.Length); // sus
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.DynamicDraw);
         }
 
         public override void clearDisplay()

@@ -9,11 +9,23 @@ namespace Shard
 {
     class GameThreeDim : Game, InputListener
     {
-        float[] vertices = {    // TODO: This is hard-coded. Make dynamic.
-            -0.5f, -0.5f, 0.0f, //Bottom-left vertex
-            0.5f, -0.5f, 0.0f,  //Bottom-right vertex
-            0.0f,  0.5f, 0.0f   //Top vertex
-            };
+        float[] verticesRect = { // TODO: Change to .obj file input
+             0.5f,  0.5f, 0.0f,  // top right
+             0.5f,  0.4f, 0.0f,  // bottom right
+             0.4f,  0.4f, 0.0f,  // bottom left
+             0.4f,  0.5f, 0.0f,   // top left
+             0.1f,  0.1f, 0.0f,  // top right
+             0.1f,  -0.1f, 0.0f,  // bottom right
+             -0.1f,  -0.1f, 0.0f,  // bottom left
+             -0.1f,  0.1f, 0.0f   // top leftq
+        };
+
+        uint[] indices = {  // TODO: change to .obj file input
+            0, 1, 3,   // first triangle
+            1, 2, 3,    // second triangle
+            4, 5, 7,
+            5, 6, 7
+        };
 
         public void handleInput(InputEvent inp, string eventType)
         {
@@ -27,7 +39,7 @@ namespace Shard
 
         public override void update()
         {
-            Bootstrap.getDisplay().drawTriangle(vertices);
+            Bootstrap.getDisplay().drawShape(verticesRect, indices);
         }
     }
 }
