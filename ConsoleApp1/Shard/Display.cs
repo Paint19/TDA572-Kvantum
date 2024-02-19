@@ -14,6 +14,7 @@ namespace Shard
     {
         protected int _height, _width;
 
+        public virtual void drawTriangle(float[] v) { }
         public virtual void drawLine(int x, int y, int x2, int y2, int r, int g, int b, int a)
         {
         }
@@ -83,7 +84,7 @@ namespace Shard
 
         public abstract void initialize();
         public abstract void clearDisplay();
-        public abstract void display();
+        public abstract void display(); // TODO: Change name or remove. Could be used for rendering, but displaying happens in WindowOTK now.
 
         public abstract void showText(string text, double x, double y, int size, int r, int g, int b);
         public abstract void showText(char[,] text, double x, double y, int size, int r, int g, int b);
