@@ -10,8 +10,6 @@ namespace Shard
 {
     class GameThreeDim : Game, InputListener
     {
-        ObjectFileParser objReader = new ObjectFileParser();
-
         float[] vertices;
         uint[] indices;
 
@@ -22,7 +20,7 @@ namespace Shard
 
         public override void initialize()
         {
-            Tuple<float[], uint[]> parsedFile = objReader.parseFile("teapot.obj");
+            Tuple<float[], uint[]> parsedFile = ObjectFileParser.parseFile("teapot.obj");
             vertices = parsedFile.Item1;
             indices = parsedFile.Item2;
             // throw new NotImplementedException();
