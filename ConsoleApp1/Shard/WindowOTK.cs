@@ -145,12 +145,5 @@ namespace Shard
             shader.Dispose();
         }
 
-        // Resizes things proportionally. Does allow any width and height, hence warping what is displayed.
-        protected override void OnResize(ResizeEventArgs e)
-        {
-            base.OnResize(e);
-
-            GL.Viewport(0, 0, e.Width, e.Height);
-        }
     }
 }

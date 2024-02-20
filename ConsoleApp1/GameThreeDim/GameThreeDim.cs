@@ -1,4 +1,5 @@
 ﻿using OpenTK.Windowing.GraphicsLibraryFramework;
+using Shard.Shard;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,23 +10,12 @@ namespace Shard
 {
     class GameThreeDim : Game, InputListener
     {
-        float[] verticesRect = { // TODO: Change to .obj file input
-             0.5f,  0.5f, 0.0f,  // top right
-             0.5f,  0.4f, 0.0f,  // bottom right
-             0.4f,  0.4f, 0.0f,  // bottom left
-             0.4f,  0.5f, 0.0f,   // top left
-             0.1f,  0.1f, 0.0f,  // top right
-             0.1f,  -0.1f, 0.0f,  // bottom right
-             -0.1f,  -0.1f, 0.0f,  // bottom left
-             -0.1f,  0.1f, 0.0f   // top leftq
-        };
+        ObjectFileParser objReader = new ObjectFileParser();
 
-        uint[] indices = {  // TODO: change to .obj file input
-            0, 1, 3,   // first triangle
-            1, 2, 3,    // second triangle
-            4, 5, 7,
-            5, 6, 7
-        };
+        float[] vertices;
+        uint[] indices;
+
+
 
         public void handleInput(InputEvent inp, string eventType)
         {
@@ -34,12 +24,15 @@ namespace Shard
 
         public override void initialize()
         {
+            Tuple<float[], uint[]> parsedFile = objReader.parseFile("teapot.obj");
+            vertices = parsedFile.Item1;
+            indices = parsedFile.Item2;
             // throw new NotImplementedException();
         }
 
         public override void update()
         {
-            Bootstrap.getDisplay().drawShape(verticesRect, indices);
+            Bootstrap.getDisplay().drawShape(vertices, indices);
         }
     }
 }
