@@ -10,16 +10,13 @@ namespace Shard.Shard
 {
     class ObjectFileParser
     {
-        public ObjectFileParser() {
-        }
-
         /*
          *  parseFile takes a file name (file must be placed in Asset-folder) and 
          *  parses it as an object file. Right now it only parses the simplest 
          *  type of .obj file, which contains vertices coordinates and faces 
          *  (which three vertices form a triangle)
          */
-        public Tuple<float[], uint[]> parseFile(string fileName)
+        static public Tuple<float[], uint[]> parseFile(string fileName)
         {
             string filePath = Bootstrap.getAssetManager().getAssetPath(fileName);
             List<float> vertices = new List<float>();
