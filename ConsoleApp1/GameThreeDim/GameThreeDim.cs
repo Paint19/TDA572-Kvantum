@@ -24,7 +24,7 @@ namespace Shard
             0, 1, 3,   // first triangle
             1, 2, 3,    // second triangle
             4, 5, 7,
-            5, 6, 7
+            5, 6, 2
         };
 
         public void handleInput(InputEvent inp, string eventType)
