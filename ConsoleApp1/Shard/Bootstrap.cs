@@ -222,6 +222,7 @@ namespace Shard
 
             nws.Size = new Vector2i(1280, 720);
             nws.Title = "Hello wOrld!";
+            nws.Vsync = VSyncMode.On;
 
             window = new WindowOTK(gws, nws); // Starts the game loop
             window.Run();              
