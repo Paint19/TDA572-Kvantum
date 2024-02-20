@@ -15,8 +15,6 @@ namespace Shard
         float[] vertices;
         uint[] indices;
 
-
-
         public void handleInput(InputEvent inp, string eventType)
         {
             // throw new NotImplementedException();
@@ -32,6 +30,12 @@ namespace Shard
 
         public override void update()
         {
+            List<float[]> chunks = vertices.Chunk(3).ToList();
+            foreach (float[] vert in chunks)
+            {
+                _3dRot.rotateAll(0.0f, 0.0f, 0.01f, vert);
+            }
+            vertices = chunks.SelectMany(vert => vert).ToArray();
             Bootstrap.getDisplay().drawShape(vertices, indices);
         }
     }
