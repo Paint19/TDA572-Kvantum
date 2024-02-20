@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Shard.Shard
@@ -35,14 +36,14 @@ namespace Shard.Shard
                     if (vals[0] == "v") {
                         for(int i = 1; i < vals.Length; i++)
                         {
-                            vertices.Add(float.Parse(vals[i], CultureInfo.InvariantCulture.NumberFormat)*0.1f); // Must be in "0.00..." format
+                            vertices.Add(float.Parse(vals[i], CultureInfo.InvariantCulture.NumberFormat)*0.001f); // Must be in "0.00..." format
                         }
                     }
                     else if (vals[0] == "f")
                     {
                         for (int i = 1; i < vals.Length; i++)
                         {
-                            indices.Add(uint.Parse(vals[i], CultureInfo.InvariantCulture.NumberFormat));
+                            indices.Add(uint.Parse(new Regex(@"\d+").Match(vals[i]).Captures[0].ToString(), CultureInfo.InvariantCulture.NumberFormat));
                         }
                     }
                 }
