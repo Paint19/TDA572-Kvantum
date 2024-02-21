@@ -58,7 +58,7 @@ namespace Shard
         public static void setup()
         {
             string workDir = Environment.CurrentDirectory;
-            baseDir = Directory.GetParent(workDir).Parent.Parent.Parent.FullName;;
+            baseDir = Directory.GetParent(workDir).Parent.Parent.Parent.FullName;
 
             setupEnvironmentalVariables(baseDir + "\\" + "envar.cfg");
             setup(baseDir + "\\" + DEFAULT_CONFIG);
@@ -220,7 +220,7 @@ namespace Shard
 
             gws.UpdateFrequency = 60;
 
-            nws.Size = new Vector2i(1280, 720);
+            nws.Size = new Vector2i(1280, 1280);
             nws.Title = "Hello wOrld!";
             nws.Vsync = VSyncMode.On;
 
