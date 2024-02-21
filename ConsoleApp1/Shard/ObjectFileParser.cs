@@ -22,6 +22,8 @@ namespace Shard.Shard
             List<float> vertices = new List<float>();
             List<uint> indices = new List<uint>();
 
+            const float epsilon = 0.000001f;
+
             IEnumerable<string> allLines;
             if (File.Exists(filePath))
             {
@@ -32,13 +34,16 @@ namespace Shard.Shard
                 {
                     string[] vals = line.Split(' ');
 
-                    if (vals[0] == "v") {
+                    if (vals[0].Equals("v")) {
                         for(int i = 1; i < vals.Length; i++)
                         {
-                            vertices.Add(float.Parse(vals[i], CultureInfo.InvariantCulture.NumberFormat)*0.1f); // Must be in "0.00..." format
+                            float v = float.Parse(vals[i], CultureInfo.InvariantCulture.NumberFormat) * 0.1f;  //TODO: Remove *0.1f // Must be in "0.00..." format
+                            if (Math.Abs(v) < epsilon) // TODO: think abuout
+                                v = 0.0f;
+                            vertices.Add(v);
                         }
                     }
-                    else if (vals[0] == "f")
+                    else if (vals[0].Equals("f"))
                     {
                         for (int i = 1; i < vals.Length; i++)
                         {
