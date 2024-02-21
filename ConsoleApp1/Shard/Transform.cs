@@ -30,6 +30,8 @@ namespace Shard
         private Vector2 forward;
         private Vector2 right, centre;
 
+        private int cropX, cropY, imageWid, imageHt;
+
         public Vector2 getLastDirection()
         {
             float dx, dy;
@@ -150,5 +152,9 @@ namespace Shard
         public float Scaley { get => scaley; set => scaley = value; }
         public float Lx { get => lx; set => lx = value; }
         public float Ly { get => ly; set => ly = value; }
+        public int CropX { get => cropX; set => cropX = value; }
+        public int CropY { get => cropY; set => cropY = value; }
+        public int ImageWid { get => imageWid; set => imageWid = value; }
+        public int ImageHt { get => imageHt; set => imageHt = value; }
     }
 }

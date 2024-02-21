@@ -6,7 +6,7 @@
 *   
 */
 
-using Shard.Shard;
+using Shard.Shard.Animation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -184,6 +184,12 @@ namespace Shard
             if (soundEngine == null)
             {
                 Debug.getInstance().log("No sound engine set", Debug.DEBUG_LEVEL_ERROR);
+                bailOut = true;
+            }
+
+            if (animation == null)
+            {
+                Debug.getInstance().log("No animation system set", Debug.DEBUG_LEVEL_ERROR);
                 bailOut = true;
             }
 

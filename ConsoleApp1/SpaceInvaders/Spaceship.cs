@@ -16,7 +16,7 @@ namespace SpaceInvaders
             this.Transform.X = 100.0f;
             this.Transform.Y = 800.0f;
             this.Transform.SpritePath = Bootstrap.getAssetManager().getAssetPath("player.png");
-
+            
 
             fireDelay = 2;
             fireCounter = fireDelay;

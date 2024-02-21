@@ -8,6 +8,7 @@
 *   
 */
 
+using Shard.Shard.Animation;
 using System;
 using System.Collections.Generic;
 
@@ -20,6 +21,7 @@ namespace Shard
         private bool toBeDestroyed;
         private bool visible;
         private PhysicsBody myBody;
+        private Animation animation;
         private List<string> tags;
 
         public void addTag(string str)
@@ -80,6 +82,12 @@ namespace Shard
             get => (Transform)transform;
         }
 
+        internal Animation Animation
+        {
+            get => animation;
+            set => animation = value;
+        }
+
 
         public bool Visible
         {
@@ -89,6 +97,9 @@ namespace Shard
         public bool Transient { get => transient; set => transient = value; }
         public bool ToBeDestroyed { get => toBeDestroyed; set => toBeDestroyed = value; }
         internal PhysicsBody MyBody { get => myBody; set => myBody = value; }
+
+       
+
 
         public virtual void initialize()
         {
