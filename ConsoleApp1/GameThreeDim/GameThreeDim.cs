@@ -38,15 +38,6 @@ namespace Shard
                 .Select(vec=> rotMatrix * new Vector3(vec[0], vec[1], vec[2]))
                 .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
         }
-        public void rotateVertices(float a, float b, float c)
-        {
-            List<float[]> chunks = vertices.Chunk(3).ToList();
-            foreach (float[] vert in chunks)
-            {
-                _3dRot.rotateAll(a, b, c, vert);
-            }
-            vertices = chunks.SelectMany(vert => vert).ToArray();
-        }
 
         public override void update()
         {

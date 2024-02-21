@@ -34,5 +34,6 @@ namespace Shard
                 (float)(Math.Cos(beta) * Math.Cos(gamma)))
                 );
         }
+
     }
 }
