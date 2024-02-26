@@ -8,11 +8,13 @@
 *   
 */
 
+using System.Numerics;
+
 namespace Shard
 {
     class Transform3D : Transform
     {
-        private double z;
+        private float z;
         private double rotx, roty;
         private int scalez;
 
@@ -20,7 +22,7 @@ namespace Shard
         {
         }
 
-        public double Z
+        public float Z
         {
             get => z;
             set => z = value;
@@ -35,5 +37,12 @@ namespace Shard
         }
         public double Rotx { get => rotx; set => rotx = value; }
         public double Roty { get => roty; set => roty = value; }
+
+        public Vector3 translate(Vector3 vertex)
+        {
+            return vertex + new Vector3(X, Y, Z);
+        }
+
+
     }
 }
