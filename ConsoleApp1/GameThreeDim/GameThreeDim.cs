@@ -28,8 +28,15 @@ namespace Shard
             indices = parser.getIndices();
             Matrix3 rotMatrix = Matrices.getInstance().getRotationMatrix3(0.0f, 0.0f, 0.250f);
             persistentRotationMatrix3 = Matrices.getInstance().getRotationMatrix3(0.0f, 0.01f, 0.0f);
-            rotateVertices(rotMatrix);
-            // throw new NotImplementedException();
+
+            this.vertices = verticesUnprocessed
+                    .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
+        }
+       
+        public override void update()
+        {
+            rotateVertices(persistentRotationMatrix3); // TODO: refactor'
+            Bootstrap.getDisplay().drawShape(vertices, indices);
         }
 
         void rotateVertices(Matrix3 rotMatrix)
@@ -51,10 +58,5 @@ namespace Shard
             }
         }
 
-        public override void update()
-        {
-            rotateVertices(persistentRotationMatrix3);
-            Bootstrap.getDisplay().drawShape(vertices, indices);
-        }
     }
 }
