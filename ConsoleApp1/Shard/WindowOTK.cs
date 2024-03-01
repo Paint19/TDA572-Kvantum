@@ -27,6 +27,7 @@ namespace Shard
         private static int indicesLength;
 
         Shader shader;
+        Texture texture;
 
         public WindowOTK(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
         {
@@ -97,12 +98,19 @@ namespace Shard
             // Set our vertex attributes pointers
             // Takes data from the latest bound VBO (memory buffer) bound to ArrayBuffer.
             // The first parameter is the location of the vertex attribute. Defined in shader.vert. Dynamically retrieving shader layout would require some changes.
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0); // TODO: Fix
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0); // TODO: Fix
+            
+            int texCoordLocation = 1;
+            GL.EnableVertexAttribArray(texCoordLocation);
+            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+
             GL.EnableVertexAttribArray(0);
 
             // GL.BufferData(..) should be called in update() in a game, to add data to be buffered
             // ... Seems OK to not update buffer data in a game, but I might want to look into that
             Bootstrap.getRunningGame().update(); // Q: Is this circular? 
+
+            
 
             timeInMillisecondsEnd = Bootstrap.getCurrentMillis();
             Bootstrap.setDeltaTime((timeInMillisecondsEnd - timeInMillisecondsStart) / 1000.0f); // Dunno if this is right. Not sure what deltaTime should be
@@ -114,9 +122,10 @@ namespace Shard
             base.OnRenderFrame(args);
 
             // Clear screen before re-rendering
-            GL.Clear(ClearBufferMask.ColorBufferBit); 
+            GL.Clear(ClearBufferMask.ColorBufferBit);
 
             // Magic OpenGL rendering stuff
+            texture.Use();
             shader.Use();
             GL.BindVertexArray(VertexArrayObject);
             // GL.DrawArrays(PrimitiveType.Triangles, 0, 3); // TODO: Remove
@@ -134,7 +143,8 @@ namespace Shard
             // Sets the color of the window "between frames"
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);      // Redundant?
 
-            shader = new Shader("../../../Shard/shader.vert", "../../../Shard/shader.frag");
+            shader = new Shader("../../../../Shard/shader.vert", "../../../../Shard/shader.frag");
+            texture = new Texture(Bootstrap.getAssetManager().getAssetPath("spaceship.png"));
         }
 
         protected override void OnUnload()
