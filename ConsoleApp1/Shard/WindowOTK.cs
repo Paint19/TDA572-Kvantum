@@ -110,7 +110,7 @@ namespace Shard
             // ... Seems OK to not update buffer data in a game, but I might want to look into that
             Bootstrap.getRunningGame().update(); // Q: Is this circular? 
 
-            
+            GL.BindVertexArray(0);
 
             timeInMillisecondsEnd = Bootstrap.getCurrentMillis();
             Bootstrap.setDeltaTime((timeInMillisecondsEnd - timeInMillisecondsStart) / 1000.0f); // Dunno if this is right. Not sure what deltaTime should be

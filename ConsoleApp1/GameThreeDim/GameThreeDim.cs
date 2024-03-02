@@ -13,6 +13,7 @@ namespace Shard
     class GameThreeDim : Game, InputListener
     {
         Vector3[] verticesUnprocessed;
+        float[] textureCoordinates;
         float[] vertices;
         uint[] indices;
         Matrix3 persistentRotationMatrix3;
@@ -26,18 +27,26 @@ namespace Shard
             ObjectFileParser parser = new ObjectFileParser("rat.obj");
             verticesUnprocessed = parser.getVertices();
             indices = parser.getIndices();
-            //Matrix3 rotMatrix = Matrices.getInstance().getRotationMatrix3(0.0f, 0.0f, 0.250f);
-            //persistentRotationMatrix3 = Matrices.getInstance().getRotationMatrix3(0.0f, 0.01f, 0.0f);
-            //rotateVertices(rotMatrix);
+            Matrix3 rotMatrix = Matrices.getInstance().getRotationMatrix3(0.0f, 0.0f, 0.250f);
+            persistentRotationMatrix3 = Matrices.getInstance().getRotationMatrix3(0.0f, 0.01f, 0.0f);
+            rotateVertices(rotMatrix);
             // throw new NotImplementedException();
+            textureCoordinates = parser.getTextureCoordinates().SelectMany(nVec => new float[] { nVec[0], nVec[1]}).ToArray();
 
             vertices =
             [
                 //Position          Texture coordinates
-                 0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right
-                 0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
-                -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
-                -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
+                 0.5f,  0.5f, 0.0f,  // top right
+                 0.5f, -0.5f, 0.0f,  // bottom right
+                -0.5f, -0.5f, 0.0f,  // bottom left
+                -0.5f,  0.5f, 0.0f  // top left
+            ];
+            textureCoordinates =
+            [
+                1.0f, 1.0f,
+                1.0f, 0.0f,
+                0.0f, 0.0f,
+                0.0f, 1.0f
             ];
             indices = [0, 1, 2, 2, 3, 0];
         }
@@ -64,7 +73,7 @@ namespace Shard
         public override void update()
         {
             //rotateVertices(persistentRotationMatrix3);
-            Bootstrap.getDisplay().drawShape(vertices, indices);
+            Bootstrap.getDisplay().drawShape(vertices, indices, textureCoordinates);
         }
     }
 }

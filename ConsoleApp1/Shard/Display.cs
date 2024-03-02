@@ -15,7 +15,7 @@ namespace Shard
         protected int _height, _width;
 
 
-        public virtual void drawShape(float[] v, uint[] i) { }
+        public virtual void drawShape(float[] v, uint[] i, float[] tc) { }
 
         public virtual void drawLine(int x, int y, int x2, int y2, int r, int g, int b, int a)
         {
