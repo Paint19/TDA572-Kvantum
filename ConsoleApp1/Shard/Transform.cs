@@ -59,7 +59,7 @@ namespace Shard
         }
 
 
-        public void recalculateCentre()
+        public virtual void recalculateCentre()
         {
 
             centre.X = (float)(x + ((this.Wid * scalex) / 2));
