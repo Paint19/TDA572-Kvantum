@@ -14,9 +14,10 @@ namespace Shard
 {
     class Transform3D : Transform
     {
-        private float z;
+        private float z, lastZ;
         private double rotx, roty;
         private int scalez;
+        private Vector3 forward, right, up, centre;
 
         public Transform3D(GameObject o) : base(o)
         {
@@ -28,6 +29,10 @@ namespace Shard
             set => z = value;
         }
 
+        public Vector3 getLast3DDirection()
+        {
+            return new Vector3(lastX - x, lastY - y, lastZ - z);
+        }
 
 
         public int Scalez

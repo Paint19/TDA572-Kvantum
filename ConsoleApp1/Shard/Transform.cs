@@ -20,13 +20,13 @@ namespace Shard
 
     class Transform
     {
-        private GameObject owner;
-        private float x, y;
-        private float lx, ly;
-        private float rotz;
-        private int wid, ht;
-        private float scalex, scaley;
-        private string spritePath;
+        internal GameObject owner;
+        internal float x, y;
+        internal float lastX, lastY;
+        internal float rotz;
+        internal int width, height;
+        internal float scalex, scaley;
+        internal string spritePath;
         private Vector2 forward;
         private Vector2 right, centre;
 
@@ -52,8 +52,8 @@ namespace Shard
             x = 0;
             y = 0;
 
-            lx = 0;
-            ly = 0;
+            lastX = 0;
+            lastY = 0;
 
             rotate(0);
         }
@@ -141,14 +141,14 @@ namespace Shard
             set => spritePath = value;
         }
         public ref Vector2 Forward { get => ref forward; }
-        public int Wid { get => wid; set => wid = value; }
-        public int Ht { get => ht; set => ht = value; }
+        public int Wid { get => width; set => width = value; }
+        public int Ht { get => height; set => height = value; }
         public ref Vector2 Right { get => ref right; }
         internal GameObject Owner { get => owner; set => owner = value; }
         public ref Vector2 Centre { get => ref centre; }
         public float Scalex { get => scalex; set => scalex = value; }
         public float Scaley { get => scaley; set => scaley = value; }
-        public float Lx { get => lx; set => lx = value; }
-        public float Ly { get => ly; set => ly = value; }
+        public float Lx { get => lastX; set => lastX = value; }
+        public float Ly { get => lastY; set => lastY = value; }
     }
 }
