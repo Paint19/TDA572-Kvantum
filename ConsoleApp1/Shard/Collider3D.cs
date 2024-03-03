@@ -11,9 +11,8 @@ namespace Shard
 {
     abstract class Collider3D
     {
-        private CollisionHandler gameObject;
-        internal Vector3 minDimensions, maxDimensions;
-
+        internal CollisionHandler gameObject;
+        internal Vector3 minDimensions, maxDimensions, myPosition;
 
         private bool rotateAtOffset;
 
@@ -30,19 +29,29 @@ namespace Shard
         public bool RotateAtOffset { get => rotateAtOffset; set => rotateAtOffset = value; }
 
 
-        public abstract Boolean checkBoundingCollision(Collider3D c);
+        public virtual Boolean checkBoundingCollision(Collider3D c)
+        {
+            return (
+                c.minDimensions.X <= maxDimensions.X &&
+                c.maxDimensions.X >= minDimensions.X &&
+                c.minDimensions.Y <= maxDimensions.Y &&
+                c.maxDimensions.Y >= minDimensions.Y &&
+                c.minDimensions.Z <= maxDimensions.Z &&
+                c.maxDimensions.Z >= minDimensions.Z
+            );
+        }
         public abstract Vector3? checkCollision(ColliderConvexPolygon c);
 
-        public abstract Vector3? checkCollision(ColliderRadial c);
+        public abstract Vector3? checkCollision(ColliderSphere c);
 
         public abstract Vector3? checkCollision(Vector3 c);
 
         public virtual Vector3? checkCollision(Collider3D c)
         {
 
-            if (c is ColliderRadial)
+            if (c is ColliderSphere)
             {
-                return checkCollision((ColliderRadial)c);
+                return checkCollision((ColliderSphere)c);
             }
 
             if (c is ColliderConvexPolygon)

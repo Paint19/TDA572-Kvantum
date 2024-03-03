@@ -18,16 +18,12 @@ namespace Shard
     class ColliderConvexPolygon : Collider3D
     {
         private Transform3D transform3D;
-        private Vector3 myPosition;
         private IEnumerable<Vector3> myVertices;
         private IEnumerable<int> myIndices;
         private bool fromTrans;
 
-
-
         public ColliderConvexPolygon(CollisionHandler gob, Transform3D t) : base(gob)
         {
-
             this.MyRect = t;
             fromTrans = true;
             RotateAtOffset = false;
@@ -87,25 +83,11 @@ namespace Shard
             throw new NotImplementedException();
         }
 
-        public override Vector3? checkCollision(ColliderRadial c)
+        public override Vector3? checkCollision(ColliderSphere c)
         {
             throw new NotImplementedException();
         }
 
-        public override bool checkBoundingCollision(Collider3D c)
-        {
-            Vector3 cMin = c.getMinDimensions(), cMax = c.getMaxDimensions();
-            //get references of c:s bounding boxes corners
-            Vector3 compMaxMin = cMax - minDimensions, compMaxMax = cMax - maxDimensions;
-            Vector3 compMinMin = cMin - minDimensions, compMinMax = cMin - maxDimensions;
-            //
-            Vector3 maxCheck = (compMaxMax * compMaxMin), minCheck = (compMinMax * compMinMin);
-            //
-            float[] results = new float[6];
-            maxCheck.CopyTo(results, 0);
-            minCheck.CopyTo(results, 3);
-            return results.Any(it => it < 0);
-        }
 
         public override Vector3 getMinDimensions()
         {
