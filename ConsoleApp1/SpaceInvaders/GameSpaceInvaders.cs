@@ -33,7 +33,7 @@ namespace Shard
         }
         public override void update()
         {
-            Bootstrap.getDisplay().showText("FPS: " + Bootstrap.getFPS(), 10, 10, 12, 255, 255, 255);
+            Bootstrap.getDisplay().showText("FPS: " + Bootstrap.getWindow().UpdateFrequency, 10, 10, 12, 255, 255, 255);
 
             int ymod = 0;
             int deaths = 0;

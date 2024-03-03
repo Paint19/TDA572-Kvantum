@@ -6,6 +6,11 @@
 *   
 */
 
+using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
+using OpenTK.Windowing.GraphicsLibraryFramework;
+using Shard.Shard;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,23 +20,21 @@ namespace Shard
 {
     class Bootstrap
     {
+
         public static string DEFAULT_CONFIG = "config.cfg";
 
+        private static WindowOTK window;
 
         private static Game runningGame;
         private static Display displayEngine;
         private static Sound soundEngine;
         private static InputSystem input;
+        private static bool physDebug = false;
         private static PhysicsManager phys;
         private static AssetManagerBase asset;
 
         private static int targetFrameRate;
-        private static int millisPerFrame;
         private static double deltaTime;
-        private static double timeElapsed;
-        private static int frames;
-        private static List<long> frameTimes;
-        private static long startTime;
         private static string baseDir;
         private static Dictionary<string,string> enVars;
 
@@ -48,9 +51,6 @@ namespace Shard
             return null;
         }
 
-
-        public static double TimeElapsed { get => timeElapsed; set => timeElapsed = value; }
-
         public static string getBaseDir() {
             return baseDir;
         }
@@ -58,7 +58,7 @@ namespace Shard
         public static void setup()
         {
             string workDir = Environment.CurrentDirectory;
-            baseDir = Directory.GetParent(workDir).Parent.Parent.Parent.FullName;;
+            baseDir = Directory.GetParent(workDir).Parent.Parent.Parent.FullName;
 
             setupEnvironmentalVariables(baseDir + "\\" + "envar.cfg");
             setup(baseDir + "\\" + DEFAULT_CONFIG);
@@ -81,6 +81,11 @@ namespace Shard
         {
 
             return deltaTime;
+        }
+
+        public static void setDeltaTime(double time)
+        {
+            deltaTime = time;
         }
 
         public static Display getDisplay()
@@ -106,6 +111,10 @@ namespace Shard
         {
             return runningGame;
         }
+
+        public static PhysicsManager getPhysicsManager() { return phys; }
+
+        public static bool getPhysDebug() { return physDebug; }
 
         public static void setup(string path)
         {
@@ -147,7 +156,6 @@ namespace Shard
                     case "game":
                         runningGame = (Game)ob;
                         targetFrameRate = runningGame.getTargetFrameRate();
-                        millisPerFrame = 1000 / targetFrameRate;
                         break;
                     case "input":
                         input = (InputSystem)ob;
@@ -188,165 +196,36 @@ namespace Shard
             return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
         }
 
-        public static int getFPS()
-        {
-            int fps;
-            double seconds;
-
-            seconds = (getCurrentMillis() - startTime) / 1000.0;
-
-            fps = (int)(frames / seconds);
-
-            return fps;
-        }
-
-        public static int getSecondFPS()
-        {
-            int count = 0;
-            long now = getCurrentMillis();
-            int lastEntry;
-
-
-
-            Debug.Log ("Frametimes is " + frameTimes.Count);
-
-            if (frameTimes.Count == 0) {
-                return -1;
-            }
-
-            lastEntry = frameTimes.Count - 1;
-
-            while (frameTimes[lastEntry] > (now - 1000) && lastEntry > 0) {
-                lastEntry -= 1;
-                count += 1;
-            }
-
-            if (lastEntry > 0) {
-                frameTimes.RemoveRange (0, lastEntry);
-            }
-
-            return count;
-        }
-
-        public static int getCurrentFrame()
-        {
-            return frames;
-        }
+        public static WindowOTK getWindow(){ return window; }   // sus
 
         static void Main(string[] args)
         {
-            long timeInMillisecondsStart, lastTick, timeInMillisecondsEnd;
-            long interval;
-            int sleep;
-            int tfro = 1;
-            bool physUpdate = false;
-            bool physDebug = false;
-
-
-
             // Setup the engine.
             setup();
-
-            // When we start the program running.
-            startTime = getCurrentMillis();
-            frames = 0;
-            frameTimes = new List<long>();
+            
             // Start the game running.
             runningGame.initialize();
 
-            timeInMillisecondsStart = startTime;
-            lastTick = startTime;
-
             phys.GravityModifier = 0.1f;
-            // This is our game loop.
 
             if (getEnvironmentalVariable("physics_debug") == "1")
             {
                 physDebug = true;
             }
 
-            while (true)
-            {
-                frames += 1;
+            // OpenTK, to start the game loop etc:
 
-                timeInMillisecondsStart = getCurrentMillis();
-                
-                // Clear the screen.
-                Bootstrap.getDisplay().clearDisplay();
+            GameWindowSettings gws = GameWindowSettings.Default;
+            NativeWindowSettings nws = NativeWindowSettings.Default;
 
-                // Update 
-                runningGame.update();
-                // Input
+            gws.UpdateFrequency = 60;
 
-                if (runningGame.isRunning() == true)
-                {
+            nws.Size = new Vector2i(1280, 1280);
+            nws.Title = "Hello wOrld!";
+            nws.Vsync = VSyncMode.On;
 
-                    // Get input, which works at 50 FPS to make sure it doesn't interfere with the 
-                    // variable frame rates.
-                    input.getInput();
-
-                    // Update runs as fast as the system lets it.  Any kind of movement or counter 
-                    // increment should be based then on the deltaTime variable.
-                    GameObjectManager.getInstance().update();
-
-                    // This will update every 20 milliseconds or thereabouts.  Our physics system aims 
-                    // at a 50 FPS cycle.
-                    if (phys.willTick())
-                    {
-                        GameObjectManager.getInstance().prePhysicsUpdate();
-                    }
-
-                    // Update the physics.  If it's too soon, it'll return false.   Otherwise 
-                    // it'll return true.
-                    physUpdate = phys.update();
-
-                    if (physUpdate)
-                    {
-                        // If it did tick, give every object an update
-                        // that is pinned to the timing of the physics system.
-                        GameObjectManager.getInstance().physicsUpdate();
-                    }
-
-                    if (physDebug) {
-                        phys.drawDebugColliders();
-                    }
-
-                }
-
-                // Render the screen.
-                Bootstrap.getDisplay().display();
-
-                timeInMillisecondsEnd = getCurrentMillis();
-
-                frameTimes.Add (timeInMillisecondsEnd);
-
-                interval = timeInMillisecondsEnd - timeInMillisecondsStart;
-
-                sleep = (int)(millisPerFrame - interval);
-
-
-                TimeElapsed += deltaTime;
-
-                if (sleep >= 0)
-                {
-                    // Frame rate regulator.  Bear in mind since this is millisecond precision, and we 
-                    // only get whole numbers from our interval, it will only rarely match a target 
-                    // FPS.  Milliseconds just aren't precise enough.
-                    //
-                    //  (I'm hinting if this bothers you, you might have found an engine modification to make...)
-                    Thread.Sleep(sleep);
-                }
-
-                timeInMillisecondsEnd = getCurrentMillis();
-                deltaTime = (timeInMillisecondsEnd - timeInMillisecondsStart) / 1000.0f;
-
-                millisPerFrame = 1000 / targetFrameRate;
-
-                lastTick = timeInMillisecondsStart;
-
-            } 
-
-
+            window = new WindowOTK(gws, nws); // Starts the game loop
+            window.Run();              
         }
     }
 }
