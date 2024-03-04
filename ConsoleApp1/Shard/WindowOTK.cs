@@ -53,9 +53,11 @@ namespace Shard
                 return;
             }
 
+            /*
             MouseState mouse = MouseState;
-            KeyboardState input = KeyboardState;
-            camera.Update(input, mouse, args);
+            KeyboardState input = KeyboardState; */
+            camera.Update(args);
+            
 
             long timeInMillisecondsStart, timeInMillisecondsEnd;
             timeInMillisecondsStart = Bootstrap.getCurrentMillis();
@@ -155,6 +157,9 @@ namespace Shard
         protected override void OnLoad()
         {
             base.OnLoad();
+
+            InputFramework inp = (InputFramework)Bootstrap.getInput();
+            inp.setWindow(this);
 
             GL.Enable(EnableCap.DepthTest);
 

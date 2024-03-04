@@ -5,7 +5,7 @@ using System;
 
 namespace Shard
 {
-    internal class Camera
+    internal class Camera : InputListener
     {
         private float speed = 8f;
         private float screenwidth;
@@ -23,11 +23,15 @@ namespace Shard
 
         private bool firstMove = true;
         public Vector2 lastPos;
+
+        bool goRight = false;
+        bool goLeft = false;
         public Camera(float width, float height, Vector3 position)
         {
             screenwidth = width;
             screenheight = height;
             this.position = position;
+            Bootstrap.getInput().addListener(this);
         }
 
         public Matrix4 GetViewMatrix()
@@ -106,9 +110,52 @@ namespace Shard
             }
             UpdateVectors();
         }
-        public void Update(KeyboardState input, MouseState mouse, FrameEventArgs e)
+        public void Update(FrameEventArgs e)
         {
-            InputController(input, mouse, e);
+            //InputController(input, mouse, e);
+            if (goLeft)
+            {
+                position -= right * speed * (float)e.Time;
+            }
+            if (goRight)
+            {
+                position += right * speed * (float)e.Time;
+            }
+        }
+
+        public void handleInput(InputEvent inp, string eventType)
+        {
+
+            if (eventType == "KeyDown")
+            {
+
+                if (inp.Key == (int)Keys.D)
+                {
+                    goRight = true;
+                }
+
+                if (inp.Key == (int)Keys.A)
+                {
+                    goLeft = true;
+                }
+
+            }
+            else if (eventType == "KeyUp")
+            {
+
+
+                if (inp.Key == (int)Keys.D)
+                {
+                    goRight = false;
+                }
+
+                if (inp.Key == (int)Keys.A)
+                {
+                    goLeft = false;
+                }
+
+
+            }
         }
     }
 }
