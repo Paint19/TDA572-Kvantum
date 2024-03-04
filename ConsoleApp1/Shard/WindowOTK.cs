@@ -1,4 +1,4 @@
-﻿using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using Shard.Shard;
@@ -81,8 +81,7 @@ namespace Shard
 
             }
 
-            VertexBufferObject = GL.GenBuffer();
-            VertexArrayObject = GL.GenVertexArray();
+            Bootstrap.getRunningGame().update();
 
             // Bind Vertex Array Object:
             GL.BindVertexArray(VertexArrayObject);
@@ -124,12 +123,11 @@ namespace Shard
             // Clear screen before re-rendering
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            // Magic OpenGL rendering stuff
             texture.Use();
             shader.Use();
-            GL.BindVertexArray(VertexArrayObject);
-            // GL.DrawArrays(PrimitiveType.Triangles, 0, 3); // TODO: Remove
-            GL.DrawElements(PrimitiveType.Triangles, indicesLength, DrawElementsType.UnsignedInt, 0); // For DrawShape rather than drawtriangle
+
+            // Display.display() renders all game objects
+            Bootstrap.getDisplay().display();
 
             // Display what has been rendering. Must be last. Double-buffering avoids screen tearing.
             SwapBuffers(); 
@@ -143,15 +141,20 @@ namespace Shard
             // Sets the color of the window "between frames"
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);      // Redundant?
 
-            shader = new Shader("../../../../Shard/shader.vert", "../../../../Shard/shader.frag");
+            // Start the game running. Must be done after starting the game loop
+            Bootstrap.getRunningGame().initialize();
+
+            // Initialize display
+            Bootstrap.getDisplay().initialize();
+
+            shader = new Shader("../../../Shard/shader.vert", "../../../Shard/shader.frag");
             texture = new Texture(Bootstrap.getAssetManager().getAssetPath("spaceship.png"));
         }
 
         protected override void OnUnload()
         {
             base.OnUnload();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0); // Redundant?
-            GL.DeleteBuffer(VertexBufferObject);        // Redundant?
+            Bootstrap.getDisplay().clearDisplay();
             shader.Dispose();
         }
 

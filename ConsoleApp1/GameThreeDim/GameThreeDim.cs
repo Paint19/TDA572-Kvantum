@@ -1,12 +1,4 @@
-﻿using OpenTK.Mathematics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using Shard.Shard;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using OpenTK.Mathematics;
 
 namespace Shard
 {
@@ -15,8 +7,11 @@ namespace Shard
         Vector3[] verticesUnprocessed;
         float[] textureCoordinates;
         float[] vertices;
-        uint[] indices;
-        Matrix3 persistentRotationMatrix3;
+        Rat rat;
+        Rat rat1;
+        Cube cube;
+        Teapot teapot;
+
         public void handleInput(InputEvent inp, string eventType)
         {
             // throw new NotImplementedException();
@@ -24,56 +19,16 @@ namespace Shard
 
         public override void initialize()
         {
-            ObjectFileParser parser = new ObjectFileParser("rat.obj");
-            verticesUnprocessed = parser.getVertices();
-            indices = parser.getIndices();
-            Matrix3 rotMatrix = Matrices.getInstance().getRotationMatrix3(0.0f, 0.0f, 0.250f);
-            persistentRotationMatrix3 = Matrices.getInstance().getRotationMatrix3(0.0f, 0.01f, 0.0f);
-            rotateVertices(rotMatrix);
-            // throw new NotImplementedException();
-            textureCoordinates = parser.getTextureCoordinates().SelectMany(nVec => new float[] { nVec[0], nVec[1]}).ToArray();
-
-            vertices =
-            [
-                //Position          Texture coordinates
-                 0.5f,  0.5f, 0.0f,  // top right
-                 0.5f, -0.5f, 0.0f,  // bottom right
-                -0.5f, -0.5f, 0.0f,  // bottom left
-                -0.5f,  0.5f, 0.0f  // top left
-            ];
-            textureCoordinates =
-            [
-                1.0f, 1.0f,
-                1.0f, 0.0f,
-                0.0f, 0.0f,
-                0.0f, 1.0f
-            ];
-            indices = [0, 1, 2, 2, 3, 0];
+            rat = new Rat(-0.001f);
+            rat1 = new Rat(0.001f);
+            cube = new Cube();
+            teapot = new Teapot(0.0001f);
         }
 
-        void rotateVertices(Matrix3 rotMatrix)
-        {
-            if (verticesUnprocessed != null)
-            {
-                this.vertices = verticesUnprocessed
-                    .Select(vec => rotMatrix * vec)
-                    .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
-
-                verticesUnprocessed = null;
-            }
-            else
-            {
-                this.vertices = vertices
-                .Chunk(3)
-                .Select(vec=> rotMatrix * new Vector3(vec[0], vec[1], vec[2]))
-                .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
-            }
-        }
 
         public override void update()
         {
-            //rotateVertices(persistentRotationMatrix3);
-            Bootstrap.getDisplay().drawShape(vertices, indices, textureCoordinates);
+            // throw new NotImplementedException();
         }
     }
 }
