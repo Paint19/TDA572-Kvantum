@@ -26,6 +26,7 @@ namespace Shard
         private bool initialized = false;
         private float[] vertices;
         private uint[] indices;
+        private float[] textureCoordinates;
 
         public ObjectRenderer(ObjectFileParser parser)
         {
@@ -33,7 +34,9 @@ namespace Shard
             Vector3[] verts = parser.getVertices();
             vertices = verts
                     .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
+            textureCoordinates = parser.getTextureCoordinates().SelectMany(nVec => new float[] { nVec[0], nVec[1] }).ToArray();
 
+            mergeVerticesWithTextCoord();
 
             VertexBufferObject = GL.GenBuffer();
             VertexArrayObject = GL.GenVertexArray();
@@ -47,13 +50,17 @@ namespace Shard
             // stuff about indices
             ElementBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw); 
+            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
 
             // Set our vertex attributes pointers
             // Takes data from the latest bound VBO (memory buffer) bound to ArrayBuffer.
             // The first parameter is the location of the vertex attribute. Defined in shader.vert.
             // Dynamically retrieving shader layout would require some changes.
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0); 
+
+            int texCoordLocation = 1;
+            GL.EnableVertexAttribArray(texCoordLocation);
+            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
             GL.EnableVertexAttribArray(0);
 
@@ -103,5 +110,28 @@ namespace Shard
 
         public float[] getVertices() { return vertices; }
         public void setVertices(float[] verts) { vertices = verts; }
+        private void mergeVerticesWithTextCoord()
+        {
+            List<float> verts = new List<float>();
+            for (int i = 0; i < vertices.Length / 3; i++)
+            {
+                verts.Add(vertices[i * 3]);
+                verts.Add(vertices[i * 3 + 1]);
+                verts.Add(vertices[i * 3 + 2]);
+                if (textureCoordinates.Length > 2 * i)
+                {
+                    verts.Add(textureCoordinates[i * 2]);
+                    verts.Add(textureCoordinates[i * 2 + 1]);
+                }
+                else
+                {
+                    verts.Add(0);
+                    verts.Add(0);
+                }
+            }
+            vertices = verts.ToArray();
+
+        }
     }
+
 }

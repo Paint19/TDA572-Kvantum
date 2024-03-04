@@ -83,6 +83,7 @@ namespace Shard
 
             Bootstrap.getRunningGame().update();
 
+            /*
             // Bind Vertex Array Object:
             GL.BindVertexArray(VertexArrayObject);
 
@@ -110,6 +111,8 @@ namespace Shard
             Bootstrap.getRunningGame().update(); // Q: Is this circular? 
 
             GL.BindVertexArray(0);
+            */
+
 
             timeInMillisecondsEnd = Bootstrap.getCurrentMillis();
             Bootstrap.setDeltaTime((timeInMillisecondsEnd - timeInMillisecondsStart) / 1000.0f); // Dunno if this is right. Not sure what deltaTime should be
