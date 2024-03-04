@@ -8,21 +8,33 @@
 *   
 */
 
-using SDL2;
+
+
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Shard
 {
 
-    // We'll be using SDL2 here to provide our underlying input system.
+    // We'll be using OpenTK here to provide our underlying input system.
     class InputFramework : InputSystem
     {
+        GameWindow window;
 
         double tick, timeInterval;
+
+        List<MouseMoveEventArgs> mouseMouseMoveEvents = new List<MouseMoveEventArgs>();
+        List<MouseButtonEventArgs> mouseButtonEvents = new List<MouseButtonEventArgs>();
+        List<MouseWheelEventArgs> wheelEvents = new List<MouseWheelEventArgs>();
+        List<KeyboardKeyEventArgs> keyDownEvents = new List<KeyboardKeyEventArgs>();
+        List<KeyboardKeyEventArgs> keyUpEvents = new List<KeyboardKeyEventArgs>();
+
         public override void getInput()
         {
 
-            SDL.SDL_Event ev;
-            int res;
             InputEvent ie;
 
             tick += Bootstrap.getDeltaTime();
@@ -35,79 +47,56 @@ namespace Shard
             while (tick >= timeInterval)
             {
 
-                res = SDL.SDL_PollEvent(out ev);
-
-
-                if (res != 1)
-                {
-                    return;
-                }
-
                 ie = new InputEvent();
 
-                if (ev.type == SDL.SDL_EventType.SDL_MOUSEMOTION)
+                foreach(var mot in mouseMouseMoveEvents)
                 {
-                    SDL.SDL_MouseMotionEvent mot;
-
-                    mot = ev.motion;
-
-                    ie.X = mot.x;
-                    ie.Y = mot.y;
+                    ie.X = (int) mot.X;
+                    ie.Y = (int) mot.Y;
 
                     informListeners(ie, "MouseMotion");
                 }
+                mouseMouseMoveEvents.Clear();
 
-                if (ev.type == SDL.SDL_EventType.SDL_MOUSEBUTTONDOWN)
+                foreach (var butt in mouseButtonEvents)
                 {
-                    SDL.SDL_MouseButtonEvent butt;
-
-                    butt = ev.button;
-
-                    ie.Button = (int)butt.button;
-                    ie.X = butt.x;
-                    ie.Y = butt.y;
-
-                    informListeners(ie, "MouseDown");
+                    ie.Button = (int)butt.Button;
+                    if (butt.IsPressed)
+                        informListeners(ie, "MouseDown");
+                    else
+                        informListeners(ie, "MouseUp");
                 }
+                mouseButtonEvents.Clear();
 
-                if (ev.type == SDL.SDL_EventType.SDL_MOUSEBUTTONUP)
+                foreach (var wh in wheelEvents)
                 {
-                    SDL.SDL_MouseButtonEvent butt;
-
-                    butt = ev.button;
-
-                    ie.Button = (int)butt.button;
-                    ie.X = butt.x;
-                    ie.Y = butt.y;
-
-                    informListeners(ie, "MouseUp");
-                }
-
-                if (ev.type == SDL.SDL_EventType.SDL_MOUSEWHEEL)
-                {
-                    SDL.SDL_MouseWheelEvent wh;
-
-                    wh = ev.wheel;
-
-                    ie.X = (int)wh.direction * wh.x;
-                    ie.Y = (int)wh.direction * wh.y;
+                    ie.X = (int)wh.OffsetX;
+                    ie.Y = (int)wh.OffsetY;
 
                     informListeners(ie, "MouseWheel");
                 }
+                wheelEvents.Clear();
 
 
-                if (ev.type == SDL.SDL_EventType.SDL_KEYDOWN)
+                foreach(var ev in keyDownEvents)
                 {
-                    ie.Key = (int)ev.key.keysym.scancode;
+                    if (!ev.IsRepeat)
+                    {
+                    ie.Key = (int)ev.ScanCode;
+                    Debug.getInstance().log("Keydown: " + ie.Key);
+                    informListeners(ie, "KeyDown");
+                    }
+                }
+                keyDownEvents.Clear();
+
+                foreach (var ev in keyUpEvents)
+                {
+                    ie.Key = (int)ev.ScanCode;
                     Debug.getInstance().log("Keydown: " + ie.Key);
                     informListeners(ie, "KeyDown");
                 }
+                keyUpEvents.Clear();
 
-                if (ev.type == SDL.SDL_EventType.SDL_KEYUP)
-                {
-                    ie.Key = (int)ev.key.keysym.scancode;
-                    informListeners(ie, "KeyUp");
-                }
 
                 tick -= timeInterval;
             }
@@ -121,5 +110,46 @@ namespace Shard
             timeInterval = 1.0 / 60.0;
         }
 
+        public void setWindow(GameWindow window)
+        {
+            this.window = window;
+            window.KeyDown += window_KeyDown;
+            window.KeyUp += window_KeyUp;
+            window.MouseMove += window_MouseMove;
+            window.MouseDown += window_MouseDown;
+            window.MouseUp += window_MouseUp;
+            window.MouseWheel += window_MouseWheel;
+        }
+
+        private void window_MouseWheel(MouseWheelEventArgs obj)
+        {
+            wheelEvents.Add(obj);
+        }
+
+        private void window_MouseUp(MouseButtonEventArgs obj)
+        {
+            mouseButtonEvents.Add(obj);
+        }
+
+        private void window_MouseDown(MouseButtonEventArgs obj)
+        {
+            mouseButtonEvents.Add(obj);
+        }
+
+        private void window_MouseMove(MouseMoveEventArgs obj)
+        {
+            mouseMouseMoveEvents.Clear();
+            MouseMoveEventArgs mouseMoveEventArgs = (MouseMoveEventArgs)obj;
+        }
+
+        private void window_KeyUp(KeyboardKeyEventArgs obj)
+        {
+            keyUpEvents.Add(obj);
+        }
+
+        private void window_KeyDown(KeyboardKeyEventArgs obj)
+        {
+            keyDownEvents.Add(obj);
+        }
     }
 }
