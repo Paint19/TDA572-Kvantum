@@ -15,7 +15,6 @@ namespace Shard
         public Teapot(float dir)
         {
             this.Transform.initRenderer("teapot.obj");
-            Bootstrap.getDisplay().addToDraw(this);
             this.Transform.tmpChangeSize(0.1f);
             this.moveDirection = dir;
         }
@@ -29,6 +28,7 @@ namespace Shard
             base.update();
             this.Transform.rotateVertices(persistentRotationMatrix3);
             this.Transform.tmpMove(moveDirection);
+            Bootstrap.getDisplay().addToDraw(this);
         }
     }
 }

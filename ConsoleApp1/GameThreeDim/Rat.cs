@@ -16,7 +16,6 @@ namespace Shard
         public Rat(float dir) 
         {
             this.Transform.initRenderer("rat.obj");
-            Bootstrap.getDisplay().addToDraw(this);
             this.Transform.tmpChangeSize(0.001f);
             this.moveDirection = dir;
         }
@@ -30,6 +29,7 @@ namespace Shard
             base.update();
             this.Transform.rotateVertices(persistentRotationMatrix3);
             this.Transform.tmpMove(moveDirection);
+            Bootstrap.getDisplay().addToDraw(this);
         }
     }
 }

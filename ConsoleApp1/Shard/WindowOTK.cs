@@ -42,6 +42,8 @@ namespace Shard
             long timeInMillisecondsStart, timeInMillisecondsEnd;
             timeInMillisecondsStart = Bootstrap.getCurrentMillis();
 
+            Bootstrap.getDisplay().clearDisplay();
+
             PhysicsManager phys = Bootstrap.getPhysicsManager();
 
             if (Bootstrap.getRunningGame().isRunning() == true)
@@ -92,7 +94,7 @@ namespace Shard
             base.OnRenderFrame(args);
 
             // Clear screen before re-rendering
-            GL.Clear(ClearBufferMask.ColorBufferBit); 
+            GL.Clear(ClearBufferMask.ColorBufferBit);
 
             shader.Use();
 
@@ -123,7 +125,7 @@ namespace Shard
         protected override void OnUnload()
         {
             base.OnUnload();
-            Bootstrap.getDisplay().clearDisplay();
+            Bootstrap.getDisplay().dispose();
             shader.Dispose();
         }
 

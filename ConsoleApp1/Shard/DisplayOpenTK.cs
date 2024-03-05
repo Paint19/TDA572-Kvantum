@@ -10,17 +10,22 @@ namespace Shard
     class DisplayOpenTK : Display
     {
 
-        List<GameObject> gameObjects = new List<GameObject>();
+        List<GameObject> toDraw = new List<GameObject>();
         int vao;
 
         public override void addToDraw(GameObject gob)
         {
-            gameObjects.Add(gob);
+            toDraw.Add(gob);
         }
 
         public override void clearDisplay()
         {
-            foreach (GameObject go in gameObjects)
+            toDraw.Clear();
+        }
+
+        public override void dispose()
+        {
+            foreach (GameObject go in toDraw)
             {
                 ObjectRenderer renderer = go.Transform.getRenderer();
                 if (renderer != null)
@@ -28,6 +33,7 @@ namespace Shard
                     renderer.Dispose();
                 }
             }
+            toDraw.Clear();
             // throw new NotImplementedException();
         }
 
@@ -35,7 +41,7 @@ namespace Shard
         
         public override void display()
         {
-            foreach (GameObject go in gameObjects)
+            foreach (GameObject go in toDraw)
             {                
                 ObjectRenderer renderer = go.Transform.getRenderer();
                 if (renderer != null)
