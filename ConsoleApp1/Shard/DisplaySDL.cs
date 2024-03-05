@@ -80,8 +80,8 @@ namespace Shard
             ret = loadTexture(trans.SpritePath);
 
             SDL.SDL_QueryTexture(ret, out format, out access, out w, out h);
-            trans.ImageHt = h;
-            trans.ImageWid = w;
+            //trans.ImageHt = h;
+            //trans.ImageWid = w;
             if(trans.Wid == 0 && trans.Ht == 0)
             {
                 trans.Wid = w;
@@ -225,7 +225,7 @@ namespace Shard
                     continue;
                 }
 
-                var sprite = loadTexture(trans);
+                /*var sprite = loadTexture(trans);
 
                 sRect.x = trans.CropX;
                 sRect.y = trans.CropY;
@@ -238,6 +238,7 @@ namespace Shard
                 tRect.h = sRect.h;
 
                 SDL.SDL_RenderCopyEx(_rend, sprite, ref sRect, ref tRect, (int)trans.Rotz, IntPtr.Zero, SDL.SDL_RendererFlip.SDL_FLIP_NONE);
+                */
             }
 
             foreach (Circle c in _circlesToDraw)

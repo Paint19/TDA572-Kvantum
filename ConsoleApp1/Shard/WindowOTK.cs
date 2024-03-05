@@ -80,6 +80,8 @@ namespace Shard
 
             }
 
+            Bootstrap.getAnimmationSystem().update();
+
             Bootstrap.getRunningGame().update();
 
             /*

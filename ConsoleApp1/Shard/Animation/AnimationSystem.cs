@@ -23,10 +23,10 @@ namespace Shard.Shard.Animation
 
         public void update()
         {
-            foreach (GameObject gob in _toAnimate)
+            foreach (Sprite sprite in _toAnimate)
             {
-                Transform t = gob.Transform;
-                Animation animation = gob.Animation;
+                
+                Animation animation = sprite.Animation;
 
                 if (animation.numFrames <= 0)
                     continue;
@@ -36,18 +36,22 @@ namespace Shard.Shard.Animation
                     continue;
 
                 // Get the current frame
-                animation.currentFrame = (int)(SDL2.SDL.SDL_GetTicks64() - animation.startTime) * animation.frameRate / 1000 % animation.numFrames;
+                animation.currentFrame = (int)(Bootstrap.getCurrentMillis() - animation.startTime) * animation.frameRate / 1000 % animation.numFrames;
+
+                float cropX, cropY = 0;
+                float size = 1 / animation.numFrames;
 
                 if (animation.vertical)
                 {
-                    t.CropX = animation.currentFrame * t.Wid;
-                    t.CropY = animation.frameOffset * t.Ht;
+                    cropX = animation.currentFrame;
+                    cropY = animation.frameOffset * size;
                 }
                 else
                 {
-                    t.CropX = animation.currentFrame * t.Wid + animation.frameOffset * t.Wid;
+                    cropX = animation.currentFrame * size + animation.frameOffset * size;
                 }
-                
+                Console.WriteLine("currentframe: " + animation.currentFrame);
+                sprite.crop(cropX, cropY, 1, size);
             }
         }
     }

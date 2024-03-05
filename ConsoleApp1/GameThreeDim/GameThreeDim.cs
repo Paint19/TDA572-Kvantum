@@ -11,6 +11,7 @@ namespace Shard
         Rat rat1;
         Cube cube;
         Teapot teapot;
+        SpriteTest spriteTest;
 
         public void handleInput(InputEvent inp, string eventType)
         {
@@ -19,7 +20,8 @@ namespace Shard
 
         public override void initialize()
         {
-            rat = new Rat(0.0f);
+            //rat = new Rat(0.0f);
+            spriteTest = new SpriteTest(1,1, "spaceship.png");
             //rat1 = new Rat(0.001f);
             //cube = new Cube();
             //teapot = new Teapot(0.0001f);

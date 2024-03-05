@@ -31,44 +31,13 @@ namespace Shard
 
         Texture texture;
 
-        public ObjectRenderer(ObjectFileParser parser, string texturePath)
+        public ObjectRenderer(float[] vertices, uint[] indices, float[] textCoords, string texturePath)
         {
-            indices = parser.getIndices();
-            Vector3[] verts = parser.getVertices();
-            vertices = verts
-                    .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
-            textureCoordinates = parser.getTextureCoordinates().SelectMany(nVec => new float[] { nVec[0], nVec[1] }).ToArray();
+            this.vertices = vertices;
+            this.indices = indices;
+            this.textureCoordinates = textCoords;
             if(texturePath is not null)
                 texture = new Texture(Bootstrap.getAssetManager().getAssetPath(texturePath));
-
-            /*vertices =
-            [
-                //Position          Texture coordinates
-                 0.5f,
-                0.5f,
-                0.0f,  // top right
-                0.5f,
-                -0.5f,
-                0.0f,  // bottom right
-                -0.5f,
-                -0.5f,
-                0.0f,  // bottom left
-                -0.5f,
-                0.5f,
-                0.0f  // top left
-            ];
-            textureCoordinates =
-            [
-                1.0f,
-                1.0f,
-                1.0f,
-                0.0f,
-                0.0f,
-                0.0f,
-                0.0f,
-                1.0f
-            ];
-            indices = [0, 1, 2, 2, 3, 0];*/
 
             //mergeVerticesWithTextCoord();
 
@@ -101,7 +70,7 @@ namespace Shard
             // Generate a vertice object buffer for the texture coordinates
             textureVBO = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, textureVBO);
-            GL.BufferData(BufferTarget.ArrayBuffer, textureCoordinates.Length * sizeof(float), textureCoordinates, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, textureCoordinates.Length * sizeof(float), textureCoordinates, BufferUsageHint.DynamicDraw);
 
             // Put the texture Coordinates in slot 1 of the VAO
             int texCoordLocation = 1;
@@ -158,27 +127,12 @@ namespace Shard
 
         public float[] getVertices() { return vertices; }
         public void setVertices(float[] verts) { vertices = verts; }
-        private void mergeVerticesWithTextCoord()
-        {
-            List<float> verts = new List<float>();
-            for (int i = 0; i < vertices.Length / 3; i++)
-            {
-                verts.Add(vertices[i * 3]);
-                verts.Add(vertices[i * 3 + 1]);
-                verts.Add(vertices[i * 3 + 2]);
-                if (textureCoordinates.Length > 2 * i)
-                {
-                    verts.Add(textureCoordinates[i * 2]);
-                    verts.Add(textureCoordinates[i * 2 + 1]);
-                }
-                else
-                {
-                    verts.Add(0);
-                    verts.Add(0);
-                }
-            }
-            vertices = verts.ToArray();
-
+        
+        public void setTextCoords(float[] textCoords) 
+        { 
+            textureCoordinates = textCoords;
+            GL.BindBuffer(BufferTarget.ArrayBuffer, textureVBO);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, 0, textureCoordinates.Length * sizeof(float), textureCoordinates);
         }
     }
 
