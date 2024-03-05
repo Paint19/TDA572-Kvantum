@@ -18,7 +18,7 @@ namespace GameBreakout
             setPhysicsEnabled();
 
 
-            MyBody.addCircleCollider();
+            MyBody.addSphereCollider();
 
             MyBody.Mass = 1;
             MyBody.MaxForce = 15;
