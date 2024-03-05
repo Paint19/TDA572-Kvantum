@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 
 /*
  *  Here we have a lot of OpenTK magic. 
@@ -26,18 +27,37 @@ namespace Shard
 
         private static int indicesLength;
 
-        Shader shader;
+        private static Shader shader;
 
+        private Camera activeCamera;
+
+        private float eventArgsTime;
         public WindowOTK(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
         {
         }
 
         public void setIndicesLength(int length) { indicesLength = length; }
+        public void setActiveCamera(Camera cam) {  activeCamera = cam; }    
+        public void setShaderMVP(Matrix4 model, Matrix4 view, Matrix4 projection)
+        {
+            shader.SetMatrix4("model", model);
+            shader.SetMatrix4("view", view);
+            shader.SetMatrix4("projection", projection);
+        }
 
+        public float getEventArgsTime() { return eventArgsTime; }  
         protected override void OnUpdateFrame(FrameEventArgs args) // Runs when GameWindow updates frame
         {
 
             base.OnUpdateFrame(args);
+
+            if (!IsFocused) // check to see if the window is focused
+            {
+                return;
+            }
+
+            eventArgsTime = (float)args.Time;
+
 
             long timeInMillisecondsStart, timeInMillisecondsEnd;
             timeInMillisecondsStart = Bootstrap.getCurrentMillis();
@@ -94,21 +114,34 @@ namespace Shard
             base.OnRenderFrame(args);
 
             // Clear screen before re-rendering
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit); 
 
             shader.Use();
 
             // Display.display() renders all game objects
             Bootstrap.getDisplay().display();
 
+            // transformation matrices
+            if (activeCamera != null) { 
+                Matrix4 model = Matrix4.Identity;
+                Matrix4 view = activeCamera.GetViewMatrix();
+                Matrix4 projection = activeCamera.GetProjectionMatrix();
+
+                setShaderMVP(model, view, projection);
+            }
             // Display what has been rendering. Must be last. Double-buffering avoids screen tearing.
             SwapBuffers(); 
         }
 
         // Runs (only once) when GameWindow loads the window
-        protected override void OnLoad() 
+        protected override void OnLoad()
         {
             base.OnLoad();
+
+            InputFramework inp = (InputFramework)Bootstrap.getInput();
+            inp.setWindow(this);
+
+            GL.Enable(EnableCap.DepthTest);
 
             // Sets the color of the window "between frames"
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);      // Redundant?
@@ -120,8 +153,11 @@ namespace Shard
             Bootstrap.getDisplay().initialize();
 
             shader = new Shader("../../../Shard/shader.vert", "../../../Shard/shader.frag");
-        }
 
+            CursorState = CursorState.Grabbed;
+
+        }
+        
         protected override void OnUnload()
         {
             base.OnUnload();

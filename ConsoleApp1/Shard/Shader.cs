@@ -1,4 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -98,6 +99,11 @@ namespace Shard.Shard
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        internal void SetMatrix4(string v, Matrix4 mat)
+        {
+            GL.UniformMatrix4(GL.GetUniformLocation(Handle, v), true , ref mat);
         }
     }
 }
