@@ -54,12 +54,12 @@ namespace Shard
 
         public void rotateVertices(Matrix3 rotMatrix)
         {
-            /*renderer.setVertices(
+            renderer.setVertices(
                 renderer.getVertices()
                 .Chunk(3)
                 .Select(vec => rotMatrix * new Vector3(vec[0], vec[1], vec[2]))
                 .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray()
-                );*/
+                );
         }
 
         public void tmpMove(float scalar)

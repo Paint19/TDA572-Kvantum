@@ -15,10 +15,10 @@ namespace Shard
 
         public Rat(float dir) 
         {
-            this.Transform.SpritePath = "test.png";
-            this.Transform.initRenderer("rat.obj");
+            this.Transform.SpritePath = "rat_map.jpg";
+            this.Transform.initRenderer("IKEA_rat.obj");
             Bootstrap.getDisplay().addToDraw(this);
-            this.Transform.tmpChangeSize(0.001f);
+            this.Transform.tmpChangeSize(0.00001f);
             this.moveDirection = dir;
         }
         public override void initialize()

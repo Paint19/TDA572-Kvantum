@@ -22,6 +22,7 @@ namespace Shard
         private int VertexBufferObject;
         private int ElementBufferObject;
         private int VertexArrayObject;
+        private int textureVBO;
 
         private bool initialized = false;
         private float[] vertices;
@@ -40,7 +41,36 @@ namespace Shard
             if(texturePath is not null)
                 texture = new Texture(Bootstrap.getAssetManager().getAssetPath(texturePath));
 
-            mergeVerticesWithTextCoord();
+            /*vertices =
+            [
+                //Position          Texture coordinates
+                 0.5f,
+                0.5f,
+                0.0f,  // top right
+                0.5f,
+                -0.5f,
+                0.0f,  // bottom right
+                -0.5f,
+                -0.5f,
+                0.0f,  // bottom left
+                -0.5f,
+                0.5f,
+                0.0f  // top left
+            ];
+            textureCoordinates =
+            [
+                1.0f,
+                1.0f,
+                1.0f,
+                0.0f,
+                0.0f,
+                0.0f,
+                0.0f,
+                1.0f
+            ];
+            indices = [0, 1, 2, 2, 3, 0];*/
+
+            //mergeVerticesWithTextCoord();
 
             VertexBufferObject = GL.GenBuffer();
             VertexArrayObject = GL.GenVertexArray();
@@ -60,13 +90,25 @@ namespace Shard
             // Takes data from the latest bound VBO (memory buffer) bound to ArrayBuffer.
             // The first parameter is the location of the vertex attribute. Defined in shader.vert.
             // Dynamically retrieving shader layout would require some changes.
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0); 
-
-            int texCoordLocation = 1;
-            GL.EnableVertexAttribArray(texCoordLocation);
-            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
-
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            
             GL.EnableVertexAttribArray(0);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            
+            // -- Texture -- 
+
+            // Generate a vertice object buffer for the texture coordinates
+            textureVBO = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, textureVBO);
+            GL.BufferData(BufferTarget.ArrayBuffer, textureCoordinates.Length * sizeof(float), textureCoordinates, BufferUsageHint.StaticDraw);
+
+            // Put the texture Coordinates in slot 1 of the VAO
+            int texCoordLocation = 1;
+            //GL.EnableVertexAttribArray(texCoordLocation);
+            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
+            GL.EnableVertexArrayAttrib(VertexArrayObject, texCoordLocation);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             initialized = true;
         }

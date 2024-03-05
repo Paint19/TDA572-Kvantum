@@ -96,7 +96,9 @@ namespace Shard.Shard
                         case "f": // Face element. In vertex_index/texture_index/normal_index form. Texture and normal indices are optional
                             for (int i = 1; i < words.Length; i++)
                             {
-                                string[] inds = words[i].Split("//", '/');
+                                string[] inds = words[i].Split(new char[] { '/', '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+                                //Console.WriteLine("inds 0: " + inds[0]);
 
                                 vertInds.Add(uint.Parse(inds[0], CultureInfo.InvariantCulture.NumberFormat) - 1);
 
