@@ -12,6 +12,7 @@ using OpenTK.Mathematics;
 using Shard.Shard;
 using System.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace Shard
 {
@@ -99,6 +100,14 @@ namespace Shard
                 .Chunk(3)
                 .Select(vert => matrix * new Vector4(vert[0], vert[1], vert[2], 1))
                 .SelectMany(vec => new float[] { vec.X, vec.Y, vec.Z }).ToArray();
+        }
+
+        public IEnumerable<Vector3> getVerticesAsVectors()
+        {
+            return renderer
+                .getVertices()
+                .Chunk(3)
+                .Select(arr => new Vector3(arr[0], arr[1], arr[2]));
         }
 
         public void setCalculatedVerticesToRender()
