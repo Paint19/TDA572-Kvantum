@@ -29,7 +29,7 @@ namespace Shard
 
         public void initRenderer(string fileName) { 
             objParser = new ObjectFileParser(fileName);
-            renderer = new ObjectRenderer(objParser);
+            renderer = new ObjectRenderer(objParser, SpritePath);
         }
 
         public Transform3D(GameObject o) : base(o)

@@ -28,13 +28,17 @@ namespace Shard
         private uint[] indices;
         private float[] textureCoordinates;
 
-        public ObjectRenderer(ObjectFileParser parser)
+        Texture texture;
+
+        public ObjectRenderer(ObjectFileParser parser, string texturePath)
         {
             indices = parser.getIndices();
             Vector3[] verts = parser.getVertices();
             vertices = verts
                     .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
             textureCoordinates = parser.getTextureCoordinates().SelectMany(nVec => new float[] { nVec[0], nVec[1] }).ToArray();
+            if(texturePath is not null)
+                texture = new Texture(Bootstrap.getAssetManager().getAssetPath(texturePath));
 
             mergeVerticesWithTextCoord();
 
@@ -73,6 +77,8 @@ namespace Shard
             GL.BindVertexArray(VertexArrayObject);
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
+            if(texture is not null)
+                texture.Use();
 
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
         }

@@ -27,7 +27,6 @@ namespace Shard
         private static int indicesLength;
 
         Shader shader;
-        Texture texture;
 
         public WindowOTK(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
         {
@@ -126,7 +125,6 @@ namespace Shard
             // Clear screen before re-rendering
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            texture.Use();
             shader.Use();
 
             // Display.display() renders all game objects
@@ -151,7 +149,6 @@ namespace Shard
             Bootstrap.getDisplay().initialize();
 
             shader = new Shader("../../../Shard/shader.vert", "../../../Shard/shader.frag");
-            texture = new Texture(Bootstrap.getAssetManager().getAssetPath("spaceship.png"));
         }
 
         protected override void OnUnload()

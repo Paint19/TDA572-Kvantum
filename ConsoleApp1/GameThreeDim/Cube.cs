@@ -14,6 +14,7 @@ namespace Shard
 
         public Cube()
         {
+            this.Transform.SpritePath = "spaceship.png";
             this.Transform.initRenderer("cube.obj");
             Bootstrap.getDisplay().addToDraw(this);
             this.Transform.tmpChangeSize(0.5f);
