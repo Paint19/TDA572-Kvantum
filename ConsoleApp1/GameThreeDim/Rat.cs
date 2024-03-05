@@ -15,6 +15,7 @@ namespace Shard
 
         public Rat(float dir) 
         {
+            this.Transform.SpritePath = "test.png";
             this.Transform.initRenderer("rat.obj");
             this.Transform.tmpChangeSize(0.001f);
             this.moveDirection = dir;

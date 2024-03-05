@@ -36,7 +36,7 @@ namespace Shard.Shard.Animation
                     continue;
 
                 // Get the current frame
-                animation.currentFrame = (int)(Bootstrap.getCurrentMillis() - animation.startTime) * animation.frameRate / 1000 % animation.numFrames;
+                animation.currentFrame = (int)(Bootstrap.getWindow().getEventArgsTime() - animation.startTime) * animation.frameRate / 1000 % animation.numFrames;
 
                 float cropX, cropY = 0;
                 float size = 1 / animation.numFrames;

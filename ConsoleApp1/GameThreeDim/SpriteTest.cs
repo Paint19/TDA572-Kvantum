@@ -33,6 +33,7 @@ namespace Shard
             Bootstrap.getAnimmationSystem().addToAnimate(this);
             //this.Transform.rotateVertices(persistentRotationMatrix3);
             //this.Transform.tmpMove(moveDirection);
+            Bootstrap.getDisplay().addToDraw(this);
         }
     }
 }

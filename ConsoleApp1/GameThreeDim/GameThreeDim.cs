@@ -33,8 +33,8 @@ namespace Shard
             Bootstrap.getInput().addListener(this);
             camera = new Camera(Bootstrap.getDisplay().getWidth(), Bootstrap.getDisplay().getHeight(), new Vector3(0, 0, 5));
 
-            Bootstrap.getWindow().setActiveCamera(camera);
-
+            Bootstrap.getWindow().setActiveCamera(camera);                                    
+            
             // Game objects
             rat = new Rat(-0.001f);
             rat1 = new Rat(0.001f);
@@ -84,6 +84,10 @@ namespace Shard
                 {
                     goLeft = true;
                 }
+                if (inp.Key == (int)Keys.S)
+                {
+                    goDown = true;
+                }
 
             }
             else if (eventType == "KeyUp")
@@ -97,6 +101,10 @@ namespace Shard
                 if (inp.Key == (int)Keys.A)
                 {
                     goLeft = false;
+                }
+                if (inp.Key == (int)Keys.S)
+                {
+                    goDown = false;
                 }
             }
 
