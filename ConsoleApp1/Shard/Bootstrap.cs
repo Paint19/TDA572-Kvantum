@@ -1,4 +1,4 @@
-﻿/*
+/*
 *
 *   The Bootstrap - this loads the config file, processes it and then starts the game loop
 *   @author Michael Heron
@@ -9,6 +9,7 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using Shard.Shard.Animation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,6 +30,7 @@ namespace Shard
         private static bool physDebug = false;
         private static PhysicsManager phys;
         private static AssetManagerBase asset;
+        private static AnimationSystem animation;
 
         private static int targetFrameRate;
         private static double deltaTime;
@@ -104,6 +106,11 @@ namespace Shard
             return asset;
         }
 
+        public static AnimationSystem getAnimmationSystem()
+        {
+            return animation;
+        }
+
         public static Game getRunningGame()
         {
             return runningGame;
@@ -157,7 +164,10 @@ namespace Shard
                         input = (InputSystem)ob;
                         input.initialize();
                         break;
-
+                    case "animation":
+                        animation = (AnimationSystem)ob;
+                        animation.initialize();
+                        break;
                 }
 
                 Debug.getInstance().log("Config file... setting " + kvp.Key + " to " + kvp.Value);
@@ -178,6 +188,12 @@ namespace Shard
             if (soundEngine == null)
             {
                 Debug.getInstance().log("No sound engine set", Debug.DEBUG_LEVEL_ERROR);
+                bailOut = true;
+            }
+
+            if (animation == null)
+            {
+                Debug.getInstance().log("No animation system set", Debug.DEBUG_LEVEL_ERROR);
                 bailOut = true;
             }
 
