@@ -42,6 +42,8 @@ namespace Shard
             long timeInMillisecondsStart, timeInMillisecondsEnd;
             timeInMillisecondsStart = Bootstrap.getCurrentMillis();
 
+            Bootstrap.getDisplay().clearDisplay();
+
             PhysicsManager phys = Bootstrap.getPhysicsManager();
 
             if (Bootstrap.getRunningGame().isRunning() == true)
@@ -80,29 +82,7 @@ namespace Shard
 
             }
 
-            VertexBufferObject = GL.GenBuffer();
-            VertexArrayObject = GL.GenVertexArray();
-
-            // Bind Vertex Array Object:
-            GL.BindVertexArray(VertexArrayObject);
-
-            // Copy our vertices array in a buffer for OpenGL to use:
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-            // GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw); TODO: Remove
-
-            ElementBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
-            //GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw); TODO: Remove
-
-            // Set our vertex attributes pointers
-            // Takes data from the latest bound VBO (memory buffer) bound to ArrayBuffer.
-            // The first parameter is the location of the vertex attribute. Defined in shader.vert. Dynamically retrieving shader layout would require some changes.
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0); // TODO: Fix
-            GL.EnableVertexAttribArray(0);
-
-            // GL.BufferData(..) should be called in update() in a game, to add data to be buffered
-            // ... Seems OK to not update buffer data in a game, but I might want to look into that
-            Bootstrap.getRunningGame().update(); // Q: Is this circular? 
+            Bootstrap.getRunningGame().update();
 
             timeInMillisecondsEnd = Bootstrap.getCurrentMillis();
             Bootstrap.setDeltaTime((timeInMillisecondsEnd - timeInMillisecondsStart) / 1000.0f); // Dunno if this is right. Not sure what deltaTime should be
@@ -114,13 +94,12 @@ namespace Shard
             base.OnRenderFrame(args);
 
             // Clear screen before re-rendering
-            GL.Clear(ClearBufferMask.ColorBufferBit); 
+            GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            // Magic OpenGL rendering stuff
             shader.Use();
-            GL.BindVertexArray(VertexArrayObject);
-            // GL.DrawArrays(PrimitiveType.Triangles, 0, 3); // TODO: Remove
-            GL.DrawElements(PrimitiveType.Triangles, indicesLength, DrawElementsType.UnsignedInt, 0); // For DrawShape rather than drawtriangle
+
+            // Display.display() renders all game objects
+            Bootstrap.getDisplay().display();
 
             // Display what has been rendering. Must be last. Double-buffering avoids screen tearing.
             SwapBuffers(); 
@@ -134,14 +113,19 @@ namespace Shard
             // Sets the color of the window "between frames"
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);      // Redundant?
 
+            // Start the game running. Must be done after starting the game loop
+            Bootstrap.getRunningGame().initialize();
+
+            // Initialize display
+            Bootstrap.getDisplay().initialize();
+
             shader = new Shader("../../../Shard/shader.vert", "../../../Shard/shader.frag");
         }
 
         protected override void OnUnload()
         {
             base.OnUnload();
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0); // Redundant?
-            GL.DeleteBuffer(VertexBufferObject);        // Redundant?
+            Bootstrap.getDisplay().dispose();
             shader.Dispose();
         }
 

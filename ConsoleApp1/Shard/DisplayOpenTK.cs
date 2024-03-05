@@ -10,20 +10,46 @@ namespace Shard
     class DisplayOpenTK : Display
     {
 
-        public override void drawShape(float[] vertices, uint[] indices)
+        List<GameObject> toDraw = new List<GameObject>();
+        int vao;
+
+        public override void addToDraw(GameObject gob)
         {
-            Bootstrap.getWindow().setIndicesLength(indices.Length); // sus
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.DynamicDraw);
+            toDraw.Add(gob);
         }
 
         public override void clearDisplay()
         {
+            toDraw.Clear();
+        }
+
+        public override void dispose()
+        {
+            foreach (GameObject go in toDraw)
+            {
+                ObjectRenderer renderer = go.Transform.getRenderer();
+                if (renderer != null)
+                {
+                    renderer.Dispose();
+                }
+            }
+            toDraw.Clear();
             // throw new NotImplementedException();
         }
 
+
+        
         public override void display()
         {
+            foreach (GameObject go in toDraw)
+            {                
+                ObjectRenderer renderer = go.Transform.getRenderer();
+                if (renderer != null)
+                {
+                    renderer.Bind();
+                    renderer.Render();
+                }
+            }
             // throw new NotImplementedException();
         }
 
