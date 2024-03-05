@@ -60,7 +60,7 @@ namespace Shard.Shard
                             new Vector3(
                                 float.Parse(words[1], CultureInfo.InvariantCulture.NumberFormat),
                                 float.Parse(words[2], CultureInfo.InvariantCulture.NumberFormat),
-                                float.Parse(words[3], CultureInfo.InvariantCulture.NumberFormat)) * 0.001f);  //TODO: Remove *0.1f
+                                float.Parse(words[3], CultureInfo.InvariantCulture.NumberFormat))); 
 
                             if (words.Length == 5) // w
                                 vertCol.Add(float.Parse(words[4], CultureInfo.InvariantCulture.NumberFormat));

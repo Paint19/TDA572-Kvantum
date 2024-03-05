@@ -86,7 +86,8 @@ namespace Shard
 
         public abstract void initialize();
         public abstract void clearDisplay();
-        public abstract void display(); // TODO: Change name or remove. Could be used for rendering, but displaying happens in WindowOTK now.
+        public abstract void dispose();
+        public abstract void display();
 
         public abstract void showText(string text, double x, double y, int size, int r, int g, int b);
         public abstract void showText(char[,] text, double x, double y, int size, int r, int g, int b);
