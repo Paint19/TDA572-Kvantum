@@ -5,7 +5,7 @@
 
 using System;
 using System.Drawing;
-using System.Numerics;
+using OpenTK.Mathematics;
 
 namespace Shard
 {
@@ -40,7 +40,7 @@ namespace Shard
                 c.maxDimensions.Z >= minDimensions.Z
             );
         }
-        public abstract Vector3? checkCollision(ColliderConvexPolygon c);
+        public abstract Vector3? checkCollision(ColliderCube c);
 
         public abstract Vector3? checkCollision(ColliderSphere c);
 
@@ -54,9 +54,9 @@ namespace Shard
                 return checkCollision((ColliderSphere)c);
             }
 
-            if (c is ColliderConvexPolygon)
+            if (c is ColliderCube)
             {
-                return checkCollision((ColliderConvexPolygon)c);
+                return checkCollision((ColliderCube)c);
             }
 
             Debug.getInstance().log("Bug");

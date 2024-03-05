@@ -8,66 +8,83 @@
 *   
 */
 
-using System.Numerics;
-using System.Xml.Serialization;
+using OpenTK.Mathematics;
+using System;
 
 namespace Shard
 {
-    class Transform3D : Transform
+    class Transform3D
     {
-        private float z, lastZ, depth;
-        private double rotx, roty;
-        private float scalez;
-        private Vector3 forward, right, up, centre;
+        private GameObject owner;
+        private Vector3 forward, right, up, centre, lastCentre, scale;
 
-        public Transform3D(GameObject o) : base(o)
+        public Transform3D(GameObject owner)
         {
+            this.owner = owner;
         }
 
-        public float Z
+        public Vector3 getLastDirection()
         {
-            get => z;
-            set => z = value;
+            return lastCentre - centre;
         }
 
-        public Vector3 getLast3DDirection()
+        public void rotate(float pitch, float yaw, float roll)
         {
-            return new Vector3(lastX - x, lastY - y, lastZ - z);
-        }
-
-
-        public float Scalez
-        {
-            get => scalez;
-            set => scalez = value;
-        }
-        public double Rotx { get => rotx; set => rotx = value; }
-        public double Roty { get => roty; set => roty = value; }
-
-        public void rotate(float x, float y, float z)
-        {
-
-        }
-
-        public override void recalculateCentre()
-        {
-            base.recalculateCentre();
-            centre.Z = (float)(z + ((this.depth * scalez) / 2));
+            Matrix3 matrix = Matrices.getInstance().getRotationMatrix3(pitch,yaw,roll);
+            timesAllCurrentLocation(matrix);
         }
 
         public void translate(float x, float y, float z)
         {
-            lastX = this.x; 
-            lastY = this.y; 
-            lastZ = this.z;
-            this.x += x; 
-            this.y += y; 
-            this.z += z;
-            recalculateCentre();
+            translate(new Vector3(x,y,z));
         }
         public void translate(Vector3 offset)
         {
-            translate(offset.X, offset.Y, offset.Z);
+            plusAllCurrentLocation(offset);
         }
+
+        public void reScale(Vector3 scale)
+        {
+            try {
+                Vector3 newScale = scale / this.scale;
+                timesAllCurrentLocation(newScale);
+            }
+            catch (DivideByZeroException e)
+            {
+                Console.WriteLine(e);
+                timesAllCurrentLocation(scale);
+            }
+        }
+
+        private void timesAllCurrentLocation(Vector3 vector) {
+            forward = vector * forward;
+            right = vector * right;
+            up = vector * up;
+            centre = vector * centre;
+        }
+        private void timesAllCurrentLocation(Matrix3 matrix) {
+            forward = matrix * forward;
+            right = matrix * right;
+            up = matrix * up;
+            centre = matrix * centre;
+        }
+        private void plusAllCurrentLocation(Vector3 vector) {
+            forward = vector + forward;
+            right = vector + right;
+            up = vector + up;
+            centre = vector + centre;
+        }
+
+        public Vector3 Centre{ get => new(centre); }
+        public Vector3 Forward { get => new(forward); }
+        public Vector3 Right { get => new(right); }
+        public Vector3 Up { get => new(up); }
+        public Vector3 Scale { get => scale; set => reScale(value); }
+
+        public Transform toTransform()
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

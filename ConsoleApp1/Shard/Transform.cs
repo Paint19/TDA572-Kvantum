@@ -20,7 +20,6 @@ namespace Shard
 
     class Transform
     {
-        internal GameObject owner;
         internal float x, y;
         internal float lastX, lastY;
         internal float rotz;
@@ -39,9 +38,8 @@ namespace Shard
             return new Vector2(-dx, -dy);
         }
 
-        public Transform(GameObject ow)
+        public Transform()
         {
-            Owner = ow;
             forward = new Vector2();
             right = new Vector2();
             centre = new Vector2();
@@ -144,7 +142,6 @@ namespace Shard
         public int Wid { get => width; set => width = value; }
         public int Ht { get => height; set => height = value; }
         public ref Vector2 Right { get => ref right; }
-        internal GameObject Owner { get => owner; set => owner = value; }
         public ref Vector2 Centre { get => ref centre; }
         public float Scalex { get => scalex; set => scalex = value; }
         public float Scaley { get => scaley; set => scaley = value; }

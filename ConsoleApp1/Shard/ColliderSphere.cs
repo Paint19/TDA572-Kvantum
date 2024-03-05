@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+using OpenTK.Mathematics;
 
 namespace Shard
 {
@@ -21,7 +18,7 @@ namespace Shard
             maxDimensions = getMaxDimensions();
         }
 
-        public override Vector3? checkCollision(ColliderConvexPolygon c)
+        public override Vector3? checkCollision(ColliderCube c)
         {
             // get box closest point to sphere center by clamping
             float x = Math.Max(c.minDimensions.X, Math.Min(X, c.maxDimensions.X));
@@ -30,7 +27,7 @@ namespace Shard
 
             // this is the same as isPointInsideSphere
             Vector3 closestVertex = new Vector3(x, y, z);
-            float distance = (closestVertex - myPosition).Length();
+            float distance = (closestVertex - myPosition).Length;
             if (distance < radius)
                 return closestVertex;
             return null;
@@ -38,7 +35,7 @@ namespace Shard
 
         public override Vector3? checkCollision(ColliderSphere c)
         {
-            if ((c.radius + radius) < (myPosition - c.myPosition).Length()) 
+            if ((c.radius + radius) < (myPosition - c.myPosition).Length) 
                 return myPosition + (myPosition-c.myPosition);
             else
                 return null;
@@ -46,7 +43,7 @@ namespace Shard
 
         public override Vector3? checkCollision(Vector3 c)
         {
-            if (radius < (myPosition - c).Length())
+            if (radius < (myPosition - c).Length)
                 return myPosition + (myPosition - c);
             else
                 return null;

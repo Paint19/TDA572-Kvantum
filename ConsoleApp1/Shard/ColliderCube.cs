@@ -11,18 +11,18 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
-using System.Numerics;
+using OpenTK.Mathematics;
 
 namespace Shard
 {
-    class ColliderConvexPolygon : Collider3D
+    class ColliderCube : Collider3D
     {
         private Transform3D transform3D;
         private IEnumerable<Vector3> myVertices;
         private IEnumerable<int> myIndices;
         private bool fromTrans;
 
-        public ColliderConvexPolygon(CollisionHandler gob, Transform3D t) : base(gob)
+        public ColliderCube(CollisionHandler gob, Transform3D t) : base(gob)
         {
             this.MyRect = t;
             fromTrans = true;
@@ -30,7 +30,7 @@ namespace Shard
             calculateBoundingBox();
         }
 
-        public ColliderConvexPolygon(CollisionHandler gob, Transform3D t, float x, float y, float z) : base(gob)
+        public ColliderCube(CollisionHandler gob, Transform3D t, float x, float y, float z) : base(gob)
         {
             X = x;
             Y = y;
@@ -78,7 +78,7 @@ namespace Shard
             throw new NotImplementedException();
         }
 
-        public override Vector3? checkCollision(ColliderConvexPolygon c)
+        public override Vector3? checkCollision(ColliderCube c)
         {
             throw new NotImplementedException();
         }
