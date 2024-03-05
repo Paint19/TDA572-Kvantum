@@ -15,12 +15,15 @@ namespace Shard
 {
     class Transform3D
     {
-        private GameObject owner;
         private Vector3 forward, right, up, centre, lastCentre, scale;
 
-        public Transform3D(GameObject owner)
+        public Transform3D()
         {
-            this.owner = owner;
+
+        }
+        public Transform3D(Matrix4 orientation)
+        {
+
         }
 
         public Vector3 getLastDirection()
@@ -84,6 +87,7 @@ namespace Shard
         public Transform toTransform()
         {
             throw new NotImplementedException();
+            
         }
 
     }
