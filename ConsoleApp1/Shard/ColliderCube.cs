@@ -18,8 +18,6 @@ namespace Shard
     class ColliderCube : Collider3D
     {
         private Transform3D transform3D;
-        private IEnumerable<Vector3> myVertices;
-        private IEnumerable<int> myIndices;
         private bool fromTrans;
 
         public ColliderCube(CollisionHandler gob, Transform3D t) : base(gob)
@@ -30,17 +28,6 @@ namespace Shard
             calculateBoundingBox();
         }
 
-        public ColliderCube(CollisionHandler gob, Transform3D t, float x, float y, float z) : base(gob)
-        {
-            X = x;
-            Y = y;
-            Z = z;
-            RotateAtOffset = true;
-            this.MyRect = t;
-
-            fromTrans = false;
-
-        }
 
         private void calculateBoundingBox(IEnumerable<Vector3> vertices)
         {
@@ -55,11 +42,7 @@ namespace Shard
 
         public override void calculateBoundingBox()
         {
-            calculateBoundingBox(myVertices
-                .Select(it => transform3D
-                    .translate(it)
-                )
-            );
+            calculateBoundingBox(transform3D.getVerticesAsVectors());
         }
 
         internal Transform3D MyRect { get => transform3D; set => transform3D = value; }
