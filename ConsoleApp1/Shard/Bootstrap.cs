@@ -203,8 +203,7 @@ namespace Shard
             // Setup the engine.
             setup();
             
-            // Start the game running.
-            runningGame.initialize();
+            
 
             phys.GravityModifier = 0.1f;
 

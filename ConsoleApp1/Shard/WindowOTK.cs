@@ -29,13 +29,15 @@ namespace Shard
 
         private static Shader shader;
 
-        private static Camera camera;
+        private Camera activeCamera;
+
+        private float eventArgsTime;
         public WindowOTK(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
         {
         }
 
         public void setIndicesLength(int length) { indicesLength = length; }
-
+        public void setActiveCamera(Camera cam) {  activeCamera = cam; }    
         public void setShaderMVP(Matrix4 model, Matrix4 view, Matrix4 projection)
         {
             shader.SetMatrix4("model", model);
@@ -43,6 +45,7 @@ namespace Shard
             shader.SetMatrix4("projection", projection);
         }
 
+        public float getEventArgsTime() { return eventArgsTime; }  
         protected override void OnUpdateFrame(FrameEventArgs args) // Runs when GameWindow updates frame
         {
 
@@ -53,11 +56,8 @@ namespace Shard
                 return;
             }
 
-            /*
-            MouseState mouse = MouseState;
-            KeyboardState input = KeyboardState; */
-            camera.Update(args);
-            
+            eventArgsTime = (float)args.Time;
+
 
             long timeInMillisecondsStart, timeInMillisecondsEnd;
             timeInMillisecondsStart = Bootstrap.getCurrentMillis();
@@ -143,12 +143,13 @@ namespace Shard
             GL.DrawElements(PrimitiveType.Triangles, indicesLength, DrawElementsType.UnsignedInt, 0); // For DrawShape rather than drawtriangle
 
             // transformation matrices
-            Matrix4 model = Matrix4.Identity;
-            Matrix4 view = camera.GetViewMatrix();
-            Matrix4 projection = camera.GetProjectionMatrix();
+            if (activeCamera != null) { 
+                Matrix4 model = Matrix4.Identity;
+                Matrix4 view = activeCamera.GetViewMatrix();
+                Matrix4 projection = activeCamera.GetProjectionMatrix();
 
-            setShaderMVP(model, view, projection);
-
+                setShaderMVP(model, view, projection);
+            }
             // Display what has been rendering. Must be last. Double-buffering avoids screen tearing.
             SwapBuffers(); 
         }
@@ -170,8 +171,10 @@ namespace Shard
 
             int width = Bootstrap.getDisplay().getWidth();
             int height = Bootstrap.getDisplay().getHeight();
-            camera = new Camera(width, height, new Vector3(0.0f, 0.0f, 3.0f));
             CursorState = CursorState.Grabbed;
+
+            // Start the game running.
+            Bootstrap.getRunningGame().initialize();
         }
         
         protected override void OnUnload()

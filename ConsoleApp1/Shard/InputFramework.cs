@@ -83,7 +83,6 @@ namespace Shard
                     if (!ev.IsRepeat)
                     {
                     ie.Key = (int)ev.Key;
-                    Debug.getInstance().log("Keydown: " + ie.Key);
                     informListeners(ie, "KeyDown");
                     }
                 }
@@ -92,7 +91,6 @@ namespace Shard
                 foreach (var ev in keyUpEvents)
                 {
                     ie.Key = (int)ev.Key;
-                    Debug.getInstance().log("KeyUp: " + ie.Key);
                     informListeners(ie, "KeyUp");
                 }
                 keyUpEvents.Clear();
