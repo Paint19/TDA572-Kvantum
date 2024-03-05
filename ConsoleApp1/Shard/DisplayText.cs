@@ -233,5 +233,10 @@ namespace Shard
             }
 
         }
+
+        public override void dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿using OpenTK.Mathematics;
+using OpenTK.Mathematics;
 using Shard.Shard;
 using System;
 using System.Collections.Generic;
@@ -15,12 +15,8 @@ namespace Shard
 
         public Rat(float dir) 
         {
-            this.Transform.SpritePath = "rat_map.jpg";
-            this.Transform.initRenderer("IKEA_rat.obj");
-            Bootstrap.getDisplay().addToDraw(this);
-            this.Transform.tmpChangeSize(2.0f);
-            Matrix3 skewMatrix = Matrices.getInstance().getRotationMatrix3(0.0f, 0.0f, 0.250f);
-            this.Transform.rotateVertices(skewMatrix);
+            this.Transform.initRenderer("rat.obj");
+            this.Transform.tmpChangeSize(0.001f);
             this.moveDirection = dir;
         }
         public override void initialize()
@@ -33,6 +29,7 @@ namespace Shard
             base.update();
             //this.Transform.rotateVertices(persistentRotationMatrix3);
             this.Transform.tmpMove(moveDirection);
+            Bootstrap.getDisplay().addToDraw(this);
         }
     }
 }
