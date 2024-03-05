@@ -198,6 +198,8 @@ namespace Shard
         {
             // Setup the engine.
             setup();
+            
+            
 
             phys.GravityModifier = 0.1f;
 
@@ -213,7 +215,7 @@ namespace Shard
 
             gws.UpdateFrequency = 60;
 
-            nws.Size = new Vector2i(1280, 1280);
+            nws.Size = new Vector2i( displayEngine.getWidth(), displayEngine.getHeight());
             nws.Title = "Hello wOrld!";
             nws.Vsync = VSyncMode.On;
 
