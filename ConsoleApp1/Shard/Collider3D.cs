@@ -72,5 +72,18 @@ namespace Shard
         public abstract Vector3 getMaxDimensions();
 
         public abstract void calculateBoundingBox();
+
+        public void onCollisionEnter(PhysicsBody x)
+        {
+            gameObject.onCollisionEnter(x);
+        }
+        public void onCollisionExit(PhysicsBody x)
+        {
+            gameObject.onCollisionExit(x);
+        }
+        public void onCollisionStay(PhysicsBody x)
+        {
+            gameObject.onCollisionStay(x);
+        }
     }
 }

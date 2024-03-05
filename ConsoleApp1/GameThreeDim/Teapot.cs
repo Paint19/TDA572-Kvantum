@@ -26,7 +26,7 @@ namespace Shard
         public override void update()
         {
             base.update();
-            this.Transform.rotateVertices(persistentRotationMatrix3);
+            this.Transform.rotate(persistentRotationMatrix3);
             this.Transform.tmpMove(moveDirection);
             Bootstrap.getDisplay().addToDraw(this);
         }

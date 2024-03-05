@@ -16,7 +16,7 @@ namespace Shard
         {
             this.Transform.initRenderer("cube.obj");
             this.Transform.tmpChangeSize(0.5f);
-            this.Transform.rotateVertices(skewMatrix);
+            this.Transform.rotate(skewMatrix);
 
         }
         public override void initialize()
@@ -27,7 +27,7 @@ namespace Shard
         public override void update()
         {
             base.update();
-            this.Transform.rotateVertices(persistentRotationMatrix3);
+            this.Transform.rotate(persistentRotationMatrix3);
             Bootstrap.getDisplay().addToDraw(this);
         }
     }

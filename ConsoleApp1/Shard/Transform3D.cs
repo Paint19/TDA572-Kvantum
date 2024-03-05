@@ -17,10 +17,12 @@ namespace Shard
 {
     class Transform3D
     {
-        private Vector3 forward, right, up, centre, lastCentre, scale;
-
+        private Matrix4 matrix;
+        private float[] calculatedVertices;
+        private Vector3 lastLocation;
         private ObjectFileParser objParser;
         private ObjectRenderer renderer;
+        public bool updatedSinceLastRender;
 
         public ObjectFileParser getObjParser() { return  objParser; }
 
@@ -32,95 +34,99 @@ namespace Shard
         }
         public Transform3D()
         {
-
+            matrix = Matrix4.Identity;
+            lastLocation = Vector3.Zero;
         }
-        public Transform3D(Matrix4 orientation)
+        public Transform3D(Matrix4 translateAndRotate)
         {
-
+            this.matrix = new Matrix4(
+                translateAndRotate.Row0, 
+                translateAndRotate.Row1, 
+                translateAndRotate.Row2, 
+                translateAndRotate.Row3);
+            lastLocation = Vector3.Zero;
+        }
+        
+        public Vector3 Right { get => new Vector3(matrix.Row0); }
+        public Vector3 Up { get =>  new Vector3(matrix.Row1); }
+        public Vector3 Forward { get =>  new Vector3(matrix.Row2); }
+        public Vector3 Scale { get => matrix.ExtractScale();
+            set 
+            {
+                Matrix4 diagonal = Matrix4.Identity;
+                diagonal.Diagonal = new Vector4(value,1);
+                matrix = diagonal * matrix;
+            }
+        }
+        public Vector3 Translation { 
+            get => matrix.ExtractTranslation();
+            set => matrix.Column3 = new Vector4(value, 1);
         }
 
+        public Matrix3 Orientation
+        {
+            get => new Matrix3(matrix);
+            set 
+            {
+                Vector3 translation = matrix.ExtractTranslation();
+                matrix = new Matrix4(value);
+                matrix.Column3 = new Vector4(translation, 1);
+            }
+        }
         public Vector3 getLastDirection()
         {
-            return lastCentre - centre;
+            return lastLocation - Translation;
         }
 
-        public void rotate(float pitch, float yaw, float roll)
+        public Matrix4 getConvenientMath()
         {
-            Matrix3 matrix = Matrices.getInstance().getRotationMatrix3(pitch,yaw,roll);
-            timesAllCurrentLocation(matrix);
+            return new Matrix4(
+                matrix.Row0, 
+                matrix.Row1, 
+                matrix.Row2, 
+                matrix.Row3);
         }
-
-        public void translate(float x, float y, float z)
-        {
-            translate(new Vector3(x,y,z));
-        }
-        public void translate(Vector3 offset)
-        {
-            plusAllCurrentLocation(offset);
-        }
-
-        public void reScale(Vector3 scale)
-        {
-            try {
-                Vector3 newScale = scale / this.scale;
-                timesAllCurrentLocation(newScale);
-            }
-            catch (DivideByZeroException e)
-            {
-                Console.WriteLine(e);
-                timesAllCurrentLocation(scale);
-            }
-        }
-
-        private void timesAllCurrentLocation(Vector3 vector) {
-            forward = vector * forward;
-            right = vector * right;
-            up = vector * up;
-            centre = vector * centre;
-        }
-        private void timesAllCurrentLocation(Matrix3 matrix) {
-            forward = matrix * forward;
-            right = matrix * right;
-            up = matrix * up;
-            centre = matrix * centre;
-        }
-        private void plusAllCurrentLocation(Vector3 vector) {
-            forward = vector + forward;
-            right = vector + right;
-            up = vector + up;
-            centre = vector + centre;
-        }
-
-        public Vector3 Centre{ get => new(centre); }
-        public Vector3 Forward { get => new(forward); }
-        public Vector3 Right { get => new(right); }
-        public Vector3 Up { get => new(up); }
-        public Vector3 Scale { get => scale; set => reScale(value); }
 
         public Transform toTransform()
         {
             throw new NotImplementedException();
         }
 
-        public void rotateVertices(Matrix3 rotMatrix)
+        public void calculateVertices()
         {
-            renderer.setVertices(
-                renderer.getVertices()
+            calculatedVertices = renderer
+                .getVertices()
                 .Chunk(3)
-                .Select(vec => rotMatrix * new Vector3(vec[0], vec[1], vec[2]))
-                .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray()
-                );
+                .Select(vert => matrix * new Vector4(vert[0], vert[1], vert[2], 1))
+                .SelectMany(vec => new float[] { vec.X, vec.Y, vec.Z }).ToArray();
         }
 
-        public void tmpMove(float scalar)
+        public void setCalculatedVerticesToRender()
         {
-            renderer.setVertices(renderer.getVertices().Select(n => scalar + n ).ToArray());
+            renderer.setVertices(calculatedVertices);
         }
-
-        public void tmpChangeSize(float scalar)
+        public void rotate(float pitch, float yaw, float roll)
         {
-            renderer.setVertices(renderer.getVertices().Select(n => scalar * n).ToArray());
+            Matrix3 matrix = Matrices.getInstance().getRotationMatrix3(pitch, yaw, roll);
+            rotate(matrix);
+        }
+        public void rotate(Matrix3 rotMatrix)
+        {
+            Orientation = rotMatrix * Orientation;
+        }
+        public void translate(Vector3 translation)
+        {
+            lastLocation = Translation;
+            Translation = lastLocation + translation;
         }
 
+        public void scale(Vector3 scale)
+        {
+            Scale = scale;
+        }
+        public void scale(float scalar)
+        {
+            scale(new Vector3(scalar));
+        }
     }
 }
