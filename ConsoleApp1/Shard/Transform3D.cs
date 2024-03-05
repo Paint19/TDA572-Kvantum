@@ -30,8 +30,7 @@ namespace Shard
             objParser = new ObjectFileParser(fileName);
             renderer = new ObjectRenderer(objParser);
         }
-
-        public Transform3D(GameObject o) : base(o)
+        public Transform3D()
         {
 
         }
@@ -101,9 +100,7 @@ namespace Shard
         public Transform toTransform()
         {
             throw new NotImplementedException();
-            
-        public double Rotx { get => rotx; set => rotx = value; }
-        public double Roty { get => roty; set => roty = value; }
+        }
 
         public void rotateVertices(Matrix3 rotMatrix)
         {

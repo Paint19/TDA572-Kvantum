@@ -13,7 +13,6 @@ namespace Shard
     {
         internal CollisionHandler gameObject;
         internal Vector3 minDimensions, maxDimensions, myPosition;
-
         private bool rotateAtOffset;
 
         public Collider3D(CollisionHandler gob)
@@ -24,6 +23,8 @@ namespace Shard
 
         }
 
+
+        internal Vector3 myPostion { get => myPosition; }
         internal CollisionHandler GameObject { get => gameObject; set => gameObject = value; }
         
         public bool RotateAtOffset { get => rotateAtOffset; set => rotateAtOffset = value; }
