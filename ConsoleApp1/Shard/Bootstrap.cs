@@ -9,12 +9,9 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using Shard.Shard;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 
 namespace Shard
 {
@@ -144,7 +141,6 @@ namespace Shard
                 {
                     case "display":
                         displayEngine = (Display)ob;
-                        displayEngine.initialize();
                         break;
                     case "sound":
                         soundEngine = (Sound)ob;
@@ -224,7 +220,7 @@ namespace Shard
             nws.Vsync = VSyncMode.On;
 
             window = new WindowOTK(gws, nws); // Starts the game loop
-            window.Run();              
+            window.Run();
         }
     }
 }

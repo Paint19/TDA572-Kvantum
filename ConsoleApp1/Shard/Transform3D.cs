@@ -8,6 +8,10 @@
 *   
 */
 
+using OpenTK.Mathematics;
+using Shard.Shard;
+using System.Linq;
+
 namespace Shard
 {
     class Transform3D : Transform
@@ -15,6 +19,18 @@ namespace Shard
         private double z;
         private double rotx, roty;
         private int scalez;
+
+        private ObjectFileParser objParser;
+        private ObjectRenderer renderer;
+
+        public ObjectFileParser getObjParser() { return  objParser; }
+
+        public ObjectRenderer getRenderer() { return renderer; }
+
+        public void initRenderer(string fileName) { 
+            objParser = new ObjectFileParser(fileName);
+            renderer = new ObjectRenderer(objParser);
+        }
 
         public Transform3D(GameObject o) : base(o)
         {
@@ -35,5 +51,25 @@ namespace Shard
         }
         public double Rotx { get => rotx; set => rotx = value; }
         public double Roty { get => roty; set => roty = value; }
+
+        public void rotateVertices(Matrix3 rotMatrix)
+        {
+            renderer.setVertices(
+                renderer.getVertices()
+                .Chunk(3)
+                .Select(vec => rotMatrix * new Vector3(vec[0], vec[1], vec[2]))
+                .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray()
+                );
+        }
+
+        public void tmpMove(float scalar)
+        {
+            renderer.setVertices(renderer.getVertices().Select(n => scalar + n ).ToArray());
+        }
+
+        public void tmpChangeSize(float scalar)
+        {
+            renderer.setVertices(renderer.getVertices().Select(n => scalar * n).ToArray());
+        }
     }
 }

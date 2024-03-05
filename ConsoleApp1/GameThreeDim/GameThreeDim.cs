@@ -8,10 +8,11 @@ namespace Shard
 {
     class GameThreeDim : Game, InputListener
     {
-        private Vector3[] verticesUnprocessed;
-        private float[] vertices;
-        private uint[] indices;
-        private Matrix3 persistentRotationMatrix3;
+        Rat rat;
+        Rat rat1;
+        Cube cube;
+        Teapot teapot;
+
 
         // CAMERA
         private bool goRight = false;
@@ -29,25 +30,19 @@ namespace Shard
         public override void initialize()
         {
             Bootstrap.getInput().addListener(this);
-            ObjectFileParser parser = new ObjectFileParser("rat.obj");
-            verticesUnprocessed = parser.getVertices();
-            camera = new Camera(Bootstrap.getDisplay().getWidth(), Bootstrap.getDisplay().getHeight(), new Vector3(0,0,5));
-
-            indices = parser.getIndices();
-            Matrix3 rotMatrix = Matrices.getInstance().getRotationMatrix3(0.0f, 0.0f, 0.250f);
-            persistentRotationMatrix3 = Matrices.getInstance().getRotationMatrix3(0.0f, 0.01f, 0.0f);
-
-            this.vertices = verticesUnprocessed
-                    .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
+            camera = new Camera(Bootstrap.getDisplay().getWidth(), Bootstrap.getDisplay().getHeight(), new Vector3(0, 0, 5));
 
             Bootstrap.getWindow().setActiveCamera(camera);
+
+            // Game objects
+            rat = new Rat(-0.001f);
+            rat1 = new Rat(0.001f);
+            cube = new Cube();
+            teapot = new Teapot(0.0001f);
         }
 
         public override void update()
         {
-            rotateVertices(persistentRotationMatrix3); // TODO: refactor'
-            Bootstrap.getDisplay().drawShape(vertices, indices);
-
             float time = Bootstrap.getWindow().getEventArgsTime();
 
             position = camera.getPosition();
@@ -70,25 +65,6 @@ namespace Shard
             }
 
             camera.setPosition(position);
-        }
-
-        void rotateVertices(Matrix3 rotMatrix)
-        {
-            if (verticesUnprocessed != null)
-            {
-                this.vertices = verticesUnprocessed
-                    .Select(vec => rotMatrix * vec)
-                    .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
-
-                verticesUnprocessed = null;
-            }
-            else
-            {
-                this.vertices = vertices
-                .Chunk(3)
-                .Select(vec=> rotMatrix * new Vector3(vec[0], vec[1], vec[2]))
-                .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
-            }
         }
 
         public void handleInput(InputEvent inp, string eventType)
@@ -116,13 +92,13 @@ namespace Shard
                 {
                     goRight = false;
                 }
-
                 if (inp.Key == (int)Keys.A)
                 {
                     goLeft = false;
                 }
             }
-        }
 
+
+        }
     }
 }
