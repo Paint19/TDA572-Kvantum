@@ -18,7 +18,9 @@ namespace Shard
             this.Transform.SpritePath = "rat_map.jpg";
             this.Transform.initRenderer("IKEA_rat.obj");
             Bootstrap.getDisplay().addToDraw(this);
-            this.Transform.tmpChangeSize(0.00001f);
+            this.Transform.tmpChangeSize(2.0f);
+            Matrix3 skewMatrix = Matrices.getInstance().getRotationMatrix3(0.0f, 0.0f, 0.250f);
+            this.Transform.rotateVertices(skewMatrix);
             this.moveDirection = dir;
         }
         public override void initialize()
@@ -29,7 +31,7 @@ namespace Shard
         public override void update()
         {
             base.update();
-            this.Transform.rotateVertices(persistentRotationMatrix3);
+            //this.Transform.rotateVertices(persistentRotationMatrix3);
             this.Transform.tmpMove(moveDirection);
         }
     }

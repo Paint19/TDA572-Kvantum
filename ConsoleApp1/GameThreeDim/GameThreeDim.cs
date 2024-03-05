@@ -19,10 +19,10 @@ namespace Shard
 
         public override void initialize()
         {
-            rat = new Rat(-0.001f);
-            rat1 = new Rat(0.001f);
-            cube = new Cube();
-            teapot = new Teapot(0.0001f);
+            rat = new Rat(0.0f);
+            //rat1 = new Rat(0.001f);
+            //cube = new Cube();
+            //teapot = new Teapot(0.0001f);
         }
 
 
