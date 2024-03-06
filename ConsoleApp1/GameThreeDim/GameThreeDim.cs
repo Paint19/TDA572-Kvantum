@@ -12,7 +12,9 @@ namespace Shard
         Rat rat1;
         Cube cube;
         Teapot teapot;
-        SpriteTest spriteTest;
+
+        // Room
+        Plane wall;
 
 
         // CAMERA
@@ -42,7 +44,7 @@ namespace Shard
             rat1 = new Rat(0.001f);
             cube = new Cube();
             teapot = new Teapot(0.0001f);
-            spriteTest = new SpriteTest(1,1, "spaceship.png");
+            wall = new Plane(1f,1f, "wallpaper.png");
         }
 
         public override void update()
