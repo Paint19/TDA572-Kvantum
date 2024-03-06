@@ -36,10 +36,12 @@ namespace Shard.Shard.Animation
                     continue;
 
                 // Get the current frame
-                animation.currentFrame = (int)(Bootstrap.getWindow().getEventArgsTime() - animation.startTime) * animation.frameRate / 1000 % animation.numFrames;
+                animation.currentFrame = (int)(Bootstrap.getTimeSinceSetup() - animation.startTime) * animation.frameRate / 1000 % animation.numFrames;
+                
 
                 float cropX, cropY = 0;
-                float size = 1 / animation.numFrames;
+                float size = 1f / animation.numFrames;
+
 
                 if (animation.vertical)
                 {
@@ -50,7 +52,7 @@ namespace Shard.Shard.Animation
                 {
                     cropX = animation.currentFrame * size + animation.frameOffset * size;
                 }
-                Console.WriteLine("currentframe: " + animation.currentFrame);
+                
                 sprite.crop(cropX, cropY, 1, size);
             }
         }

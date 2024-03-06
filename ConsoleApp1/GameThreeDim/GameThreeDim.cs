@@ -40,7 +40,7 @@ namespace Shard
             rat1 = new Rat(0.001f);
             cube = new Cube();
             teapot = new Teapot(0.0001f);
-            spriteTest = new SpriteTest(1,1, "spaceship.png");
+            spriteTest = new SpriteTest(1,1, "spritesheet.png");
         }
 
         public override void update()

@@ -43,13 +43,13 @@ namespace Shard.Shard
 
         public void crop(float cropX, float cropY, float cropH, float cropW)
         {
-            Console.WriteLine("Cropped!");
+            //Console.WriteLine("Cropped!");
             textCoords =
             [
-                1- cropX, 1- cropY,
-                1- cropX, 1- cropH,
-                1- cropW, 1- cropH,
-                1- cropW, 1- cropY
+                1- cropX,           1- cropY,
+                1- cropX,           1 - cropY - cropH,
+                1- cropX- cropW,    1- cropY- cropH,
+                1- cropX- cropW,    1- cropY
             ];
             Transform.getRenderer().setTextCoords(textCoords);
         }

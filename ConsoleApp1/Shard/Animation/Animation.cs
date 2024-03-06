@@ -19,6 +19,7 @@ namespace Shard.Shard.Animation
             frameRate = fr;
             frameOffset = foff;
             vertical = vert;
+            startTime = 0;
         }
     }
 }

@@ -37,6 +37,8 @@ namespace Shard
         private static string baseDir;
         private static Dictionary<string,string> enVars;
 
+        private static long timeStarted;
+
         public static bool checkEnvironmentalVariable (string id) {
             return enVars.ContainsKey (id);
         }
@@ -61,6 +63,7 @@ namespace Shard
 
             setupEnvironmentalVariables(baseDir + "\\" + "envar.cfg");
             setup(baseDir + "\\" + DEFAULT_CONFIG);
+            timeStarted = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
         }
 
@@ -202,12 +205,16 @@ namespace Shard
                 Environment.Exit(0);
             }
         }
-
+        
         public static long getCurrentMillis()
         {
             return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
         }
 
+        public static long getTimeSinceSetup()
+        {
+            return (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - timeStarted;
+        }
         public static WindowOTK getWindow(){ return window; }   // sus
 
         static void Main(string[] args)
