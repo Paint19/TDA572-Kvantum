@@ -17,13 +17,15 @@ namespace Shard
         // CAMERA
         private bool goRight = false;
         private bool goLeft = false;
+        private bool goForward = false;
+        private bool goBack = false;
         private bool goUp = false;
         private bool goDown = false;
         private Vector3 up = Vector3.UnitY;
         private Vector3 front = -Vector3.UnitZ;
         private Vector3 right = Vector3.UnitX;
         private float speed = 4f;
-        private Vector3 position;
+        private Vector3 camPos;
 
         private Camera camera;
 
@@ -45,60 +47,71 @@ namespace Shard
         {
             float time = Bootstrap.getWindow().getEventArgsTime();
 
-            position = camera.getPosition();
+            camPos = camera.getPosition();
 
             if (goLeft)
             {
-                position -= right * speed * time;
+                camPos -= right * speed * time;
             }
             if (goRight)
             {
-                position += right * speed * time;
+                camPos += right * speed * time;
+            }
+            if (goForward)
+            {
+                camPos += front * speed * time;
+            }
+            if (goBack)
+            {
+                camPos -= front * speed * time;
             }
             if (goUp)
             {
-                position += front * speed * time;
+                camPos += up * speed * time;
             }
             if (goDown)
             {
-                position -= front * speed * time;
+                camPos -= up * speed * time;
             }
 
-            camera.setPosition(position);
+            camera.setPosition(camPos);
         }
 
         public void handleInput(InputEvent inp, string eventType)
         {
-
             if (eventType == "KeyDown")
             {
-
-                if (inp.Key == (int)Keys.D)
-                {
-                    goRight = true;
-                }
-
-                if (inp.Key == (int)Keys.A)
-                {
-                    goLeft = true;
-                }
-
+                configMovement(inp, true);
             }
             else if (eventType == "KeyUp")
             {
-
-
-                if (inp.Key == (int)Keys.D)
-                {
-                    goRight = false;
-                }
-                if (inp.Key == (int)Keys.A)
-                {
-                    goLeft = false;
-                }
+                configMovement(inp, false);
             }
+        }
 
-
+        private void configMovement(InputEvent inp, bool isTrue)
+        {
+            switch (inp.Key)
+            {
+                case (int)Keys.D:
+                    goRight = isTrue;
+                    break;
+                case (int)Keys.A:
+                    goLeft = isTrue;
+                    break;
+                case (int)Keys.W:
+                    goForward = isTrue;
+                    break;
+                case (int)Keys.S:
+                    goBack = isTrue;
+                    break;
+                case (int)Keys.E:
+                    goUp = isTrue;
+                    break;
+                case (int)Keys.Q:
+                    goDown = isTrue;
+                    break;
+            }
         }
     }
 }
