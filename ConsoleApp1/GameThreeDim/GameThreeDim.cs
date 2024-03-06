@@ -35,7 +35,7 @@ namespace Shard
         private float pitch;
         private float yaw = -90.0f;
         private bool firstMove = true;
-        private float sensitivity = 10f;
+        private float sensitivity = 4f;
         private Vector2 lastPos;
         private float deltaX;
         private float deltaY;
@@ -52,7 +52,7 @@ namespace Shard
             rat1 = new Rat(0.001f);
             cube = new Cube();
             teapot = new Teapot(0.0001f);
-            wall = new Plane(1f,1f, "wallpaper.png");
+            //wall = new Plane(1f,1f, "wallpaper.png");
         }
 
         public override void update()
@@ -85,10 +85,9 @@ namespace Shard
             {
                 camPos -= up * speed * time;
             }
-
-           
-
             camera.setPosition(camPos);
+            camera.setVectors(up, front); // updates looking direction
+
         }
 
         public void handleInput(InputEvent inp, string eventType)
@@ -120,7 +119,21 @@ namespace Shard
                     yaw += deltaX * sensitivity * time;
                     pitch -= deltaY * sensitivity * time;
                 }
-                UpdateVectors();
+
+                if (pitch > 89.0f)
+                {
+                    pitch = 89.0f;
+                }
+                if (pitch < -89.0f)
+                {
+                    pitch = -89.0f;
+                }
+                front.X = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Cos(MathHelper.DegreesToRadians(yaw));
+                front.Y = MathF.Sin(MathHelper.DegreesToRadians(pitch));
+                front.Z = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Sin(MathHelper.DegreesToRadians(yaw));
+                front = Vector3.Normalize(front);
+                right = Vector3.Normalize(Vector3.Cross(front, Vector3.UnitY));
+                up = Vector3.Normalize(Vector3.Cross(right, front));
             }
         }
 
@@ -147,26 +160,6 @@ namespace Shard
                     goDown = isTrue;
                     break;
             }
-        }
-        private void UpdateVectors()
-        {
-            if (pitch > 89.0f)
-            {
-                pitch = 89.0f;
-            }
-            if (pitch < -89.0f)
-            {
-                pitch = -89.0f;
-            }
-            front.X = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Cos(MathHelper.DegreesToRadians(yaw));
-            front.Y = MathF.Sin(MathHelper.DegreesToRadians(pitch));
-            front.Z = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Sin(MathHelper.DegreesToRadians(yaw));
-            front = Vector3.Normalize(front);
-            right = Vector3.Normalize(Vector3.Cross(front, Vector3.UnitY));
-            up = Vector3.Normalize(Vector3.Cross(right, front));
-
-            camera.setVectors(up, front); // updates looking direction
-
         }
 
     }
