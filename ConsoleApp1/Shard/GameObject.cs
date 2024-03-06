@@ -75,11 +75,6 @@ namespace Shard
             get => transform;
         }
 
-        public Transform Transform2D
-        {
-            get => transform.toTransform();
-        }
-
 
         public bool Visible
         {

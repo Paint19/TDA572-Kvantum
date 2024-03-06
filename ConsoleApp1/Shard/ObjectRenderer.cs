@@ -24,7 +24,7 @@ namespace Shard
         private int VertexArrayObject;
 
         private bool initialized = false;
-        private float[] vertices;
+        private float[] vertices, originalVertices;
         private uint[] indices;
 
         public ObjectRenderer(ObjectFileParser parser)
@@ -33,7 +33,7 @@ namespace Shard
             Vector3[] verts = parser.getVertices();
             vertices = verts
                     .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
-
+            originalVertices = vertices.Select(it => it).ToArray();
 
             VertexBufferObject = GL.GenBuffer();
             VertexArrayObject = GL.GenVertexArray();
@@ -102,6 +102,10 @@ namespace Shard
         }
 
         public float[] getVertices() { return vertices; }
+
+        public float[] Vertices { get { return vertices; } }
+
+        public float[] OriginalVertices { get { return originalVertices; } }
         public void setVertices(float[] verts) { vertices = verts; }
     }
 }

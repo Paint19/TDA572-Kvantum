@@ -24,6 +24,7 @@ namespace Shard
         private ObjectFileParser objParser;
         private ObjectRenderer renderer;
         public bool updatedSinceLastRender;
+        private string spritePath;
 
         public ObjectFileParser getObjParser() { return  objParser; }
 
@@ -35,8 +36,8 @@ namespace Shard
         }
         public Transform3D()
         {
-            matrix = Matrix4.Identity;
-            lastLocation = Vector3.Zero;
+            this.matrix = Matrix4.Identity;
+            this.lastLocation = Vector3.Zero;
         }
         public Transform3D(Matrix4 translateAndRotate)
         {
@@ -47,7 +48,7 @@ namespace Shard
                 translateAndRotate.Row3);
             lastLocation = Vector3.Zero;
         }
-        
+        public string SpritePath { get => spritePath; set => spritePath = value; }
         public Vector3 Right { get => new Vector3(matrix.Row0); }
         public Vector3 Up { get =>  new Vector3(matrix.Row1); }
         public Vector3 Forward { get =>  new Vector3(matrix.Row2); }
@@ -59,8 +60,8 @@ namespace Shard
                 matrix = diagonal * matrix;
             }
         }
-        public Vector3 Translation { 
-            get => matrix.ExtractTranslation();
+        public Vector3 Translation {
+            get => new Vector3(matrix.Column3);
             set => matrix.Column3 = new Vector4(value, 1);
         }
 
@@ -69,9 +70,9 @@ namespace Shard
             get => new Matrix3(matrix);
             set 
             {
-                Vector3 translation = matrix.ExtractTranslation();
+                Vector3 translation = Translation;
                 matrix = new Matrix4(value);
-                matrix.Column3 = new Vector4(translation, 1);
+                Translation = translation;
             }
         }
         public Vector3 getLastDirection()
@@ -88,15 +89,10 @@ namespace Shard
                 matrix.Row3);
         }
 
-        public Transform toTransform()
-        {
-            throw new NotImplementedException();
-        }
-
         public void calculateVertices()
         {
             calculatedVertices = renderer
-                .getVertices()
+                .OriginalVertices
                 .Chunk(3)
                 .Select(vert => matrix * new Vector4(vert[0], vert[1], vert[2], 1))
                 .SelectMany(vec => new float[] { vec.X, vec.Y, vec.Z }).ToArray();
@@ -105,7 +101,7 @@ namespace Shard
         public IEnumerable<Vector3> getVerticesAsVectors()
         {
             return renderer
-                .getVertices()
+                .OriginalVertices
                 .Chunk(3)
                 .Select(arr => new Vector3(arr[0], arr[1], arr[2]));
         }
@@ -127,6 +123,11 @@ namespace Shard
         {
             lastLocation = Translation;
             Translation = lastLocation + translation;
+        }
+
+        public void translateAbsolute(Vector3 location)
+        {
+            Translation = location;
         }
 
         public void scale(Vector3 scale)
