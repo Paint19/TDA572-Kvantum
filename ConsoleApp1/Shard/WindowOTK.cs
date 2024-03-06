@@ -1,4 +1,4 @@
-﻿using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using Shard.Shard;
@@ -102,7 +102,40 @@ namespace Shard
 
             }
 
+            Bootstrap.getAnimmationSystem().update();
+
             Bootstrap.getRunningGame().update();
+
+            /*
+            // Bind Vertex Array Object:
+            GL.BindVertexArray(VertexArrayObject);
+
+            // Copy our vertices array in a buffer for OpenGL to use:
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
+            // GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw); TODO: Remove
+
+            ElementBufferObject = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
+            //GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw); TODO: Remove
+
+            // Set our vertex attributes pointers
+            // Takes data from the latest bound VBO (memory buffer) bound to ArrayBuffer.
+            // The first parameter is the location of the vertex attribute. Defined in shader.vert. Dynamically retrieving shader layout would require some changes.
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0); // TODO: Fix
+            
+            int texCoordLocation = 1;
+            GL.EnableVertexAttribArray(texCoordLocation);
+            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+
+            GL.EnableVertexAttribArray(0);
+
+            // GL.BufferData(..) should be called in update() in a game, to add data to be buffered
+            // ... Seems OK to not update buffer data in a game, but I might want to look into that
+            Bootstrap.getRunningGame().update(); // Q: Is this circular? 
+
+            GL.BindVertexArray(0);
+            */
+
 
             timeInMillisecondsEnd = Bootstrap.getCurrentMillis();
             Bootstrap.setDeltaTime((timeInMillisecondsEnd - timeInMillisecondsStart) / 1000.0f); // Dunno if this is right. Not sure what deltaTime should be

@@ -10,6 +10,7 @@
 
 using OpenTK.Mathematics;
 using Shard.Shard;
+using System;
 using System.Linq;
 
 namespace Shard
@@ -28,8 +29,18 @@ namespace Shard
         public ObjectRenderer getRenderer() { return renderer; }
 
         public void initRenderer(string fileName) { 
-            objParser = new ObjectFileParser(fileName);
-            renderer = new ObjectRenderer(objParser);
+            ObjectFileParser parser = new ObjectFileParser(fileName);
+            uint[] indices = parser.getIndices();
+            Vector3[] verts = parser.getVertices();
+            float[] vertices = verts
+                    .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
+            float[] textureCoordinates = parser.getTextureCoordinates().SelectMany(nVec => new float[] { nVec[0], nVec[1] }).ToArray();
+            renderer = new ObjectRenderer(vertices, indices, textureCoordinates, SpritePath);
+        }
+
+        public void initRenderer(float[] vertices, uint[] indices, float[] textCoords, string spritePath)
+        {
+            renderer = new ObjectRenderer(vertices, indices, textCoords, spritePath);
         }
 
         public Transform3D(GameObject o) : base(o)

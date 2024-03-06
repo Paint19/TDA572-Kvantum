@@ -1,4 +1,4 @@
-﻿using OpenTK.Mathematics;
+using OpenTK.Mathematics;
 using Shard.Shard;
 using System;
 using System.Collections.Generic;
@@ -15,6 +15,7 @@ namespace Shard
 
         public Rat(float dir) 
         {
+            this.Transform.SpritePath = "test.png";
             this.Transform.initRenderer("rat.obj");
             this.Transform.tmpChangeSize(0.001f);
             this.moveDirection = dir;
@@ -27,7 +28,7 @@ namespace Shard
         public override void update()
         {
             base.update();
-            this.Transform.rotateVertices(persistentRotationMatrix3);
+            //this.Transform.rotateVertices(persistentRotationMatrix3);
             this.Transform.tmpMove(moveDirection);
             Bootstrap.getDisplay().addToDraw(this);
         }

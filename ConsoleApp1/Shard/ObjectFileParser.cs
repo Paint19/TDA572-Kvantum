@@ -27,20 +27,19 @@ namespace Shard.Shard
         private Vector3[] parameterSpaceCoordinates;
         private uint[] lineElements;
 
+        List<Vector3> verts = new List<Vector3>();
+        List<uint> vertInds = new List<uint>();
+        List<uint> texInds = new List<uint>();
+        List<uint> normInds = new List<uint>();
+        List<float> vertCol = new List<float>();
+        List<Vector3> texCoords = new List<Vector3>();
+        List<Vector3> vertNorms = new List<Vector3>();
+        List<Vector3> paramSpaceCoords = new List<Vector3>();
+        List<uint> lineElems = new List<uint>();
 
         public ObjectFileParser(string fileName)
         {
             string filePath = Bootstrap.getAssetManager().getAssetPath(fileName);
-
-            List<Vector3> verts = new List<Vector3>();
-            List<uint> vertInds = new List<uint>();
-            List<uint> texInds = new List<uint>();
-            List<uint> normInds = new List<uint>();
-            List<float> vertCol = new List<float>();
-            List<Vector3> texCoords = new List<Vector3>();
-            List<Vector3> vertNorms = new List<Vector3>();
-            List<Vector3> paramSpaceCoords = new List<Vector3>();
-            List<uint> lineElems = new List<uint>();
 
             IEnumerable<string> allLines;
 
@@ -93,19 +92,26 @@ namespace Shard.Shard
                                 float.Parse(words[3], CultureInfo.InvariantCulture.NumberFormat)));
                             break;
 
-                        case "f": // Face element. In vertex_index/texture_index/normal_index form. Texture and normal indices are optional
-                            for (int i = 1; i < words.Length; i++)
+                        // Face element. In vertex_index/texture_index/normal_index form. Texture and normal indices are optional
+                        // Currently only supports parsing for triangles and quadrilaterals. 
+                        case "f":
+                            if (words.Length == 4) // Triangle
+                            { 
+                                for (int i = 1; i < words.Length; i++)
+                                {
+                                    parseFaceElement(words[i]);
+                                }
+                            }
+                            else if (words.Length == 5) // Quadrilateral
                             {
-                                string[] inds = words[i].Split("//", '/');
-
-                                vertInds.Add(uint.Parse(inds[0], CultureInfo.InvariantCulture.NumberFormat) - 1);
-
-                                if (words[i].Contains("//"))
-                                    normInds.Add(uint.Parse(inds[1], CultureInfo.InvariantCulture.NumberFormat) - 1);
-                                else if (inds.Length > 1)
-                                    texInds.Add(uint.Parse(inds[1], CultureInfo.InvariantCulture.NumberFormat) - 1);
-                                if (inds.Length > 2)
-                                    normInds.Add(uint.Parse(inds[2], CultureInfo.InvariantCulture.NumberFormat) - 1);
+                                for (int i = 1; i < 4; i++) // Triangle 1
+                                {
+                                    parseFaceElement(words[i]);
+                                }
+                                for (int i = 1; i < 5 && i != 2; i++) // Triangle 2
+                                {
+                                    parseFaceElement(words[i]);
+                                }
                             }
                             break;
 
@@ -129,6 +135,20 @@ namespace Shard.Shard
             }
         }
         
+        private void parseFaceElement(string word)
+        {
+            string[] inds = word.Split(new char[] { '/', '/' }, StringSplitOptions.RemoveEmptyEntries);
+
+            vertInds.Add(parseInd(inds[0]));
+
+            if (word.Contains("//"))
+                normInds.Add(parseInd(inds[1]));
+            else if (inds.Length > 1)
+                texInds.Add(parseInd(inds[1]));
+            if (inds.Length > 2)
+                normInds.Add(parseInd(inds[2]));
+        }
+        private uint parseInd(string i) { return uint.Parse(i, CultureInfo.InvariantCulture.NumberFormat) - 1; }
         public Vector3[] getVertices() { return vertices; }
         public uint[] getIndices() { return indices; }
         public uint[] getTextureIndices() { return textureIndices; }

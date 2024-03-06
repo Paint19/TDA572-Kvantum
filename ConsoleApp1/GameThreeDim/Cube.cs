@@ -14,6 +14,7 @@ namespace Shard
 
         public Cube()
         {
+            this.Transform.SpritePath = "spaceship.png";
             this.Transform.initRenderer("cube.obj");
             this.Transform.tmpChangeSize(0.5f);
             this.Transform.rotateVertices(skewMatrix);

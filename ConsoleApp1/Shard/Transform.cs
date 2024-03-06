@@ -30,6 +30,7 @@ namespace Shard
         private Vector2 forward;
         private Vector2 right, centre;
 
+
         public Vector2 getLastDirection()
         {
             float dx, dy;
