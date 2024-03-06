@@ -16,8 +16,8 @@ namespace Shard
         {
             this.Transform.SpritePath = "spaceship.png";
             this.Transform.initRenderer("cube.obj");
-            this.Transform.tmpChangeSize(0.5f);
-            this.Transform.rotateVertices(skewMatrix);
+            this.Transform.scale(0.5f);
+            this.Transform.rotate(skewMatrix);
 
         }
         public override void initialize()
@@ -28,7 +28,9 @@ namespace Shard
         public override void update()
         {
             base.update();
-            this.Transform.rotateVertices(persistentRotationMatrix3);
+            this.Transform.rotate(persistentRotationMatrix3);
+            this.Transform.calculateVertices();
+            this.Transform.setCalculatedVerticesToRender();
             Bootstrap.getDisplay().addToDraw(this);
         }
     }

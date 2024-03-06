@@ -72,14 +72,9 @@ namespace Shard
             return true;
         }
 
-        internal Transform3D Transform
+        public Transform3D Transform
         {
             get => transform;
-        }
-
-        internal Transform Transform2D
-        {
-            get => (Transform)transform;
         }
 
         internal Animation Animation
@@ -87,7 +82,6 @@ namespace Shard
             get => animation;
             set => animation = value;
         }
-
 
         public bool Visible
         {
@@ -122,7 +116,7 @@ namespace Shard
         {
             GameObjectManager.getInstance().addGameObject(this);
 
-            transform = new Transform3D(this);
+            transform = new Transform3D();
             visible = false;
 
             ToBeDestroyed = false;
@@ -140,13 +134,7 @@ namespace Shard
                 return;
             }
 
-            if (Transform.X > 0 && Transform.X < Bootstrap.getDisplay().getWidth())
-            {
-                if (Transform.Y > 0 && Transform.Y < Bootstrap.getDisplay().getHeight())
-                {
-                    return;
-                }
-            }
+            //Should do a kinda advanced collision box check with the collider of the object and the viewspace to see if it is in the frame
 
 
             ToBeDestroyed = true;

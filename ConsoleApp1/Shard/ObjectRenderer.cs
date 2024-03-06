@@ -25,7 +25,7 @@ namespace Shard
         private int textureVBO;
 
         private bool initialized = false;
-        private float[] vertices;
+        private float[] vertices, originalVertices;
         private uint[] indices;
         private float[] textureCoordinates;
 
@@ -38,8 +38,6 @@ namespace Shard
             this.textureCoordinates = textCoords;
             if(texturePath is not null)
                 texture = new Texture(Bootstrap.getAssetManager().getAssetPath(texturePath));
-
-            //mergeVerticesWithTextCoord();
 
             VertexBufferObject = GL.GenBuffer();
             VertexArrayObject = GL.GenVertexArray();
@@ -126,6 +124,10 @@ namespace Shard
         }
 
         public float[] getVertices() { return vertices; }
+
+        public float[] Vertices { get { return vertices; } }
+
+        public float[] OriginalVertices { get { return originalVertices; } }
         public void setVertices(float[] verts) { vertices = verts; }
         
         public void setTextCoords(float[] textCoords) 

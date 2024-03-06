@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Shard
-{
+{   //REMOVE THIS!!
     class _3dTrans
     {
         static public void translate(float[] tVec, float[] vCoords) {

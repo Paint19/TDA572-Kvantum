@@ -30,21 +30,21 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Numerics;
+using OpenTK.Mathematics;
 
 namespace Shard
 {
     class PhysicsBody
     {
-        List<Collider> myColliders;
-        List<Collider> collisionCandidates;
+        List<Collider3D> myColliders;
+        List<Collider3D> collisionCandidates;
         GameObject parent;
         CollisionHandler colh;
-        Transform trans;
-        private float angularDrag;
+        Transform3D trans;
+        private Vector3 angularDrag;
         private float drag;
-        private float torque;
-        private Vector2 force;
+        private Vector3 torque;
+        private Vector3 force;
         private float mass;
         private double timeInterval;
         private float maxForce, maxTorque;
@@ -59,23 +59,25 @@ namespace Shard
 
         private float[] minAndMaxX;
         private float[] minAndMaxY;
+        private float[] minAndMaxZ;
 
-        public void applyGravity(float modifier, Vector2 dir)
+        public void applyGravity(float modifier, Vector3 dir)
         {
 
-            Vector2 gf = dir * modifier;
+            Vector3 gf = dir * modifier;
 
             addForce(gf);
 
         }
 
-        public float AngularDrag { get => angularDrag; set => angularDrag = value; }
+        public Vector3 AngularDrag { get => angularDrag; set => angularDrag = value; }
         public float Drag { get => drag; set => drag = value; }
         internal GameObject Parent { get => parent; set => parent = value; }
-        internal Transform Trans { get => trans; set => trans = value; }
+        internal Transform3D Trans { get => trans; set => trans = value; }
         public float Mass { get => mass; set => mass = value; }
         public float[] MinAndMaxX { get => minAndMaxX; set => minAndMaxX = value; }
         public float[] MinAndMaxY { get => minAndMaxY; set => minAndMaxY = value; }
+        public float[] MinAndMaxZ { get => minAndMaxZ; set => minAndMaxZ = value; }
         public float MaxForce { get => maxForce; set => maxForce = value; }
         public float MaxTorque { get => maxTorque; set => maxTorque = value; }
         public bool Kinematic { get => kinematic; set => kinematic = value; }
@@ -88,43 +90,28 @@ namespace Shard
 
         public void drawMe()
         {
-            foreach (Collider col in myColliders)
+            foreach (Collider3D col in myColliders)
             {
                 col.drawMe(DebugColor);
             }
         }
-
-        public float[] getMinAndMax(bool x)
+        /**
+         * @index should be the dimension you want to access
+         * 0 = x
+         * 1 = y
+         * 2 = z
+         **/
+        public float[] getMinAndMax(int index)
         {
             float min = Int32.MaxValue;
             float max = -1 * min;
             float[] tmp;
 
-            foreach (Collider col in myColliders)
+            foreach (Collider3D col in myColliders)
             {
-
-                if (x)
-                {
-                    tmp = col.MinAndMaxX;
-                }
-                else
-                {
-                    tmp = col.MinAndMaxY;
-                }
-
-
-                if (tmp[0] < min)
-                {
-                    min = tmp[0];
-                }
-
-                if (tmp[1] > max)
-                {
-                    max = tmp[1];
-                }
+                min = Math.Min(col.minDimensions[index], min);
+                max = Math.Max(col.maxDimensions[index], max);
             }
-
-
             return new float[2] { min, max };
         }
 
@@ -132,14 +119,14 @@ namespace Shard
         {
             DebugColor = Color.Green;
 
-            myColliders = new List<Collider>();
-            collisionCandidates = new List<Collider>();
+            myColliders = new List<Collider3D>();
+            collisionCandidates = new List<Collider3D>();
 
             Parent = p;
             Trans = p.Transform;
             Colh = (CollisionHandler)p;
 
-            AngularDrag = 0.01f;
+            AngularDrag = new Vector3(0.01f);
             Drag = 0.01f;
             Drag = 0.01f;
             Mass = 1;
@@ -158,7 +145,7 @@ namespace Shard
             PhysicsManager.getInstance().addPhysicsObject(this);
         }
 
-        public void addTorque(float dir)
+        public void addTorque(Vector3 dir)
         {
             if (Kinematic)
             {
@@ -167,17 +154,11 @@ namespace Shard
 
             torque += dir / Mass;
 
-            if (torque > MaxTorque)
+            if (torque.Length > MaxTorque)
             {
-                torque = MaxTorque;
+                torque.Normalize(); 
+                torque = torque * MaxTorque;
             }
-
-            if (torque < -1 * MaxTorque)
-            {
-                torque = -1 * MaxTorque;
-            }
-
-
         }
 
         public void reverseForces(float prop)
@@ -200,42 +181,38 @@ namespace Shard
 
         public void stopForces()
         {
-            force = Vector2.Zero;
+            force = Vector3.Zero;
         }
 
-        public void reflectForces(Vector2 impulse)
+        public void reflectForces(Vector3 impulse)
         {
-            Vector2 reflect = new Vector2(0, 0);
+            Vector3 reflect = new Vector3(0, 0, 0);
 
             Debug.Log ("Reflecting " + impulse);
 
             // We're being pushed to the right, so we must have collided with the right.
             if (impulse.X > 0)
-            {
                 reflect.X = -1;
-            }
 
             // We're being pushed to the left, so we must have collided with the left.
             if (impulse.X < 0)
-            {
                 reflect.X = -1;
-
-            }
 
             // We're being pushed upwards, so we must have collided with the top.
             if (impulse.Y < 0)
-            {
                 reflect.Y = -1;
-            }
 
             // We're being pushed downwards, so we must have collided with the bottom.
             if (impulse.Y > 0)
-            {
                 reflect.Y = -1;
 
-            }
+            // We're being pushed Backwards, so we must have collided with the background.
+            if (impulse.Z < 0)
+                reflect.Z = -1;
 
-
+            // We're being pushed Forwards, so we must have collided with the screen.
+            if (impulse.Z > 0)
+                reflect.Z = -1;
             force *= reflect;
 
             Debug.Log("Reflect is " + reflect);
@@ -246,11 +223,11 @@ namespace Shard
             force *= prop;
         }
 
-        public void addForce(Vector2 dir, float force) {
+        public void addForce(Vector3 dir, float force) {
             addForce(dir * force);
         }
 
-        public void addForce(Vector2 dir)
+        public void addForce(Vector3 dir)
         {
             if (Kinematic)
             {
@@ -260,7 +237,7 @@ namespace Shard
             dir /= Mass;
 
             // Set a lower bound.
-            if (dir.LengthSquared() < 0.0001)
+            if (dir.Length * dir.Length < 0.0001)
             {
                 return;
             }
@@ -268,48 +245,45 @@ namespace Shard
             force += dir;
 
             // Set a higher bound.
-            if (force.Length() > MaxForce)
+            if (force.Length > MaxForce)
             {
-                force = Vector2.Normalize(force) * MaxForce;
+                force = Vector3.Normalize(force) * MaxForce;
             }
         }
 
         public void recalculateColliders()
         {
-            foreach (Collider col in getColliders())
+            foreach (Collider3D col in getColliders())
             {
-                col.recalculate();
+                col.calculateBoundingBox();
             }
 
-            MinAndMaxX = getMinAndMax(true);
-            MinAndMaxY = getMinAndMax(false);
+            MinAndMaxX = getMinAndMax(0);
+            MinAndMaxY = getMinAndMax(1);
+            MinAndMaxZ = getMinAndMax(2);
         }
 
         public void physicsTick()
         {
-            List<Vector2> toRemove;
+            List<Vector3> toRemove;
             float force;
             float rot = 0;
 
+            toRemove = new List<Vector3>();
 
-            toRemove = new List<Vector2>();
+            rot = torque.Length;
 
-            rot = torque;
+            torque.X = Math.Max(torque.X - AngularDrag.X, 0);
+            torque.Y = Math.Max(torque.Y - AngularDrag.Y, 0);
+            torque.Z = Math.Max(torque.Z - AngularDrag.Z, 0);
+            Matrix3 rotMatrix = Matrix3.Identity;
+            rotMatrix.Diagonal = torque;
+            //should rotate along all axes
+            //torque should also be calculated in a 3d vector
+            //No clue if this works as intended, would be a wonder if it did
+            trans.rotate(rotMatrix);
 
-            if (Math.Abs(torque) < AngularDrag)
-            {
-                torque = 0;
-            }
-            else
-            {
-                torque -= Math.Sign(torque) * AngularDrag;
-            }
-
-
-
-            trans.rotate(rot);
-
-            force = this.force.Length();
+            force = this.force.Length;
 
 			trans.translate(this.force);
 
@@ -322,65 +296,41 @@ namespace Shard
                 this.force = (this.force / force) * (force - Drag);
             }
 
-
-
         }
 
-
-        public ColliderRect addRectCollider()
+        public ColliderCube addColliderCube()
         {
-            ColliderRect cr = new ColliderRect((CollisionHandler)parent, parent.Transform);
+            ColliderCube cCube = new ColliderCube((CollisionHandler)parent, parent.Transform);
 
-            addCollider(cr);
+            addCollider(cCube);
 
-            return cr;
+            return cCube;
         }
-
-        public ColliderCircle addCircleCollider()
+        public ColliderSphere addColliderSphere()
         {
-            ColliderCircle cr = new ColliderCircle((CollisionHandler)parent, parent.Transform);
+            ColliderSphere cSphere = new ColliderSphere((CollisionHandler)parent, parent.Transform);
+            
+            addCollider(cSphere);
 
-            addCollider(cr);
-
-            return cr;
+            return cSphere;
         }
 
-        public ColliderCircle addCircleCollider(int x, int y, int rad)
-        {
-            ColliderCircle cr = new ColliderCircle((CollisionHandler)parent, parent.Transform, x, y, rad);
-
-            addCollider(cr);
-
-            return cr;
-        }
-
-
-        public ColliderRect addRectCollider(int x, int y, int wid, int ht)
-        {
-            ColliderRect cr = new ColliderRect((CollisionHandler)parent, parent.Transform, x, y, wid, ht);
-
-            addCollider(cr);
-
-            return cr;
-        }
-
-
-        public void addCollider(Collider col)
+        public void addCollider(Collider3D col)
         {
             myColliders.Add(col);
         }
 
-        public List<Collider> getColliders()
+        public List<Collider3D> getColliders()
         {
             return myColliders;
         }
 
-        public Vector2? checkCollisions(Vector2 other)
+        public Vector3? checkCollisions(Vector3 other)
         {
-            Vector2? d;
+            Vector3? d;
 
 
-            foreach (Collider c in myColliders)
+            foreach (Collider3D c in myColliders)
             {
                 d = c.checkCollision(other);
 
@@ -394,12 +344,12 @@ namespace Shard
         }
 
 
-        public Vector2? checkCollisions(Collider other)
+        public Vector3? checkCollisions(Collider3D other)
         {
-            Vector2? d;
+            Vector3? d;
 
 //            Debug.Log("Checking collision with " + other);
-            foreach (Collider c in myColliders)
+            foreach (Collider3D c in myColliders)
             {
                 d = c.checkCollision(other);
 
