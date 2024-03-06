@@ -14,7 +14,8 @@ namespace Shard
         Teapot teapot;
 
         // Room
-        Plane wall;
+        Plane wall1;
+        Plane wall2;
 
         private float time;
 
@@ -43,16 +44,17 @@ namespace Shard
         public override void initialize()
         {
             Bootstrap.getInput().addListener(this);
-            camera = new Camera(Bootstrap.getDisplay().getWidth(), Bootstrap.getDisplay().getHeight(), new Vector3(0, 0, 5));
+            camera = new Camera(Bootstrap.getDisplay().getWidth(), Bootstrap.getDisplay().getHeight(), new Vector3(0, 0, 0));
 
             Bootstrap.getWindow().setActiveCamera(camera);                                    
             
             // Game objects
-            rat = new Rat(-0.001f);
-            rat1 = new Rat(0.001f);
-            cube = new Cube();
-            teapot = new Teapot(0.0001f);
-            //wall = new Plane(1f,1f, "wallpaper.png");
+            // rat = new Rat();
+            //rat1 = new Rat(0.001f);
+            // cube = new Cube();
+            // teapot = new Teapot(0.0001f);
+            wall1 = new Plane(5f,10f, "wallpaper-purple.png", new Vector3(0.0f, 0.0f, -10.0f), new Vector3(0.0f, 0.0f, 0.0f));
+            // wall2 = new Plane(5f,10f, "wallpaper-blue.png", new Vector3(0.0f, 10.0f, 0.0f), new Vector3(0.0f, 1.57f, 0.0f));
         }
 
         public override void update()

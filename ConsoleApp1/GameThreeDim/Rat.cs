@@ -10,10 +10,9 @@ namespace Shard
 {
     class Rat : GameObject
     {
-        Matrix3 persistentRotationMatrix3 = Matrices.getInstance().getRotationMatrix3(0.0f, 0.01f, 0.0f);
         Vector3 moveDirection;
 
-        public Rat(float dir) 
+        public Rat() 
         {
             this.Transform.SpritePath = "test.png";
             this.Transform.initRenderer("rat.obj");

@@ -39,6 +39,8 @@ namespace Shard
             if(texturePath is not null)
                 texture = new Texture(Bootstrap.getAssetManager().getAssetPath(texturePath));
 
+            originalVertices = vertices.Select(it => it).ToArray();
+
             VertexBufferObject = GL.GenBuffer();
             VertexArrayObject = GL.GenVertexArray();
 
