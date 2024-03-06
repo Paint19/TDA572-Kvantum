@@ -10,10 +10,10 @@ namespace Shard
         private float screenwidth;
         private float screenheight;
 
-        public Vector3 position;
+        private Vector3 position;
 
-        Vector3 up = Vector3.UnitY;
-        Vector3 front = -Vector3.UnitZ;
+        private Vector3 up = Vector3.UnitY;
+        private Vector3 front = -Vector3.UnitZ;
 
 
         public Vector2 lastPos;
@@ -37,6 +37,12 @@ namespace Shard
         public void setPosition(Vector3 pos)
         {
             position = pos;
+        }
+
+        public void setVectors(Vector3 up, Vector3 front)
+        {
+            this.up = up;
+            this.front = front;
         }
 
         public Vector3 getPosition() {  return position; }  

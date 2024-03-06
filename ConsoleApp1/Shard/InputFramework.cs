@@ -137,7 +137,7 @@ namespace Shard
         private void window_MouseMove(MouseMoveEventArgs obj)
         {
             mouseMouseMoveEvents.Clear();
-            MouseMoveEventArgs mouseMoveEventArgs = (MouseMoveEventArgs)obj;
+            mouseMouseMoveEvents.Add(obj);
         }
 
         private void window_KeyUp(KeyboardKeyEventArgs obj)

@@ -16,6 +16,7 @@ namespace Shard
         // Room
         Plane wall;
 
+        private float time;
 
         // CAMERA
         private bool goRight = false;
@@ -29,8 +30,15 @@ namespace Shard
         private Vector3 right = Vector3.UnitX;
         private float speed = 4f;
         private Vector3 camPos;
-
         private Camera camera;
+        // First person shooter style camera controls
+        private float pitch;
+        private float yaw = -90.0f;
+        private bool firstMove = true;
+        private float sensitivity = 10f;
+        private Vector2 lastPos;
+        private float deltaX;
+        private float deltaY;
 
         public override void initialize()
         {
@@ -49,7 +57,7 @@ namespace Shard
 
         public override void update()
         {
-            float time = Bootstrap.getWindow().getEventArgsTime();
+            time = Bootstrap.getWindow().getEventArgsTime();
 
             camPos = camera.getPosition();
 
@@ -78,11 +86,14 @@ namespace Shard
                 camPos -= up * speed * time;
             }
 
+           
+
             camera.setPosition(camPos);
         }
 
         public void handleInput(InputEvent inp, string eventType)
         {
+
             if (eventType == "KeyDown")
             {
                 configMovement(inp, true);
@@ -90,6 +101,26 @@ namespace Shard
             else if (eventType == "KeyUp")
             {
                 configMovement(inp, false);
+            }
+            
+            if (eventType == "MouseMotion") 
+            {
+                if (firstMove)
+                {
+                    lastPos = new Vector2(inp.X, inp.Y);
+                    firstMove = false;
+                }
+                else
+                {
+                    deltaX = inp.X - lastPos.X;
+                    deltaY = inp.Y - lastPos.Y;
+                    lastPos = new Vector2(inp.X, inp.Y);
+
+                    // Looking direction:
+                    yaw += deltaX * sensitivity * time;
+                    pitch -= deltaY * sensitivity * time;
+                }
+                UpdateVectors();
             }
         }
 
@@ -117,5 +148,26 @@ namespace Shard
                     break;
             }
         }
+        private void UpdateVectors()
+        {
+            if (pitch > 89.0f)
+            {
+                pitch = 89.0f;
+            }
+            if (pitch < -89.0f)
+            {
+                pitch = -89.0f;
+            }
+            front.X = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Cos(MathHelper.DegreesToRadians(yaw));
+            front.Y = MathF.Sin(MathHelper.DegreesToRadians(pitch));
+            front.Z = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Sin(MathHelper.DegreesToRadians(yaw));
+            front = Vector3.Normalize(front);
+            right = Vector3.Normalize(Vector3.Cross(front, Vector3.UnitY));
+            up = Vector3.Normalize(Vector3.Cross(right, front));
+
+            camera.setVectors(up, front); // updates looking direction
+
+        }
+
     }
 }
