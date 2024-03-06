@@ -8,12 +8,12 @@ namespace Shard
     class ColliderSphere : Collider3D
     {
         float radius = 0.0f;
-        public ColliderSphere(CollisionHandler gob, Transform3D transform) : base(gob)
+        public ColliderSphere(CollisionHandler gob, Transform transform) : base(gob)
         {
             //TODO Do something with the transform
         }
 
-        public ColliderSphere(CollisionHandler gob, Transform3D transform, float x, float y, float z, float radius) : base(gob) { this.radius = radius; }
+        public ColliderSphere(CollisionHandler gob, Transform transform, float x, float y, float z, float radius) : base(gob) { this.radius = radius; }
         public override void calculateBoundingBox()
         {
             minDimensions = getMinDimensions();

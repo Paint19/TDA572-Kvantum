@@ -16,15 +16,13 @@ using System.Collections.Generic;
 
 namespace Shard
 {
-    class Transform3D
+    class Transform
     {
         private Matrix4 matrix;
         private float[] calculatedVertices;
         private Vector3 lastLocation;
         private ObjectFileParser objParser;
         private ObjectRenderer renderer;
-        public bool updatedSinceLastRender;
-        private string spritePath;
 
         public ObjectFileParser getObjParser() { return  objParser; }
 
@@ -34,12 +32,12 @@ namespace Shard
             objParser = new ObjectFileParser(fileName);
             renderer = new ObjectRenderer(objParser);
         }
-        public Transform3D()
+        public Transform()
         {
             this.matrix = Matrix4.Identity;
             this.lastLocation = Vector3.Zero;
         }
-        public Transform3D(Matrix4 translateAndRotate)
+        public Transform(Matrix4 translateAndRotate)
         {
             this.matrix = new Matrix4(
                 translateAndRotate.Row0, 
@@ -48,7 +46,6 @@ namespace Shard
                 translateAndRotate.Row3);
             lastLocation = Vector3.Zero;
         }
-        public string SpritePath { get => spritePath; set => spritePath = value; }
         public Vector3 Right { get => new Vector3(matrix.Row0); }
         public Vector3 Up { get =>  new Vector3(matrix.Row1); }
         public Vector3 Forward { get =>  new Vector3(matrix.Row2); }

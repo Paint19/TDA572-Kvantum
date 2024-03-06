@@ -15,7 +15,7 @@ namespace Shard
 {
     class GameObject
     {
-        private Transform3D transform;
+        private Transform transform;
         private bool transient;
         private bool toBeDestroyed;
         private bool visible;
@@ -70,7 +70,7 @@ namespace Shard
             return true;
         }
 
-        public Transform3D Transform
+        public Transform Transform
         {
             get => transform;
         }
@@ -106,7 +106,7 @@ namespace Shard
         {
             GameObjectManager.getInstance().addGameObject(this);
 
-            transform = new Transform3D();
+            transform = new Transform();
             visible = false;
 
             ToBeDestroyed = false;

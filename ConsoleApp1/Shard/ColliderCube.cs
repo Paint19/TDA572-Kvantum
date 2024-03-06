@@ -17,10 +17,10 @@ namespace Shard
 {
     class ColliderCube : Collider3D
     {
-        private Transform3D transform3D;
+        private Transform transform3D;
         private bool fromTrans;
 
-        public ColliderCube(CollisionHandler gob, Transform3D t) : base(gob)
+        public ColliderCube(CollisionHandler gob, Transform t) : base(gob)
         {
             this.MyRect = t;
             fromTrans = true;
@@ -45,7 +45,7 @@ namespace Shard
             calculateBoundingBox(transform3D.getVerticesAsVectors());
         }
 
-        internal Transform3D MyRect { get => transform3D; set => transform3D = value; }
+        internal Transform MyRect { get => transform3D; set => transform3D = value; }
         public float X { get => myPosition.X; set => myPosition.X = value; }
         public float Y { get => myPosition.Y; set => myPosition.Y = value; }
         public float Z { get => myPosition.Z; set => myPosition.Z = value; }
