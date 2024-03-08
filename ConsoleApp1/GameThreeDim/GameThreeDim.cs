@@ -2,20 +2,14 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using Shard.Shard;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Shard
 {
     class GameThreeDim : Game, InputListener
     {
-        Rat rat;
-        Rat rat1;
-        Cube cube;
         Teapot teapot;
-
-        // Room
-        Plane wall1;
-        Plane wall2;
 
         private float time;
 
@@ -29,17 +23,22 @@ namespace Shard
         private Vector3 up = Vector3.UnitY;
         private Vector3 front = -Vector3.UnitZ;
         private Vector3 right = Vector3.UnitX;
-        private float speed = 4f;
+        private float speed = 2f;
         private Vector3 camPos;
         private Camera camera;
         // First person shooter style camera controls
         private float pitch;
         private float yaw = -90.0f;
         private bool firstMove = true;
-        private float sensitivity = 4f;
+        private float sensitivity = 2f;
         private Vector2 lastPos;
         private float deltaX;
         private float deltaY;
+
+
+        private bool renderNewPot = false;
+        private Vector3 potPosition;
+        private List<Teapot> teapots = new List<Teapot>();
 
         public override void initialize()
         {
@@ -48,13 +47,7 @@ namespace Shard
 
             Bootstrap.getWindow().setActiveCamera(camera);                                    
             
-            // Game objects
-            // rat = new Rat();
-            //rat1 = new Rat(0.001f);
-            // cube = new Cube();
-            // teapot = new Teapot(0.0001f);
-            wall1 = new Plane(5f,10f, "wallpaper-purple.png", new Vector3(0.0f, 0.0f, -10.0f), new Vector3(0.0f, 0.0f, 0.0f));
-            // wall2 = new Plane(5f,10f, "wallpaper-blue.png", new Vector3(0.0f, 10.0f, 0.0f), new Vector3(0.0f, 1.57f, 0.0f));
+            teapot = new Teapot(new Vector3(0.0f, 0.0f, 0.0f));
         }
 
         public override void update()
@@ -86,6 +79,10 @@ namespace Shard
             if (goDown)
             {
                 camPos -= up * speed * time;
+            }
+            if (renderNewPot)
+            {
+                teapots.Add(new Teapot(potPosition));
             }
             camera.setPosition(camPos);
             camera.setVectors(up, front); // updates looking direction
@@ -160,6 +157,10 @@ namespace Shard
                     break;
                 case (int)Keys.Q:
                     goDown = isTrue;
+                    break;
+                case (int)Keys.Space:
+                    renderNewPot = isTrue;
+                    potPosition = camPos + (2*front) ; // new Vector3(inp.X, inp.Y, camPos.Y);
                     break;
             }
         }
