@@ -18,6 +18,7 @@ namespace Shard
         public Collider3D(CollisionHandler gob)
         {
             gameObject = gob;
+            
             minDimensions = new Vector3(0, 0, 0);
             maxDimensions = new Vector3(0, 0, 0);
 
@@ -68,7 +69,6 @@ namespace Shard
 
         public abstract Vector3 getMinDimensions();
         public abstract Vector3 getMaxDimensions();
-
         public abstract void calculateBoundingBox();
 
         public void onCollisionEnter(PhysicsBody x)
@@ -82,6 +82,18 @@ namespace Shard
         public void onCollisionStay(PhysicsBody x)
         {
             gameObject.onCollisionStay(x);
+        }
+
+        internal bool VectorIsWithin(Vector3 min, Vector3 max, Vector3 vector)
+        {
+            if (min.X > vector.X || max.X < vector.X)
+                return false;
+            if (min.Y > vector.Y || max.Y < vector.Y)
+                return false;
+            if (min.Z > vector.Z || max.Z < vector.Z)
+                return false;
+            //doing these as guarding statements to hopefully exit early on a miss
+            return true;
         }
     }
 }

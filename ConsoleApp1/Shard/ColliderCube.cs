@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using OpenTK.Mathematics;
@@ -57,18 +56,32 @@ namespace Shard
 
         public override Vector3? checkCollision(Vector3 other)
         {
-
-            throw new NotImplementedException();
+            bool isWithinAxisAlignedBoundingBox = VectorIsWithin(minDimensions, maxDimensions, other);
+            if (!isWithinAxisAlignedBoundingBox)
+                return null;
+            return transform3D.Translation - other;
         }
 
         public override Vector3? checkCollision(ColliderCube c)
         {
-            throw new NotImplementedException();
+            if (checkBoundingCollision(c))
+                return myPosition - c.myPosition;
+            return null;
         }
 
         public override Vector3? checkCollision(ColliderSphere c)
         {
-            throw new NotImplementedException();
+            // get box closest point to sphere center by clamping
+            float x = Math.Max(minDimensions.X, Math.Min(c.X, maxDimensions.X));
+            float y = Math.Max(minDimensions.Y, Math.Min(c.Y, maxDimensions.Y));
+            float z = Math.Max(minDimensions.Z, Math.Min(c.Z, maxDimensions.Z));
+
+            // this is the same as isPointInsideSphere
+            Vector3 closestVertex = new Vector3(x, y, z);
+            float distance = (closestVertex - myPosition).Length;
+            if (distance < c.Radius)
+                return myPosition - c.myPosition;
+            return null;
         }
 
 

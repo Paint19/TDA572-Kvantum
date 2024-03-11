@@ -38,7 +38,7 @@ namespace Shard
         public override Vector3? checkCollision(ColliderSphere c)
         {
             if ((c.radius + radius) < (myPosition - c.myPosition).Length) 
-                return myPosition + (myPosition-c.myPosition);
+                return myPosition - c.myPosition;
             else
                 return null;
         }
@@ -46,7 +46,7 @@ namespace Shard
         public override Vector3? checkCollision(Vector3 c)
         {
             if (radius < (myPosition - c).Length)
-                return myPosition + (myPosition - c);
+                return myPosition - c;
             else
                 return null;
         }
@@ -68,5 +68,6 @@ namespace Shard
         public float X { get => myPosition.X; set => myPosition.X = value; }
         public float Y { get => myPosition.Y; set => myPosition.Y = value; }
         public float Z { get => myPosition.Z; set => myPosition.Z = value; }
+        public float Radius { get => radius; set => radius = value;}
     }
 }
