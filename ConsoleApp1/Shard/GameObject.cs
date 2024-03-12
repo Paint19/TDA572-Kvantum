@@ -13,7 +13,7 @@ using System.Collections.Generic;
 
 namespace Shard
 {
-    class GameObject
+    class GameObject: CollisionHandler
     {
         private Transform transform;
         private bool transient;
@@ -139,6 +139,19 @@ namespace Shard
             transform = null;
         }
 
+        public void onCollisionEnter(PhysicsBody x)
+        {
+            //throw new NotImplementedException();
+        }
 
+        public void onCollisionExit(PhysicsBody x)
+        {
+            //throw new NotImplementedException();
+        }
+
+        public void onCollisionStay(PhysicsBody x)
+        {
+            //throw new NotImplementedException();
+        }
     }
 }

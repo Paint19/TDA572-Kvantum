@@ -60,6 +60,37 @@ namespace Shard
             initialized = true;
         }
 
+        public ObjectRenderer(float[] vertices, uint[] indices)
+        {
+            this.vertices = vertices;
+            this.indices = indices;
+            originalVertices = vertices.Select(it => it).ToArray();
+
+            VertexBufferObject = GL.GenBuffer();
+            VertexArrayObject = GL.GenVertexArray();
+
+            // Bind Vertex Array Object:
+            GL.BindVertexArray(VertexArrayObject);
+
+            // Copy our vertices array in a buffer for OpenGL to use:
+            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
+
+            // stuff about indices
+            ElementBufferObject = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+
+            // Set our vertex attributes pointers
+            // Takes data from the latest bound VBO (memory buffer) bound to ArrayBuffer.
+            // The first parameter is the location of the vertex attribute. Defined in shader.vert.
+            // Dynamically retrieving shader layout would require some changes.
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+
+            GL.EnableVertexAttribArray(0);
+
+            initialized = true;
+        }
+
         public void Bind()
         {
             // Re-binding things:
