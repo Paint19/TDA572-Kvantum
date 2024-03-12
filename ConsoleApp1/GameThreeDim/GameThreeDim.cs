@@ -37,9 +37,9 @@ namespace Shard
             
             // Game objects
             rat = new Rat(-0.001f);
-            rat1 = new Rat(0.001f);
+            //rat1 = new Rat(0.001f);
             cube = new Cube();
-            teapot = new Teapot(0.0001f);
+            //teapot = new Teapot(0.0001f);
             spriteTest = new SpriteTest(1,1, "spritesheet.png");
         }
 

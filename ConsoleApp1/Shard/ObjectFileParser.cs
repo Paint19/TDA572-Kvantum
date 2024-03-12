@@ -50,75 +50,80 @@ namespace Shard.Shard
 
                 foreach (string line in allLines)
                 {
-                    string[] words = line.Split(' ');
+                    string[] words = line.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-                    switch (words[0])
+                    if (words.Length > 0)
                     {
-                        case "v": // Geometric vertices. x, y, z, w. w defaults to 1 and defines a color value ranging 0 to 1.
-                            verts.Add(
-                            new Vector3(
-                                float.Parse(words[1], CultureInfo.InvariantCulture.NumberFormat),
-                                float.Parse(words[2], CultureInfo.InvariantCulture.NumberFormat),
-                                float.Parse(words[3], CultureInfo.InvariantCulture.NumberFormat))); 
+                        switch (words[0])
+                        {
+                            case "v": // Geometric vertices. x, y, z, w. w defaults to 1 and defines a color value ranging 0 to 1.
+                                verts.Add(
+                                new Vector3(
+                                    float.Parse(words[1], CultureInfo.InvariantCulture.NumberFormat),
+                                    float.Parse(words[2], CultureInfo.InvariantCulture.NumberFormat),
+                                    float.Parse(words[3], CultureInfo.InvariantCulture.NumberFormat))); 
 
-                            if (words.Length == 5) // w
-                                vertCol.Add(float.Parse(words[4], CultureInfo.InvariantCulture.NumberFormat));
-                            break;
+                                if (words.Length == 5) // w
+                                    vertCol.Add(float.Parse(words[4], CultureInfo.InvariantCulture.NumberFormat));
+                                break;
 
-                        case "vt": // Texture coordinates. u, v, w coordinates, these will vary between 0 and 1. v, w are optional and default to 0.
-                            float first = float.Parse(words[1], CultureInfo.InvariantCulture.NumberFormat);
-                            float second = 0;
-                            float third = 0;
-                            if (words.Length > 2)
-                                second = float.Parse(words[2], CultureInfo.InvariantCulture.NumberFormat);
-                            if (words.Length > 3)
-                                third = float.Parse(words[3], CultureInfo.InvariantCulture.NumberFormat);
-                            texCoords.Add(new Vector3(first, second, third));
-                            break;
+                            case "vt": // Texture coordinates. u, v, w coordinates, these will vary between 0 and 1. v, w are optional and default to 0.
+                                float first = float.Parse(words[1], CultureInfo.InvariantCulture.NumberFormat);
+                                float second = 0;
+                                float third = 0;
+                                if (words.Length > 2)
+                                    second = float.Parse(words[2], CultureInfo.InvariantCulture.NumberFormat);
+                                if (words.Length > 3)
+                                    third = float.Parse(words[3], CultureInfo.InvariantCulture.NumberFormat);
+                                texCoords.Add(new Vector3(first, second, third));
+                                break;
 
-                        case "vn": // Vertex normals in (x,y,z) form. Normals might not be unit vectors.
-                            vertNorms.Add(
-                            new Vector3(
-                                float.Parse(words[1], CultureInfo.InvariantCulture.NumberFormat),
-                                float.Parse(words[2], CultureInfo.InvariantCulture.NumberFormat),
-                                float.Parse(words[3], CultureInfo.InvariantCulture.NumberFormat)));
-                            break;
+                            case "vn": // Vertex normals in (x,y,z) form. Normals might not be unit vectors.
+                                vertNorms.Add(
+                                new Vector3(
+                                    float.Parse(words[1], CultureInfo.InvariantCulture.NumberFormat),
+                                    float.Parse(words[2], CultureInfo.InvariantCulture.NumberFormat),
+                                    float.Parse(words[3], CultureInfo.InvariantCulture.NumberFormat)));
+                                break;
 
-                        case "vp": // Parameter space vertice. In u, v, w form; free form geometry statement 
-                            paramSpaceCoords.Add(
-                            new Vector3(
-                                float.Parse(words[1], CultureInfo.InvariantCulture.NumberFormat),
-                                float.Parse(words[2], CultureInfo.InvariantCulture.NumberFormat),
-                                float.Parse(words[3], CultureInfo.InvariantCulture.NumberFormat)));
-                            break;
+                            case "vp": // Parameter space vertice. In u, v, w form; free form geometry statement 
+                                paramSpaceCoords.Add(
+                                new Vector3(
+                                    float.Parse(words[1], CultureInfo.InvariantCulture.NumberFormat),
+                                    float.Parse(words[2], CultureInfo.InvariantCulture.NumberFormat),
+                                    float.Parse(words[3], CultureInfo.InvariantCulture.NumberFormat)));
+                                break;
 
-                        // Face element. In vertex_index/texture_index/normal_index form. Texture and normal indices are optional
-                        // Currently only supports parsing for triangles and quadrilaterals. 
-                        case "f":
-                            if (words.Length == 4) // Triangle
-                            { 
+                            // Face element. In vertex_index/texture_index/normal_index form. Texture and normal indices are optional
+                            // Currently only supports parsing for triangles and quadrilaterals. 
+                            case "f":
+                                if (words.Length == 4) // Triangle
+                                { 
+                                    for (int i = 1; i < words.Length; i++)
+                                    {
+                                        parseFaceElement(words[i]);
+                                    }
+                                }
+                                else if (words.Length == 5) // Quadrilateral
+                                {                                   
+                                    // Triangle 1
+                                    parseFaceElement(words[1]);
+                                    parseFaceElement(words[2]);
+                                    parseFaceElement(words[3]);
+                                
+                                    //Triangle 2
+                                    parseFaceElement(words[1]);
+                                    parseFaceElement(words[3]);
+                                    parseFaceElement(words[4]);
+                                }
+                                break;
+
+                            case "l": // Line element, these specify the order of the vertices which build a polyline. 
                                 for (int i = 1; i < words.Length; i++)
-                                {
-                                    parseFaceElement(words[i]);
-                                }
-                            }
-                            else if (words.Length == 5) // Quadrilateral
-                            {
-                                for (int i = 1; i < 4; i++) // Triangle 1
-                                {
-                                    parseFaceElement(words[i]);
-                                }
-                                for (int i = 1; i < 5 && i != 2; i++) // Triangle 2
-                                {
-                                    parseFaceElement(words[i]);
-                                }
-                            }
-                            break;
+                                    lineElems.Add(uint.Parse(words[i], CultureInfo.InvariantCulture.NumberFormat));
+                                break;
 
-                        case "l": // Line element, these specify the order of the vertices which build a polyline. 
-                            for (int i = 1; i < words.Length; i++)
-                                lineElems.Add(uint.Parse(words[i], CultureInfo.InvariantCulture.NumberFormat));
-                            break;
+                        }
                     }
 
                     // Set all values here
@@ -138,6 +143,8 @@ namespace Shard.Shard
         private void parseFaceElement(string word)
         {
             string[] inds = word.Split(new char[] { '/', '/' }, StringSplitOptions.RemoveEmptyEntries);
+            //foreach (var ind in inds)
+                //Console.WriteLine(ind);
 
             vertInds.Add(parseInd(inds[0]));
 

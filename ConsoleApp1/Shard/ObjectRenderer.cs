@@ -23,18 +23,17 @@ namespace Shard
         private int ElementBufferObject;
         private int VertexArrayObject;
         private int textureVBO;
+        private int textEBO;
 
         private bool initialized = false;
         private float[] vertices;
-        private uint[] indices;
         private float[] textureCoordinates;
 
         Texture texture;
 
-        public ObjectRenderer(float[] vertices, uint[] indices, float[] textCoords, string texturePath)
+        public ObjectRenderer(float[] vertices, float[] textCoords, string texturePath)
         {
             this.vertices = vertices;
-            this.indices = indices;
             this.textureCoordinates = textCoords;
             if(texturePath is not null)
                 texture = new Texture(Bootstrap.getAssetManager().getAssetPath(texturePath));
@@ -51,9 +50,9 @@ namespace Shard
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
 
             // stuff about indices
-            ElementBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+            //ElementBufferObject = GL.GenBuffer();
+            //GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
+            //GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
 
             // Set our vertex attributes pointers
             // Takes data from the latest bound VBO (memory buffer) bound to ArrayBuffer.
@@ -70,11 +69,12 @@ namespace Shard
             // Generate a vertice object buffer for the texture coordinates
             textureVBO = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, textureVBO);
-            GL.BufferData(BufferTarget.ArrayBuffer, textureCoordinates.Length * sizeof(float), textureCoordinates, BufferUsageHint.DynamicDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, textureCoordinates.Length * sizeof(float), textureCoordinates, BufferUsageHint.StaticDraw);
+
 
             // Put the texture Coordinates in slot 1 of the VAO
             int texCoordLocation = 1;
-            //GL.EnableVertexAttribArray(texCoordLocation);
+            //GL.EnableVertexAttribArray(1);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
             GL.EnableVertexArrayAttrib(VertexArrayObject, texCoordLocation);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
@@ -87,7 +87,7 @@ namespace Shard
             // Re-binding things:
             GL.BindVertexArray(VertexArrayObject);
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
+            //GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
             if(texture is not null)
                 texture.Use();
 
@@ -96,7 +96,8 @@ namespace Shard
 
         public void Render()
         {
-            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0); // For DrawShape rather than drawtriangle
+            //GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0); // For DrawShape rather than drawtriangle
+            GL.DrawArrays(PrimitiveType.Triangles, 0, vertices.Length);
 
             // Unbinding buffers
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
