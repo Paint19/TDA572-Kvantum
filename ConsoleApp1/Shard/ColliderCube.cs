@@ -25,7 +25,6 @@ namespace Shard
             this.MyRect = t;
             fromTrans = true;
             RotateAtOffset = false;
-            calculateBoundingBox();
         }
 
 
@@ -42,7 +41,8 @@ namespace Shard
 
         public override void calculateBoundingBox()
         {
-            calculateBoundingBox(transform3D.getVerticesAsVectors());
+            //calculateBoundingBox(transform3D.getVerticesAsVectors());
+            calculateBoundingBox(transform3D.Vertices.Chunk(3).Select(arr => new Vector3(arr[0], arr[1], arr[2])));
         }
 
         internal Transform MyRect { get => transform3D; set => transform3D = value; }
@@ -67,13 +67,14 @@ namespace Shard
                 ];
             uint[] indices = [
                 1,2,3,
-                6,7,8];
+                6,7,8
+                ];
 
             Transform trans = new Transform();
             trans.initRenderer(vertices, indices) ;
-            //trans.setCalculatedVerticesToRender(vertices);
-            Bootstrap.getDisplay().addToDraw(trans.getRenderer());
             trans.setCalculatedVerticesToRender(vertices);
+            Bootstrap.getDisplay().addToDraw(trans.getRenderer());
+            Console.WriteLine("got to render collision box between" + minDimensions.ToString() + maxDimensions.ToString());
         }
 
         public override Vector3? checkCollision(Vector3 other)

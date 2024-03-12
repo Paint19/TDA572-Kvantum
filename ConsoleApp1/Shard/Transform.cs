@@ -32,16 +32,20 @@ namespace Shard
         public void initRenderer(string fileName) { 
             objParser = new ObjectFileParser(fileName);
             renderer = new ObjectRenderer(objParser);
+            calculateVertices();
         }
 
         public void initRenderer(float[] vertices, uint[] indices)
         {
+            this.calculatedVertices = vertices;
             renderer = new ObjectRenderer(vertices, indices);
+            calculateVertices();
         }
         public Transform()
         {
             this.matrix = Matrix4.Identity;
             this.lastLocation = Vector3.Zero;
+
         }
         public Transform(Matrix4 translateAndRotate)
         {
@@ -146,5 +150,7 @@ namespace Shard
         {
             scale(new Vector3(scalar));
         }
+
+        public float[] Vertices { get => calculatedVertices; }
     }
 }
