@@ -282,11 +282,8 @@ namespace Shard
             //should rotate along all axes
             //torque should also be calculated in a 3d vector
             //No clue if this works as intended, would be a wonder if it did
-            trans.rotate(rotMatrix);
 
             force = this.force.Length;
-
-			trans.translate(this.force);
 
             if (force < Drag)
             {
