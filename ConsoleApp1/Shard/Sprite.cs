@@ -38,7 +38,21 @@ namespace Shard.Shard
                 1- cropW, 1- cropY
             ];
             indices = [0, 1, 2, 2, 3, 0];
-            Transform.initRenderer(vertices, indices, textCoords, spritePath);
+
+            List<float> vert = new List<float>();
+            List<float> text = new List<float>();
+            foreach (var ind in indices)
+            {
+                vert.Add(vertices[3 * ind]);
+                vert.Add(vertices[(3 * ind) + 1]);
+                vert.Add(vertices[(3 * ind) + 2]);
+                text.Add(textCoords[2 * ind]);
+                text.Add(textCoords[2 * ind + 1]);
+            }
+            float[] verts = vert.ToArray();
+            float[] textureCoordinates = text.ToArray();
+
+            Transform.initRenderer(verts, textureCoordinates, spritePath);
         }
 
         public void crop(float cropX, float cropY, float cropH, float cropW)
@@ -51,7 +65,16 @@ namespace Shard.Shard
                 1- cropX- cropW,    1- cropY- cropH,
                 1- cropX- cropW,    1- cropY
             ];
-            Transform.getRenderer().setTextCoords(textCoords);
+
+            List<float> text = new List<float>();
+            foreach (var ind in indices)
+            {
+                text.Add(textCoords[2 * ind]);
+                text.Add(textCoords[2 * ind + 1]);
+            }
+            float[] textureCoordinates = text.ToArray();
+
+            Transform.getRenderer().setTextCoords(textureCoordinates);
         }
         
     }
