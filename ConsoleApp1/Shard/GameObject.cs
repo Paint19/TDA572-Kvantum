@@ -91,7 +91,11 @@ namespace Shard
 
         public virtual void update()
         {
-
+            foreach(Collider3D c in myBody.getColliders())
+            {
+                if (c != null)
+                    c.update();
+            }
         }
 
         public virtual void physicsUpdate()
