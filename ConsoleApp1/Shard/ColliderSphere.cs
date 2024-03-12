@@ -10,7 +10,7 @@ namespace Shard
         float radius = 0.0f;
         public ColliderSphere(CollisionHandler gob, Transform transform) : base(gob)
         {
-            //TODO Do something with the transform
+            this.radius = transform.getVerticesAsVectors().MaxBy(it => it.Length).Length;
         }
 
         public ColliderSphere(CollisionHandler gob, Transform transform, float x, float y, float z, float radius) : base(gob) { this.radius = radius; }
@@ -53,7 +53,7 @@ namespace Shard
 
         public override void drawMe(Color col)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException(); TODO: implement
         }
 
         public override Vector3 getMaxDimensions()
