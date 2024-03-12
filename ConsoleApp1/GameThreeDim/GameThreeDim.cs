@@ -4,7 +4,7 @@ using Shard.Shard;
 using System;
 using System.Linq;
 
-namespace Shard.GameThreeDim
+namespace Shard
 {
     class GameThreeDim : Game, InputListener
     {

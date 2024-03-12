@@ -100,7 +100,9 @@ namespace Shard
 
         public virtual void update()
         {
-            foreach(Collider3D c in myBody.getColliders())
+            if (myBody is null)
+                return;
+            foreach (Collider3D c in myBody.getColliders())
             {
                 if (c != null)
                     c.update();

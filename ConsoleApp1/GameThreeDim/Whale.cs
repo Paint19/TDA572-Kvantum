@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shard.GameThreeDim
+namespace Shard
 {
 
     class Whale : GameObject
