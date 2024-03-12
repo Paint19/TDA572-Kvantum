@@ -25,7 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Numerics;
+using OpenTK.Mathematics;
 
 namespace Shard
 {
@@ -95,7 +95,7 @@ namespace Shard
         private long timeInterval;
         SAPEntry sapX, sapY;
         float gravityModifier;
-        Vector2 gravityDir;
+        Vector3 gravityDir;
 
         List<PhysicsBody> allPhysicsObjects;
         private long lastUpdate;
@@ -112,7 +112,7 @@ namespace Shard
 
             collisionsToCheck = new List<CollidingObject>();
 
-            gravityDir = new Vector2(0, 1);
+            gravityDir = new Vector3(0, 1, 0);
             // 50 FPS            
 
             TimeInterval = 20;
@@ -132,10 +132,19 @@ namespace Shard
 
                 tmpbits = tmp.Split(",");
 
-                gravityDir = new Vector2(int.Parse(tmpbits[0]), int.Parse(tmpbits[1]));
+                //Can break if gravity_dir not formatted correctly, probably
+                try
+                {
+                    gravityDir = new Vector3(int.Parse(tmpbits[0]), int.Parse(tmpbits[1]), int.Parse(tmpbits[2]));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e + ": gravity dir not formatted correctly, need as least 'x,y,z'");
+                    gravityDir = new Vector3(0, 1, 0);
+                }
             }
             else {
-                gravityDir = new Vector2 (0, 1);
+                gravityDir = new Vector3(0, 1, 0);
             }
 
             
@@ -309,7 +318,7 @@ namespace Shard
             {
                 ch = col.A.Colh;
                 ch2 = col.B.Colh;
-                Vector2? impulse;
+                Vector3? impulse;
 
                 // If the object has been destroyed in the interim, it should still 
                 // trigger a collision exit.
@@ -366,13 +375,13 @@ namespace Shard
             }
         }
 
-        private Vector2? checkCollisionBetweenObjects(PhysicsBody a, PhysicsBody b)
+        private Vector3? checkCollisionBetweenObjects(PhysicsBody a, PhysicsBody b)
         {
-            Vector2? impulse;
+            Vector3? impulse;
 
-            foreach (Collider col in a.getColliders())
+            foreach (Collider3D col in a.getColliders())
             {
-                foreach (Collider col2 in b.getColliders())
+                foreach (Collider3D col2 in b.getColliders())
                 {
                     impulse = col.checkCollision(col2);
 
@@ -441,8 +450,8 @@ namespace Shard
 
         private void narrowPass()
         {
-            Vector2 impulse;
-            Vector2? possibleImpulse;
+            Vector3 impulse;
+            Vector3? possibleImpulse;
             float massTotal, massa, massb;
             float massProp = 0.0f;
 
@@ -485,7 +494,7 @@ namespace Shard
 
                         if (ob.B.Kinematic == false)
                         {
-                            ob.B.Parent.Transform.translate(-1 * (impulse.X * massProp), -1 * (impulse.Y * massProp));
+                            ob.B.Parent.Transform.translate(new Vector3(-1 * (impulse.X * massProp), -1 * (impulse.Y * massProp), -1 * (impulse.Z * massProp)));
                         }
 
 
@@ -504,7 +513,7 @@ namespace Shard
                         if (ob.A.Kinematic == false)
                         {
 
-                            ob.A.Parent.Transform.translate((impulse.X * massProp), (impulse.Y * massProp));
+                            ob.A.Parent.Transform.translate(new Vector3((impulse.X * massProp), (impulse.Y * massProp), (impulse.Z * massProp)));
                         }
 
 

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace Shard.Shard.pathfinding
+namespace Shard.pathfinding
 {
     class RouteFinder<T> where T : GraphNode
     {

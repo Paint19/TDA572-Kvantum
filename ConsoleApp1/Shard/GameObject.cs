@@ -14,9 +14,9 @@ using System.Collections.Generic;
 
 namespace Shard
 {
-    class GameObject
+    class GameObject : CollisionHandler
     {
-        private Transform3D transform;
+        private Transform transform;
         private bool transient;
         private bool toBeDestroyed;
         private bool visible;
@@ -72,22 +72,15 @@ namespace Shard
             return true;
         }
 
-        internal Transform3D Transform
+        public Transform Transform
         {
             get => transform;
         }
-
-        internal Transform Transform2D
-        {
-            get => (Transform)transform;
-        }
-
         internal Animation Animation
         {
             get => animation;
             set => animation = value;
         }
-
 
         public bool Visible
         {
@@ -107,7 +100,13 @@ namespace Shard
 
         public virtual void update()
         {
-
+            if (myBody is null)
+                return;
+            foreach (Collider3D c in myBody.getColliders())
+            {
+                if (c != null)
+                    c.update();
+            }
         }
 
         public virtual void physicsUpdate()
@@ -122,7 +121,7 @@ namespace Shard
         {
             GameObjectManager.getInstance().addGameObject(this);
 
-            transform = new Transform3D(this);
+            transform = new Transform();
             visible = false;
 
             ToBeDestroyed = false;
@@ -140,13 +139,7 @@ namespace Shard
                 return;
             }
 
-            if (Transform.X > 0 && Transform.X < Bootstrap.getDisplay().getWidth())
-            {
-                if (Transform.Y > 0 && Transform.Y < Bootstrap.getDisplay().getHeight())
-                {
-                    return;
-                }
-            }
+            //Should do a kinda advanced collision box check with the collider of the object and the viewspace to see if it is in the frame
 
 
             ToBeDestroyed = true;
@@ -161,6 +154,19 @@ namespace Shard
             transform = null;
         }
 
+        public virtual void onCollisionEnter(PhysicsBody x)
+        {
+            throw new NotImplementedException();
+        }
 
+        public virtual void onCollisionExit(PhysicsBody x)
+        {
+            Console.WriteLine("Finally free from " + x.ToString());
+        }
+
+        public virtual void onCollisionStay(PhysicsBody x)
+        {
+            Console.WriteLine("still colliding with " + x.ToString());
+        }
     }
 }
