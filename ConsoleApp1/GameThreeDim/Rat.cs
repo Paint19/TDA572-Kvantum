@@ -17,7 +17,7 @@ namespace Shard
         {
             this.Transform.initRenderer("rat.obj");
             this.Transform.scale(0.001f);
-            this.moveDirection = new Vector3(0.01f,0.01f,0.01f);
+            this.moveDirection = new Vector3(0f,0f,0f);
         }
         public override void initialize()
         {

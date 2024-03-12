@@ -67,7 +67,7 @@ namespace Shard
                 ];
             uint[] indices = [
                 1,2,3,
-                6,7,8
+                4,5,6
                 ];
 
             Transform trans = new Transform();
