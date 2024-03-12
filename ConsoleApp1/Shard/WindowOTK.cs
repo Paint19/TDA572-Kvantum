@@ -1,15 +1,8 @@
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using Shard.Shard;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
+using Shard.Shard;
 
 /*
  *  Here we have a lot of OpenTK magic. 
@@ -37,7 +30,7 @@ namespace Shard
         }
 
         public void setIndicesLength(int length) { indicesLength = length; }
-        public void setActiveCamera(Camera cam) {  activeCamera = cam; }    
+        public void setActiveCamera(Camera cam) { activeCamera = cam; }
         public void setShaderMVP(Matrix4 model, Matrix4 view, Matrix4 projection)
         {
             shader.SetMatrix4("model", model);
@@ -45,7 +38,7 @@ namespace Shard
             shader.SetMatrix4("projection", projection);
         }
 
-        public float getEventArgsTime() { return eventArgsTime; }  
+        public float getEventArgsTime() { return eventArgsTime; }
         protected override void OnUpdateFrame(FrameEventArgs args) // Runs when GameWindow updates frame
         {
 
@@ -118,7 +111,7 @@ namespace Shard
             base.OnRenderFrame(args);
 
             // Clear screen before re-rendering
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit); 
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             shader.Use();
 
@@ -126,7 +119,8 @@ namespace Shard
             Bootstrap.getDisplay().display();
 
             // transformation matrices
-            if (activeCamera != null) { 
+            if (activeCamera != null)
+            {
                 Matrix4 model = Matrix4.Identity;
                 Matrix4 view = activeCamera.GetViewMatrix();
                 Matrix4 projection = activeCamera.GetProjectionMatrix();
@@ -134,7 +128,7 @@ namespace Shard
                 setShaderMVP(model, view, projection);
             }
             // Display what has been rendering. Must be last. Double-buffering avoids screen tearing.
-            SwapBuffers(); 
+            SwapBuffers();
         }
 
         // Runs (only once) when GameWindow loads the window
@@ -161,7 +155,7 @@ namespace Shard
             CursorState = CursorState.Grabbed;
 
         }
-        
+
         protected override void OnUnload()
         {
             base.OnUnload();

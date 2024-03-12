@@ -21,7 +21,7 @@ namespace Shard
             {
                 return;
             }
-            
+
             cki = Console.ReadKey(true);
 
             ie = new InputEvent();

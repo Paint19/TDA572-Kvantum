@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
+﻿using OpenTK.Graphics.OpenGL4;
 using Shard.Shard;
+using System;
+using System.Linq;
 
 /*
  * 
@@ -35,14 +31,14 @@ namespace Shard
             originalVertices = vertices.Select(it => it).ToArray();
             this.vertices = vertices;
             this.textureCoordinates = textCoords;
-            if(texturePath is not null)
+            if (texturePath is not null)
                 texture = new Texture(Bootstrap.getAssetManager().getAssetPath(texturePath));
 
             VertexBufferObject = GL.GenBuffer();
             VertexArrayObject = GL.GenVertexArray();
 
             // Bind Vertex Array Object:
-             GL.BindVertexArray(VertexArrayObject);
+            GL.BindVertexArray(VertexArrayObject);
 
             // Copy our vertices array in a buffer for OpenGL to use:
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
@@ -54,11 +50,11 @@ namespace Shard
             // The first parameter is the location of the vertex attribute. Defined in shader.vert.
             // Dynamically retrieving shader layout would require some changes.
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
-            
+
             GL.EnableVertexAttribArray(0);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
-            
+
             // -- Texture -- 
 
             // Generate a vertice object buffer for the texture coordinates
@@ -82,7 +78,7 @@ namespace Shard
             // Re-binding things:
             GL.BindVertexArray(VertexArrayObject);
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-            if(texture is not null)
+            if (texture is not null)
                 texture.Use();
 
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
@@ -125,9 +121,9 @@ namespace Shard
 
         public float[] OriginalVertices { get { return originalVertices; } }
         public void setVertices(float[] verts) { vertices = verts; }
-        
-        public void setTextCoords(float[] textCoords) 
-        { 
+
+        public void setTextCoords(float[] textCoords)
+        {
             textureCoordinates = textCoords;
             GL.BindBuffer(BufferTarget.ArrayBuffer, textureVBO);
             GL.BufferSubData(BufferTarget.ArrayBuffer, 0, textureCoordinates.Length * sizeof(float), textureCoordinates);

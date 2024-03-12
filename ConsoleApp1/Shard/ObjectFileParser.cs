@@ -3,10 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Shard.Shard
 {
@@ -61,7 +57,7 @@ namespace Shard.Shard
                                 new Vector3(
                                     float.Parse(words[1], CultureInfo.InvariantCulture.NumberFormat),
                                     float.Parse(words[2], CultureInfo.InvariantCulture.NumberFormat),
-                                    float.Parse(words[3], CultureInfo.InvariantCulture.NumberFormat))); 
+                                    float.Parse(words[3], CultureInfo.InvariantCulture.NumberFormat)));
 
                                 if (words.Length == 5) // w
                                     vertCol.Add(float.Parse(words[4], CultureInfo.InvariantCulture.NumberFormat));
@@ -98,19 +94,19 @@ namespace Shard.Shard
                             // Currently only supports parsing for triangles and quadrilaterals. 
                             case "f":
                                 if (words.Length == 4) // Triangle
-                                { 
+                                {
                                     for (int i = 1; i < words.Length; i++)
                                     {
                                         parseFaceElement(words[i]);
                                     }
                                 }
                                 else if (words.Length == 5) // Quadrilateral
-                                {                                   
+                                {
                                     // Triangle 1
                                     parseFaceElement(words[1]);
                                     parseFaceElement(words[2]);
                                     parseFaceElement(words[3]);
-                                
+
                                     //Triangle 2
                                     parseFaceElement(words[1]);
                                     parseFaceElement(words[3]);
@@ -139,12 +135,12 @@ namespace Shard.Shard
                 }
             }
         }
-        
+
         private void parseFaceElement(string word)
         {
             string[] inds = word.Split(new char[] { '/', '/' }, StringSplitOptions.RemoveEmptyEntries);
             //foreach (var ind in inds)
-                //Console.WriteLine(ind);
+            //Console.WriteLine(ind);
 
             vertInds.Add(parseInd(inds[0]));
 
@@ -159,12 +155,12 @@ namespace Shard.Shard
         public Vector3[] getVertices() { return vertices; }
         public uint[] getIndices() { return indices; }
         public uint[] getTextureIndices() { return textureIndices; }
-        public uint[] getNormalIndices() {  return normalIndices; }
+        public uint[] getNormalIndices() { return normalIndices; }
         public float[] getVerticeColor() { return verticeColor; }
         public Vector3[] getTextureCoordinates() { return textureCoordinates; }
         public Vector3[] getVertexNormals() { return vertexNormals; }
-        public Vector3[] getParameterSpaceCoordinates() { return parameterSpaceCoordinates; }   
-        public uint[] getLineElements() { return lineElements; }    
+        public Vector3[] getParameterSpaceCoordinates() { return parameterSpaceCoordinates; }
+        public uint[] getLineElements() { return lineElements; }
 
     }
 }

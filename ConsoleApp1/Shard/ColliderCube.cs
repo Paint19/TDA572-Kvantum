@@ -6,12 +6,11 @@
 *   
 */
 
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Reflection.Metadata;
-using OpenTK.Mathematics;
 
 namespace Shard
 {
@@ -50,7 +49,7 @@ namespace Shard
         public float Y { get => myPosition.Y; set => myPosition.Y = value; }
         public float Z { get => myPosition.Z; set => myPosition.Z = value; }
 
-        public override void drawMe(Color col){}
+        public override void drawMe(Color col) { }
 
         public override Vector3? checkCollision(Vector3 other)
         {

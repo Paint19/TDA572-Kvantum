@@ -1,9 +1,4 @@
-using OpenTK.Graphics.OpenGL4;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shard
 {
@@ -31,11 +26,12 @@ namespace Shard
         }
 
 
-        
+
         public override void display()
         {
             toDraw.RemoveAll(it => it == null);
-            toDraw.ForEach(it => {
+            toDraw.ForEach(it =>
+            {
                 it.Bind();
                 it.Render();
             });

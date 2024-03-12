@@ -91,7 +91,7 @@ namespace Shard
         public bool ToBeDestroyed { get => toBeDestroyed; set => toBeDestroyed = value; }
         internal PhysicsBody MyBody { get => myBody; set => myBody = value; }
 
-       
+
 
 
         public virtual void initialize()

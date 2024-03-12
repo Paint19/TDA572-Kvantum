@@ -1,8 +1,6 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using Shard.Shard;
 using System;
-using System.Linq;
 
 namespace Shard
 {
@@ -42,18 +40,21 @@ namespace Shard
         {
             Bootstrap.getInput().addListener(this);
             camera = new Camera(Bootstrap.getDisplay().getWidth(), Bootstrap.getDisplay().getHeight(), new Vector3(0, 0, 5));
-            Bootstrap.getWindow().setActiveCamera(camera);                                    
-            
+            Bootstrap.getWindow().setActiveCamera(camera);
+
             // Game objects
-            rat = new Rat(new Vector3(0.5f, 0,0), new Vector3(-0.001f, 0,0));
+            /*rat = new Rat(new Vector3(0.5f, 0,0), new Vector3(-0.001f, 0,0));
             rat.setPhysicsEnabled();
             rat.MyBody.addColliderCube();
 
             rat1 = new Rat(new Vector3(-0.5f,0,0), new Vector3(0.001f,0,0));
             rat1.setPhysicsEnabled();
             rat1.MyBody.addColliderCube();
-            spriteTest = new SpriteTest(1,1, "spritesheet.png");
+            spriteTest = new SpriteTest(1,1, "spritesheet.png");*/
 
+            rat = new Rat(new Vector3(0, 0, 0), new Vector3(0, 0, 0));
+            rat1 = new Rat(new Vector3(1, 1, 0), new Vector3(0, 0, 0));
+            rat1.Transform.scale(0.5f);
         }
 
         public override void update()

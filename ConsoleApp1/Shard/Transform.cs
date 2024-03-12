@@ -10,10 +10,8 @@
 
 using OpenTK.Mathematics;
 using Shard.Shard;
-using System.Linq;
-using System;
 using System.Collections.Generic;
-using System.Security;
+using System.Linq;
 
 namespace Shard
 {
@@ -25,7 +23,7 @@ namespace Shard
         private string spritePath;
         private ObjectFileParser objParser;
         private ObjectRenderer renderer;
-        public ObjectFileParser getObjParser() { return  objParser; }
+        public ObjectFileParser getObjParser() { return objParser; }
 
         public ObjectRenderer getRenderer() { return renderer; }
 
@@ -75,24 +73,27 @@ namespace Shard
         public Transform(Matrix4 translateAndRotate)
         {
             this.matrix = new Matrix4(
-                translateAndRotate.Row0, 
-                translateAndRotate.Row1, 
-                translateAndRotate.Row2, 
+                translateAndRotate.Row0,
+                translateAndRotate.Row1,
+                translateAndRotate.Row2,
                 translateAndRotate.Row3);
             lastLocation = Vector3.Zero;
         }
         public Vector3 Right { get => new Vector3(matrix.Row0); }
-        public Vector3 Up { get =>  new Vector3(matrix.Row1); }
-        public Vector3 Forward { get =>  new Vector3(matrix.Row2); }
-        public Vector3 Scale { get => matrix.ExtractScale();
-            set 
+        public Vector3 Up { get => new Vector3(matrix.Row1); }
+        public Vector3 Forward { get => new Vector3(matrix.Row2); }
+        public Vector3 Scale
+        {
+            get => matrix.ExtractScale();
+            set
             {
                 Matrix4 diagonal = Matrix4.Identity;
-                diagonal.Diagonal = new Vector4(value,1);
+                diagonal.Diagonal = new Vector4(value, 1);
                 matrix = diagonal * matrix;
             }
         }
-        public Vector3 Translation {
+        public Vector3 Translation
+        {
             get => new Vector3(matrix.Column3);
             set => matrix.Column3 = new Vector4(value, 1);
         }
@@ -100,7 +101,7 @@ namespace Shard
         public Matrix3 Orientation
         {
             get => new Matrix3(matrix);
-            set 
+            set
             {
                 Vector3 translation = Translation;
                 matrix = new Matrix4(value);
@@ -115,9 +116,9 @@ namespace Shard
         public Matrix4 getConvenientMath()
         {
             return new Matrix4(
-                matrix.Row0, 
-                matrix.Row1, 
-                matrix.Row2, 
+                matrix.Row0,
+                matrix.Row1,
+                matrix.Row2,
                 matrix.Row3);
         }
 

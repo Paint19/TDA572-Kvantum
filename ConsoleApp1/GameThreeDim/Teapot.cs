@@ -1,9 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shard
 {
@@ -16,7 +11,7 @@ namespace Shard
         {
             this.Transform.initRenderer("teapot.obj");
             this.Transform.scale(0.1f);
-            this.moveDirection = new Vector3(-0.01f,-0.01f,-0.01f);
+            this.moveDirection = new Vector3(-0.01f, -0.01f, -0.01f);
         }
         public override void initialize()
         {

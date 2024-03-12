@@ -1,10 +1,5 @@
 using OpenTK.Mathematics;
-using Shard.Shard;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shard
 {
@@ -13,7 +8,7 @@ namespace Shard
         Matrix3 persistentRotationMatrix3 = Matrices.getInstance().getRotationMatrix3(0.0f, 0.01f, 0.0f);
         Vector3 moveDirection;
 
-        public Rat(Vector3 startLocation, Vector3 direction) 
+        public Rat(Vector3 startLocation, Vector3 direction)
         {
             this.Transform.initRenderer("rat.obj");
             this.Transform.scale(0.001f);

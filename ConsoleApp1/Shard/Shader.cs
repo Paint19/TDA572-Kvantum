@@ -1,11 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shard.Shard
 {
@@ -103,7 +99,7 @@ namespace Shard.Shard
 
         internal void SetMatrix4(string v, Matrix4 mat)
         {
-            GL.UniformMatrix4(GL.GetUniformLocation(Handle, v), true , ref mat);
+            GL.UniformMatrix4(GL.GetUniformLocation(Handle, v), true, ref mat);
         }
     }
 }
