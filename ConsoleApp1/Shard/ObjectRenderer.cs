@@ -49,9 +49,6 @@ namespace Shard
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
 
             // stuff about indices
-            //ElementBufferObject = GL.GenBuffer();
-            //GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
-            //GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
 
             // Set our vertex attributes pointers
             // Takes data from the latest bound VBO (memory buffer) bound to ArrayBuffer.
