@@ -16,7 +16,6 @@ namespace Shard.Shard
 
         public Texture(String path)
         {
-            Console.WriteLine(path);
 
             Handle = GL.GenTexture();
             Use();
