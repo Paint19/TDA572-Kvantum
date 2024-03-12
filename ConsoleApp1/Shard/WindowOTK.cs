@@ -102,7 +102,7 @@ namespace Shard
 
             }
 
-            Bootstrap.getAnimmationSystem().update();
+            Bootstrap.getAnimationSystem().update();
 
             Bootstrap.getRunningGame().update();
 

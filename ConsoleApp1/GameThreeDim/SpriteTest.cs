@@ -30,7 +30,7 @@ namespace Shard
         public override void update()
         {
             base.update();
-            Bootstrap.getAnimmationSystem().addToAnimate(this);
+            Bootstrap.getAnimationSystem().addToAnimate(this);
             //this.Transform.rotateVertices(persistentRotationMatrix3);
             //this.Transform.tmpMove(moveDirection);
             Bootstrap.getDisplay().addToDraw(this);

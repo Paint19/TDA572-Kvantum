@@ -109,7 +109,7 @@ namespace Shard
             return asset;
         }
 
-        public static AnimationSystem getAnimmationSystem()
+        public static AnimationSystem getAnimationSystem()
         {
             return animation;
         }
