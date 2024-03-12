@@ -22,23 +22,48 @@ namespace Shard
         private Matrix4 matrix;
         private float[] calculatedVertices;
         private Vector3 lastLocation;
+        private string spritePath;
         private ObjectFileParser objParser;
         private ObjectRenderer renderer;
-
         public ObjectFileParser getObjParser() { return  objParser; }
 
         public ObjectRenderer getRenderer() { return renderer; }
 
-        public void initRenderer(string fileName) { 
-            objParser = new ObjectFileParser(fileName);
-            renderer = new ObjectRenderer(objParser);
+        public void initRenderer(float[] vertices, float[] textCoords, string spritePath)
+        {
+            renderer = new ObjectRenderer(vertices, textCoords, spritePath);
             calculateVertices();
         }
 
-        public void initRenderer(float[] vertices, uint[] indices)
+        public void initRenderer(string fileName)
         {
-            this.calculatedVertices = vertices;
-            renderer = new ObjectRenderer(vertices, indices);
+            ObjectFileParser parser = new ObjectFileParser(fileName);
+            uint[] indices = parser.getIndices();
+            Vector3[] verts = parser.getVertices();
+
+            // Sort the vertices into an array based on the indices (This is because OpenGl can't take multiple indices)
+            List<Vector3> vert = new List<Vector3>();
+            foreach (var ind in indices)
+                vert.Add(verts[ind]);
+            float[] vertices = vert
+                    .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
+
+            // Do the same with the texture coordinates
+            uint[] textIndices = parser.getTextureIndices();
+            Vector3[] textCoords = parser.getTextureCoordinates();
+            float[] textureCoordinates;
+            if (textIndices.Length > 0)
+            {
+                List<Vector3> text = new List<Vector3>();
+                foreach (var ind in textIndices)
+                    text.Add(textCoords[ind]);
+
+                textureCoordinates = text.SelectMany(nVec => new float[] { nVec[0], nVec[1] }).ToArray();
+            }
+            else
+                textureCoordinates = textCoords.SelectMany(nVec => new float[] { nVec[0], nVec[1] }).ToArray();
+
+            renderer = new ObjectRenderer(vertices, textureCoordinates, SpritePath);
             calculateVertices();
         }
         public Transform()
@@ -152,5 +177,7 @@ namespace Shard
         }
 
         public float[] Vertices { get => calculatedVertices; }
+
+        public string SpritePath { get => spritePath; set => spritePath = value; }
     }
 }

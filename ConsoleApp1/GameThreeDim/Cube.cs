@@ -18,7 +18,6 @@ namespace Shard
             this.Transform.initRenderer("cube.obj");
             this.Transform.scale(0.5f);
             this.Transform.rotate(skewMatrix);
-
         }
         public Cube(Matrix3 rotation)
         {

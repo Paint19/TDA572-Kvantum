@@ -1,10 +1,10 @@
-﻿using OpenTK.Mathematics;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using Shard.Shard;
 using System;
 using System.Linq;
 
-namespace Shard
+namespace Shard.GameThreeDim
 {
     class GameThreeDim : Game, InputListener
     {
@@ -12,6 +12,7 @@ namespace Shard
         Rat rat1;
         Cube aube, bube, cube, dube;
         Teapot teapot;
+        SpriteTest spriteTest;
 
 
         // CAMERA
@@ -32,8 +33,8 @@ namespace Shard
             Bootstrap.getInput().addListener(this);
             camera = new Camera(Bootstrap.getDisplay().getWidth(), Bootstrap.getDisplay().getHeight(), new Vector3(0, 0, 5));
 
-            Bootstrap.getWindow().setActiveCamera(camera);
-
+            Bootstrap.getWindow().setActiveCamera(camera);                                    
+            
             // Game objects
             rat = new Rat(new Vector3(0.5f, 0,0), new Vector3(-0.001f, 0,0));
             rat.setPhysicsEnabled();
@@ -42,9 +43,8 @@ namespace Shard
             rat1 = new Rat(new Vector3(-0.5f,0,0), new Vector3(0.001f,0,0));
             rat1.setPhysicsEnabled();
             rat1.MyBody.addColliderCube();
-            //bube = new Cube();
-            //cube = new Cube(new Vector3(0.0005f, 0.0005f, 0.001f));
-            //dube = new Cube(new Vector3(-0.002f), Matrices.getInstance().getRotationMatrix3(0.5f, 0.5f, 0.5f));
+            spriteTest = new SpriteTest(1,1, "spritesheet.png");
+
         }
 
         public override void update()
@@ -88,6 +88,10 @@ namespace Shard
                 {
                     goLeft = true;
                 }
+                if (inp.Key == (int)Keys.S)
+                {
+                    goDown = true;
+                }
 
             }
             else if (eventType == "KeyUp")
@@ -101,6 +105,10 @@ namespace Shard
                 if (inp.Key == (int)Keys.A)
                 {
                     goLeft = false;
+                }
+                if (inp.Key == (int)Keys.S)
+                {
+                    goDown = false;
                 }
             }
 

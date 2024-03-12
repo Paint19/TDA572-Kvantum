@@ -1,4 +1,4 @@
-﻿using OpenTK.Mathematics;
+using OpenTK.Mathematics;
 using Shard.Shard;
 using System;
 using System.Collections.Generic;

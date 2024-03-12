@@ -50,32 +50,7 @@ namespace Shard
         public float Y { get => myPosition.Y; set => myPosition.Y = value; }
         public float Z { get => myPosition.Z; set => myPosition.Z = value; }
 
-        public override void drawMe(Color col)
-        {
-            float minx, miny, minz, maxx, maxy, maxz;
-            minDimensions.Deconstruct(out minx, out miny, out minz);
-            maxDimensions.Deconstruct(out maxx, out maxy, out maxz);
-            float[] vertices = [
-                minx, miny, minz, 
-                minx, miny, maxz,
-                minx, maxy, minz,
-                minx, maxy, maxz,
-                maxx, miny, minz,
-                maxx, miny, maxz,
-                maxx, maxy, minz,
-                maxx, maxy, maxz
-                ];
-            uint[] indices = [
-                1,2,3,
-                4,5,6
-                ];
-
-            Transform trans = new Transform();
-            trans.initRenderer(vertices, indices) ;
-            trans.setCalculatedVerticesToRender(vertices);
-            Bootstrap.getDisplay().addToDraw(trans.getRenderer());
-            //Console.WriteLine("got to render collision box between" + minDimensions.ToString() + maxDimensions.ToString());
-        }
+        public override void drawMe(Color col){}
 
         public override Vector3? checkCollision(Vector3 other)
         {

@@ -1,4 +1,4 @@
-﻿using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using Shard.Shard;
@@ -102,7 +102,11 @@ namespace Shard
 
             }
 
+            Bootstrap.getAnimationSystem().update();
+
             Bootstrap.getRunningGame().update();
+
+
 
             timeInMillisecondsEnd = Bootstrap.getCurrentMillis();
             Bootstrap.setDeltaTime((timeInMillisecondsEnd - timeInMillisecondsStart) / 1000.0f); // Dunno if this is right. Not sure what deltaTime should be
