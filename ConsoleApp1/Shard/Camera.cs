@@ -39,6 +39,12 @@ namespace Shard
             position = pos;
         }
 
+        public void setVectors(Vector3 up, Vector3 front)
+        {
+            this.up = up;
+            this.front = front;
+        }
+
         public Vector3 getPosition() {  return position; }  
 
     }
