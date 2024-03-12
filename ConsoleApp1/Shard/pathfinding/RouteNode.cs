@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shard.Shard.pathfinding
+namespace Shard.pathfinding
 {
     class RouteNode<T> : IComparable<RouteNode<T>> where T : GraphNode
     {

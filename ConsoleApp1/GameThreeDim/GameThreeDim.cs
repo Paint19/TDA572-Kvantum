@@ -10,7 +10,7 @@ namespace Shard
     {
         Rat rat;
         Rat rat1;
-        Cube cube;
+        Cube aube, bube, cube, dube;
         Teapot teapot;
         SpriteTest spriteTest;
 
@@ -38,11 +38,15 @@ namespace Shard
             Bootstrap.getWindow().setActiveCamera(camera);                                    
             
             // Game objects
-            rat = new Rat(-0.001f);
-            //rat1 = new Rat(0.001f);
-            cube = new Cube();
-            //teapot = new Teapot(0.0001f);
-            //spriteTest = new SpriteTest(1,1, "spritesheet.png");
+            rat = new Rat(new Vector3(0.5f, 0,0), new Vector3(-0.001f, 0,0));
+            rat.setPhysicsEnabled();
+            rat.MyBody.addColliderCube();
+
+            rat1 = new Rat(new Vector3(-0.5f,0,0), new Vector3(0.001f,0,0));
+            rat1.setPhysicsEnabled();
+            rat1.MyBody.addColliderCube();
+            spriteTest = new SpriteTest(1,1, "spritesheet.png");
+
         }
 
         public override void update()

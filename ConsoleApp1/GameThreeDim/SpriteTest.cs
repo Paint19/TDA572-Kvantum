@@ -16,7 +16,7 @@ namespace Shard
 
         public SpriteTest(float h, float w, String spritePath) : base(h, w, 0,0,1,1, spritePath)
         {
-            Bootstrap.getDisplay().addToDraw(this);
+            Bootstrap.getDisplay().addToDraw(this.Transform.getRenderer());
             //this.Transform.tmpChangeSize(0.1f);
             this.moveDirection = 1;
             Animation = new Animation(6, 10, 0, false);
@@ -33,7 +33,7 @@ namespace Shard
             Bootstrap.getAnimationSystem().addToAnimate(this);
             //this.Transform.rotateVertices(persistentRotationMatrix3);
             //this.Transform.tmpMove(moveDirection);
-            Bootstrap.getDisplay().addToDraw(this);
+            Bootstrap.getDisplay().addToDraw(this.Transform.getRenderer());
         }
     }
 }

@@ -25,19 +25,18 @@ namespace Shard
         private int textureVBO;
 
         private bool initialized = false;
-        private float[] vertices;
+        private float[] vertices, originalVertices;
         private float[] textureCoordinates;
 
         Texture texture;
 
         public ObjectRenderer(float[] vertices, float[] textCoords, string texturePath)
         {
+            originalVertices = vertices.Select(it => it).ToArray();
             this.vertices = vertices;
             this.textureCoordinates = textCoords;
             if(texturePath is not null)
                 texture = new Texture(Bootstrap.getAssetManager().getAssetPath(texturePath));
-
-            //mergeVerticesWithTextCoord();
 
             VertexBufferObject = GL.GenBuffer();
             VertexArrayObject = GL.GenVertexArray();
@@ -121,6 +120,10 @@ namespace Shard
         }
 
         public float[] getVertices() { return vertices; }
+
+        public float[] Vertices { get { return vertices; } }
+
+        public float[] OriginalVertices { get { return originalVertices; } }
         public void setVertices(float[] verts) { vertices = verts; }
         
         public void setTextCoords(float[] textCoords) 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shard.Shard.pathfinding
+namespace Shard.pathfinding
 {
     class Graph<T> where T:GraphNode
     {
@@ -17,7 +17,7 @@ namespace Shard.Shard.pathfinding
         }
 
         public List<T> getConnections(string id) {
-            return connections[id].Select(id => getNode(id)).ToList();
+            return connections[id].Select(it => getNode(it)).ToList();
         }
     }
 }

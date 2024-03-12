@@ -1,155 +1,183 @@
 ﻿/*
 *
-*   The transform class handles position, independent of physics and forces (although the physics
-*       system will make use of the rotation and translation functions here).  Essentially this class
-*       is a game object's location (X, Y), rotation and scale.  Usefully it also calculates the 
-*       centre of an object as well as relative directions such as forwards and right.  If you want 
-*       backwards and left, multiply forward or right by -1.
+*   Our game engine functions in 2D, but all its features except for graphics can mostly be extended
+*       from existing data structures.
 *       
 *   @author Michael Heron
 *   @version 1.0
 *   
 */
 
-
+using OpenTK.Mathematics;
+using Shard.Shard;
+using System.Linq;
 using System;
-using System.Numerics;
+using System.Collections.Generic;
+using System.Security;
 
 namespace Shard
 {
-
     class Transform
     {
-        private GameObject owner;
-        private float x, y;
-        private float lx, ly;
-        private float rotz;
-        private int wid, ht;
-        private float scalex, scaley;
+        private Matrix4 matrix;
+        private float[] calculatedVertices;
+        private Vector3 lastLocation;
         private string spritePath;
-        private Vector2 forward;
-        private Vector2 right, centre;
+        private ObjectFileParser objParser;
+        private ObjectRenderer renderer;
+        public ObjectFileParser getObjParser() { return  objParser; }
 
+        public ObjectRenderer getRenderer() { return renderer; }
 
-        public Vector2 getLastDirection()
+        public void initRenderer(float[] vertices, float[] textCoords, string spritePath)
         {
-            float dx, dy;
-            dx = (X - Lx);
-            dy = (Y - Ly);
-
-            return new Vector2(-dx, -dy);
+            renderer = new ObjectRenderer(vertices, textCoords, spritePath);
+            calculateVertices();
         }
 
-        public Transform(GameObject ow)
+        public void initRenderer(string fileName)
         {
-            Owner = ow;
-            forward = new Vector2();
-            right = new Vector2();
-            centre = new Vector2();
+            ObjectFileParser parser = new ObjectFileParser(fileName);
+            uint[] indices = parser.getIndices();
+            Vector3[] verts = parser.getVertices();
 
-            scalex = 1.0f;
-            scaley = 1.0f;
+            // Sort the vertices into an array based on the indices (This is because OpenGl can't take multiple indices)
+            List<Vector3> vert = new List<Vector3>();
+            foreach (var ind in indices)
+                vert.Add(verts[ind]);
+            float[] vertices = vert
+                    .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
 
-            x = 0;
-            y = 0;
+            // Do the same with the texture coordinates
+            uint[] textIndices = parser.getTextureIndices();
+            Vector3[] textCoords = parser.getTextureCoordinates();
+            float[] textureCoordinates;
+            if (textIndices.Length > 0)
+            {
+                List<Vector3> text = new List<Vector3>();
+                foreach (var ind in textIndices)
+                    text.Add(textCoords[ind]);
 
-            lx = 0;
-            ly = 0;
+                textureCoordinates = text.SelectMany(nVec => new float[] { nVec[0], nVec[1] }).ToArray();
+            }
+            else
+                textureCoordinates = textCoords.SelectMany(nVec => new float[] { nVec[0], nVec[1] }).ToArray();
 
-            rotate(0);
+            renderer = new ObjectRenderer(vertices, textureCoordinates, SpritePath);
+            calculateVertices();
         }
-
-
-        public void recalculateCentre()
+        public Transform()
         {
-
-            centre.X = (float)(x + ((this.Wid * scalex) / 2));
-            centre.Y = (float)(y + ((this.Ht * scaley) / 2));
-
-        }
-
-        public void translate(double nx, double ny)
-        {
-            translate ((float)nx, (float)ny);
-        }
-
-
-
-        public void translate(float nx, float ny)
-        {
-            Lx = X;
-            Ly = Y;
-
-            x += (float)nx;
-            y += (float)ny;
-
-
-            recalculateCentre();
-        }
-
-        public void translate(Vector2 vect)
-        {
-            translate(vect.X, vect.Y);
-        }
-
-
-
-        public void rotate(float dir)
-        {
-            rotz += (float)dir;
-
-            rotz %= 360;
-
-            float angle = (float)(Math.PI * rotz / 180.0f);
-            float sin = (float)Math.Sin(angle);
-            float cos = (float)Math.Cos(angle);
-
-            forward.X = cos;
-            forward.Y = sin;
-
-
-            right.X = -1 * forward.Y;
-            right.Y = forward.X;
-
-
-
+            this.matrix = Matrix4.Identity;
+            this.lastLocation = Vector3.Zero;
 
         }
-
-
-
-        public float X
+        public Transform(Matrix4 translateAndRotate)
         {
-            get => x;
-            set => x = value;
+            this.matrix = new Matrix4(
+                translateAndRotate.Row0, 
+                translateAndRotate.Row1, 
+                translateAndRotate.Row2, 
+                translateAndRotate.Row3);
+            lastLocation = Vector3.Zero;
         }
-        public float Y
-        {
-            get => y;
-            set => y = value;
+        public Vector3 Right { get => new Vector3(matrix.Row0); }
+        public Vector3 Up { get =>  new Vector3(matrix.Row1); }
+        public Vector3 Forward { get =>  new Vector3(matrix.Row2); }
+        public Vector3 Scale { get => matrix.ExtractScale();
+            set 
+            {
+                Matrix4 diagonal = Matrix4.Identity;
+                diagonal.Diagonal = new Vector4(value,1);
+                matrix = diagonal * matrix;
+            }
+        }
+        public Vector3 Translation {
+            get => new Vector3(matrix.Column3);
+            set => matrix.Column3 = new Vector4(value, 1);
         }
 
-        public float Rotz
+        public Matrix3 Orientation
         {
-            get => rotz;
-            set => rotz = value;
+            get => new Matrix3(matrix);
+            set 
+            {
+                Vector3 translation = Translation;
+                matrix = new Matrix4(value);
+                Translation = translation;
+            }
+        }
+        public Vector3 getLastDirection()
+        {
+            return lastLocation - Translation;
         }
 
-
-        public string SpritePath
+        public Matrix4 getConvenientMath()
         {
-            get => spritePath;
-            set => spritePath = value;
+            return new Matrix4(
+                matrix.Row0, 
+                matrix.Row1, 
+                matrix.Row2, 
+                matrix.Row3);
         }
-        public ref Vector2 Forward { get => ref forward; }
-        public int Wid { get => wid; set => wid = value; }
-        public int Ht { get => ht; set => ht = value; }
-        public ref Vector2 Right { get => ref right; }
-        internal GameObject Owner { get => owner; set => owner = value; }
-        public ref Vector2 Centre { get => ref centre; }
-        public float Scalex { get => scalex; set => scalex = value; }
-        public float Scaley { get => scaley; set => scaley = value; }
-        public float Lx { get => lx; set => lx = value; }
-        public float Ly { get => ly; set => ly = value; }
+
+        public void calculateVertices()
+        {
+            calculatedVertices = renderer
+                .OriginalVertices
+                .Chunk(3)
+                .Select(vert => matrix * new Vector4(vert[0], vert[1], vert[2], 1))
+                .SelectMany(vec => new float[] { vec.X, vec.Y, vec.Z }).ToArray();
+        }
+
+        public IEnumerable<Vector3> getVerticesAsVectors()
+        {
+            return renderer
+                .OriginalVertices
+                .Chunk(3)
+                .Select(arr => new Vector3(arr[0], arr[1], arr[2]));
+        }
+
+        public void setCalculatedVerticesToRender()
+        {
+            renderer.setVertices(calculatedVertices);
+        }
+
+        public void setCalculatedVerticesToRender(float[] vertices)
+        {
+            renderer.setVertices(vertices);
+        }
+        public void rotate(float pitch, float yaw, float roll)
+        {
+            Matrix3 matrix = Matrices.getInstance().getRotationMatrix3(pitch, yaw, roll);
+            rotate(matrix);
+        }
+        public void rotate(Matrix3 rotMatrix)
+        {
+            Orientation = rotMatrix * Orientation;
+        }
+        public void translate(Vector3 translation)
+        {
+            lastLocation = Translation;
+            Translation = lastLocation + translation;
+        }
+
+        public void translateAbsolute(Vector3 location)
+        {
+            Translation = location;
+        }
+
+        public void scale(Vector3 scale)
+        {
+            Scale = scale;
+        }
+        public void scale(float scalar)
+        {
+            scale(new Vector3(scalar));
+        }
+
+        public float[] Vertices { get => calculatedVertices; }
+
+        public string SpritePath { get => spritePath; set => spritePath = value; }
     }
 }
