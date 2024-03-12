@@ -54,7 +54,7 @@ namespace Shard
             this.Transform.translate(movementDirection);
             this.Transform.calculateVertices();
             this.Transform.setCalculatedVerticesToRender();
-            Bootstrap.getDisplay().addToDraw(this);
+            Bootstrap.getDisplay().addToDraw(Transform.getRenderer());
         }
     }
 }
