@@ -35,10 +35,12 @@ namespace Shard
             Bootstrap.getWindow().setActiveCamera(camera);
 
             // Game objects
-            aube = new Cube(new Vector3(0.001f,0,0));
-            bube = new Cube();
-            cube = new Cube(new Vector3(0.0005f, 0.0005f, 0.001f));
-            dube = new Cube(new Vector3(-0.002f), Matrices.getInstance().getRotationMatrix3(0.5f, 0.5f, 0.5f));
+            rat = new Rat(0);
+            rat.setPhysicsEnabled();
+            rat.MyBody.addColliderCube();
+            //bube = new Cube();
+            //cube = new Cube(new Vector3(0.0005f, 0.0005f, 0.001f));
+            //dube = new Cube(new Vector3(-0.002f), Matrices.getInstance().getRotationMatrix3(0.5f, 0.5f, 0.5f));
         }
 
         public override void update()

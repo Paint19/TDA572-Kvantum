@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Metadata;
 using OpenTK.Mathematics;
 
 namespace Shard
@@ -51,7 +52,28 @@ namespace Shard
 
         public override void drawMe(Color col)
         {
-            throw new NotImplementedException();
+            float minx, miny, minz, maxx, maxy, maxz;
+            minDimensions.Deconstruct(out minx, out miny, out minz);
+            maxDimensions.Deconstruct(out maxx, out maxy, out maxz);
+            float[] vertices = [
+                minx, miny, minz, 
+                minx, miny, maxz,
+                minx, maxy, minz,
+                minx, maxy, maxz,
+                maxx, miny, minz,
+                maxx, miny, maxz,
+                maxx, maxy, minz,
+                maxx, maxy, maxz
+                ];
+            uint[] indices = [
+                1,2,3,
+                6,7,8];
+
+            Transform trans = new Transform();
+            trans.initRenderer(vertices, indices) ;
+            //trans.setCalculatedVerticesToRender(vertices);
+            Bootstrap.getDisplay().addToDraw(trans.getRenderer());
+            trans.setCalculatedVerticesToRender(vertices);
         }
 
         public override Vector3? checkCollision(Vector3 other)

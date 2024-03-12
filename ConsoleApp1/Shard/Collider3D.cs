@@ -95,5 +95,12 @@ namespace Shard
             //doing these as guarding statements to hopefully exit early on a miss
             return true;
         }
+
+        public void update()
+        {
+            Color defaultColor = Color.Red;
+            calculateBoundingBox();
+            drawMe(defaultColor);
+        }
     }
 }

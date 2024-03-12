@@ -112,7 +112,7 @@ namespace Shard
                 min = Math.Min(col.minDimensions[index], min);
                 max = Math.Max(col.maxDimensions[index], max);
             }
-            return new float[2] { min, max };
+            return [min, max];
         }
 
         public PhysicsBody(GameObject p)
@@ -138,6 +138,7 @@ namespace Shard
 
             MinAndMaxX = new float[2];
             MinAndMaxY = new float[2];
+            MinAndMaxZ = new float[2];
 
             timeInterval = PhysicsManager.getInstance().TimeInterval;
             //            Debug.getInstance().log ("Setting physics enabled");

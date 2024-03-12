@@ -13,6 +13,7 @@ using Shard.Shard;
 using System.Linq;
 using System;
 using System.Collections.Generic;
+using System.Security;
 
 namespace Shard
 {
@@ -31,6 +32,11 @@ namespace Shard
         public void initRenderer(string fileName) { 
             objParser = new ObjectFileParser(fileName);
             renderer = new ObjectRenderer(objParser);
+        }
+
+        public void initRenderer(float[] vertices, uint[] indices)
+        {
+            renderer = new ObjectRenderer(vertices, indices);
         }
         public Transform()
         {
@@ -106,6 +112,11 @@ namespace Shard
         public void setCalculatedVerticesToRender()
         {
             renderer.setVertices(calculatedVertices);
+        }
+
+        public void setCalculatedVerticesToRender(float[] vertices)
+        {
+            renderer.setVertices(vertices);
         }
         public void rotate(float pitch, float yaw, float roll)
         {
