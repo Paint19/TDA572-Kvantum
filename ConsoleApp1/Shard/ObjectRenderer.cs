@@ -91,7 +91,6 @@ namespace Shard
 
         public void Render()
         {
-            //GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0); // For DrawShape rather than drawtriangle
             GL.DrawArrays(PrimitiveType.Triangles, 0, vertices.Length);
 
             // Unbinding buffers
