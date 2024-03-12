@@ -62,7 +62,7 @@ namespace Shard
         {
         }
 
-        public virtual void addToDraw(GameObject gob)
+        public virtual void addToDraw(ObjectRenderer gob)
         {
         }
 

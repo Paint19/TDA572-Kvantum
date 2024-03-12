@@ -107,6 +107,11 @@ namespace Shard
         {
             renderer.setVertices(calculatedVertices);
         }
+
+        public void setCalculatedVerticesToRender(float[] vertices)
+        {
+            renderer.setVertices(vertices);
+        }
         public void rotate(float pitch, float yaw, float roll)
         {
             Matrix3 matrix = Matrices.getInstance().getRotationMatrix3(pitch, yaw, roll);
