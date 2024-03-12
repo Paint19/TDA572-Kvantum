@@ -74,7 +74,7 @@ namespace Shard
             trans.initRenderer(vertices, indices) ;
             trans.setCalculatedVerticesToRender(vertices);
             Bootstrap.getDisplay().addToDraw(trans.getRenderer());
-            Console.WriteLine("got to render collision box between" + minDimensions.ToString() + maxDimensions.ToString());
+            //Console.WriteLine("got to render collision box between" + minDimensions.ToString() + maxDimensions.ToString());
         }
 
         public override Vector3? checkCollision(Vector3 other)
