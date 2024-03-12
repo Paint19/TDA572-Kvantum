@@ -1,4 +1,4 @@
-﻿/*
+/*
 *
 *   The Bootstrap - this loads the config file, processes it and then starts the game loop
 *   @author Michael Heron
@@ -9,6 +9,7 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using Shard.Shard.Animation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,11 +30,14 @@ namespace Shard
         private static bool physDebug = false;
         private static PhysicsManager phys;
         private static AssetManagerBase asset;
+        private static AnimationSystem animation;
 
         private static int targetFrameRate;
         private static double deltaTime;
         private static string baseDir;
         private static Dictionary<string,string> enVars;
+
+        private static long timeStarted;
 
         public static bool checkEnvironmentalVariable (string id) {
             return enVars.ContainsKey (id);
@@ -59,6 +63,7 @@ namespace Shard
 
             setupEnvironmentalVariables(baseDir + "\\" + "envar.cfg");
             setup(baseDir + "\\" + DEFAULT_CONFIG);
+            timeStarted = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
         }
 
@@ -102,6 +107,11 @@ namespace Shard
 
         public static AssetManagerBase getAssetManager() {
             return asset;
+        }
+
+        public static AnimationSystem getAnimationSystem()
+        {
+            return animation;
         }
 
         public static Game getRunningGame()
@@ -157,7 +167,10 @@ namespace Shard
                         input = (InputSystem)ob;
                         input.initialize();
                         break;
-
+                    case "animation":
+                        animation = (AnimationSystem)ob;
+                        animation.initialize();
+                        break;
                 }
 
                 Debug.getInstance().log("Config file... setting " + kvp.Key + " to " + kvp.Value);
@@ -181,17 +194,27 @@ namespace Shard
                 bailOut = true;
             }
 
+            if (animation == null)
+            {
+                Debug.getInstance().log("No animation system set", Debug.DEBUG_LEVEL_ERROR);
+                bailOut = true;
+            }
+
             if (bailOut)
             {
                 Environment.Exit(0);
             }
         }
-
+        
         public static long getCurrentMillis()
         {
             return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
         }
 
+        public static long getTimeSinceSetup()
+        {
+            return (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - timeStarted;
+        }
         public static WindowOTK getWindow(){ return window; }   // sus
 
         static void Main(string[] args)

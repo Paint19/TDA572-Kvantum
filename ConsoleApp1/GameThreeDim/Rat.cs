@@ -1,4 +1,4 @@
-﻿using OpenTK.Mathematics;
+using OpenTK.Mathematics;
 using Shard.Shard;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,8 @@ namespace Shard
 
         public Rat(float dir) 
         {
-            this.Transform.initRenderer("rat.obj");
+            this.Transform.SpritePath = "whale.jpg";
+            this.Transform.initRenderer("whale.obj");
             this.Transform.tmpChangeSize(0.001f);
             this.moveDirection = dir;
         }

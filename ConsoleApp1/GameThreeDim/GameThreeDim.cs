@@ -1,4 +1,4 @@
-﻿using OpenTK.Mathematics;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using Shard.Shard;
 using System;
@@ -12,6 +12,7 @@ namespace Shard
         Rat rat1;
         Cube cube;
         Teapot teapot;
+        SpriteTest spriteTest;
 
 
         // CAMERA
@@ -32,13 +33,14 @@ namespace Shard
             Bootstrap.getInput().addListener(this);
             camera = new Camera(Bootstrap.getDisplay().getWidth(), Bootstrap.getDisplay().getHeight(), new Vector3(0, 0, 5));
 
-            Bootstrap.getWindow().setActiveCamera(camera);
-
+            Bootstrap.getWindow().setActiveCamera(camera);                                    
+            
             // Game objects
             rat = new Rat(-0.001f);
-            rat1 = new Rat(0.001f);
+            //rat1 = new Rat(0.001f);
             cube = new Cube();
-            teapot = new Teapot(0.0001f);
+            //teapot = new Teapot(0.0001f);
+            //spriteTest = new SpriteTest(1,1, "spritesheet.png");
         }
 
         public override void update()
@@ -82,6 +84,10 @@ namespace Shard
                 {
                     goLeft = true;
                 }
+                if (inp.Key == (int)Keys.S)
+                {
+                    goDown = true;
+                }
 
             }
             else if (eventType == "KeyUp")
@@ -95,6 +101,10 @@ namespace Shard
                 if (inp.Key == (int)Keys.A)
                 {
                     goLeft = false;
+                }
+                if (inp.Key == (int)Keys.S)
+                {
+                    goDown = false;
                 }
             }
 

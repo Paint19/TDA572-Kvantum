@@ -22,18 +22,22 @@ namespace Shard
         private int VertexBufferObject;
         private int ElementBufferObject;
         private int VertexArrayObject;
+        private int textureVBO;
 
         private bool initialized = false;
         private float[] vertices;
-        private uint[] indices;
+        private float[] textureCoordinates;
 
-        public ObjectRenderer(ObjectFileParser parser)
+        Texture texture;
+
+        public ObjectRenderer(float[] vertices, float[] textCoords, string texturePath)
         {
-            indices = parser.getIndices();
-            Vector3[] verts = parser.getVertices();
-            vertices = verts
-                    .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
+            this.vertices = vertices;
+            this.textureCoordinates = textCoords;
+            if(texturePath is not null)
+                texture = new Texture(Bootstrap.getAssetManager().getAssetPath(texturePath));
 
+            //mergeVerticesWithTextCoord();
 
             VertexBufferObject = GL.GenBuffer();
             VertexArrayObject = GL.GenVertexArray();
@@ -45,17 +49,31 @@ namespace Shard
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
 
             // stuff about indices
-            ElementBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw); 
 
             // Set our vertex attributes pointers
             // Takes data from the latest bound VBO (memory buffer) bound to ArrayBuffer.
             // The first parameter is the location of the vertex attribute. Defined in shader.vert.
             // Dynamically retrieving shader layout would require some changes.
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
-
+            
             GL.EnableVertexAttribArray(0);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            
+            // -- Texture -- 
+
+            // Generate a vertice object buffer for the texture coordinates
+            textureVBO = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, textureVBO);
+            GL.BufferData(BufferTarget.ArrayBuffer, textureCoordinates.Length * sizeof(float), textureCoordinates, BufferUsageHint.StaticDraw);
+
+
+            // Put the texture Coordinates in slot 1 of the VAO
+            int texCoordLocation = 1;
+            //GL.EnableVertexAttribArray(1);
+            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
+            GL.EnableVertexArrayAttrib(VertexArrayObject, texCoordLocation);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             initialized = true;
         }
@@ -65,14 +83,15 @@ namespace Shard
             // Re-binding things:
             GL.BindVertexArray(VertexArrayObject);
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
+            if(texture is not null)
+                texture.Use();
 
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
         }
 
         public void Render()
         {
-            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0); // For DrawShape rather than drawtriangle
+            GL.DrawArrays(PrimitiveType.Triangles, 0, vertices.Length);
 
             // Unbinding buffers
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
@@ -103,5 +122,13 @@ namespace Shard
 
         public float[] getVertices() { return vertices; }
         public void setVertices(float[] verts) { vertices = verts; }
+        
+        public void setTextCoords(float[] textCoords) 
+        { 
+            textureCoordinates = textCoords;
+            GL.BindBuffer(BufferTarget.ArrayBuffer, textureVBO);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, 0, textureCoordinates.Length * sizeof(float), textureCoordinates);
+        }
     }
+
 }

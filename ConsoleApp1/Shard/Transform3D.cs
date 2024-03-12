@@ -10,7 +10,10 @@
 
 using OpenTK.Mathematics;
 using Shard.Shard;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Shard
 {
@@ -28,8 +31,52 @@ namespace Shard
         public ObjectRenderer getRenderer() { return renderer; }
 
         public void initRenderer(string fileName) { 
-            objParser = new ObjectFileParser(fileName);
-            renderer = new ObjectRenderer(objParser);
+            ObjectFileParser parser = new ObjectFileParser(fileName);
+            uint[] indices = parser.getIndices();
+            Vector3[] verts = parser.getVertices();
+
+            // Sort the vertices into an array based on the indices (This is because OpenGl can't take multiple indices)
+            List<Vector3> vert = new List<Vector3>();
+            foreach (var ind in indices)
+                vert.Add(verts[ind]);
+            float[] vertices = vert
+                    .SelectMany(nVec => new float[] { nVec[0], nVec[1], nVec[2] }).ToArray();
+
+            // Do the same with the texture coordinates
+            uint[] textIndices = parser.getTextureIndices();
+            Vector3[] textCoords = parser.getTextureCoordinates();
+            float[] textureCoordinates;
+            if (textIndices.Length > 0)
+            {
+                List<Vector3> text = new List<Vector3>();
+                foreach (var ind in textIndices)
+                    text.Add(textCoords[ind]);
+            
+                textureCoordinates = text.SelectMany(nVec => new float[] { nVec[0], nVec[1] }).ToArray();
+            }
+            else
+                textureCoordinates = textCoords.SelectMany(nVec => new float[] { nVec[0], nVec[1] }).ToArray();
+
+            renderer = new ObjectRenderer(vertices, textureCoordinates, SpritePath);
+        }
+
+        public void initRenderer(float[] vertices, uint[] indices, float[] textCoords, string spritePath)
+        {
+            List<float> vert = new List<float>();
+            List<float> text = new List<float>();
+            foreach (var ind in indices)
+            {
+                vert.Add(vertices[3*ind]);
+                vert.Add(vertices[(3*ind) +1]);
+                vert.Add(vertices[(3*ind) +2]);
+                text.Add(textCoords[2*ind]);
+                text.Add(textCoords[2*ind +1]);
+                text.Add(0);
+            }
+            float[] verts = vert.ToArray();
+            float[] textureCoordinates = text.ToArray();
+            
+            renderer = new ObjectRenderer(verts, textureCoordinates, spritePath);
         }
 
         public Transform3D(GameObject o) : base(o)
