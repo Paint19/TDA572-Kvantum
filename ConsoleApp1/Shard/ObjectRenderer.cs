@@ -23,7 +23,6 @@ namespace Shard
         private int ElementBufferObject;
         private int VertexArrayObject;
         private int textureVBO;
-        private int textEBO;
 
         private bool initialized = false;
         private float[] vertices;

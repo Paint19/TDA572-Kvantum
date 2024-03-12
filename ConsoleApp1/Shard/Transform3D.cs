@@ -63,10 +63,20 @@ namespace Shard
         public void initRenderer(float[] vertices, uint[] indices, float[] textCoords, string spritePath)
         {
             List<float> vert = new List<float>();
+            List<float> text = new List<float>();
             foreach (var ind in indices)
-                vert.Add(vertices[ind]);
+            {
+                vert.Add(vertices[3*ind]);
+                vert.Add(vertices[(3*ind) +1]);
+                vert.Add(vertices[(3*ind) +2]);
+                text.Add(textCoords[2*ind]);
+                text.Add(textCoords[2*ind +1]);
+                text.Add(0);
+            }
             float[] verts = vert.ToArray();
-            renderer = new ObjectRenderer(verts, textCoords, spritePath);
+            float[] textureCoordinates = text.ToArray();
+            
+            renderer = new ObjectRenderer(verts, textureCoordinates, spritePath);
         }
 
         public Transform3D(GameObject o) : base(o)
