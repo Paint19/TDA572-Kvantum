@@ -15,9 +15,9 @@ namespace Shard
 
         public Rat(float dir) 
         {
-            this.Transform.SpritePath = "whale.jpg";
-            this.Transform.initRenderer("whale.obj");
-            this.Transform.tmpChangeSize(0.001f);
+            this.Transform.SpritePath = "cheese.jpg";
+            this.Transform.initRenderer("cheese.obj");
+            this.Transform.tmpChangeSize(0.1f);
             this.moveDirection = dir;
         }
         public override void initialize()

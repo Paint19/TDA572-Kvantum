@@ -40,7 +40,7 @@ namespace Shard
             //rat1 = new Rat(0.001f);
             cube = new Cube();
             //teapot = new Teapot(0.0001f);
-            spriteTest = new SpriteTest(1,1, "spritesheet.png");
+            //spriteTest = new SpriteTest(1,1, "spritesheet.png");
         }
 
         public override void update()
@@ -73,42 +73,37 @@ namespace Shard
         {
 
             if (eventType == "KeyDown")
-            {
+                configMovement(inp, true);
 
-                if (inp.Key == (int)Keys.D)
-                {
-                    goRight = true;
-                }
-
-                if (inp.Key == (int)Keys.A)
-                {
-                    goLeft = true;
-                }
-                if (inp.Key == (int)Keys.S)
-                {
-                    goDown = true;
-                }
-
-            }
             else if (eventType == "KeyUp")
+                configMovement(inp, false);
+
+
+        }
+
+        private void configMovement(InputEvent inp, bool isTrue)
+        {
+            switch (inp.Key)
             {
-
-
-                if (inp.Key == (int)Keys.D)
-                {
-                    goRight = false;
-                }
-                if (inp.Key == (int)Keys.A)
-                {
-                    goLeft = false;
-                }
-                if (inp.Key == (int)Keys.S)
-                {
-                    goDown = false;
-                }
+                case (int)Keys.D:
+                    goRight = isTrue;
+                    break;
+                case (int)Keys.A:
+                    goLeft = isTrue;
+                    break;
+                case (int)Keys.W:
+                    goForward = isTrue;
+                    break;
+                case (int)Keys.S:
+                    goBack = isTrue;
+                    break;
+                case (int)Keys.E:
+                    goUp = isTrue;
+                    break;
+                case (int)Keys.Q:
+                    goDown = isTrue;
+                    break;
             }
-
-
         }
     }
 }
