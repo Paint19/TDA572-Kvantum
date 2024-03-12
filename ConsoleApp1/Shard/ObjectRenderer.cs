@@ -83,7 +83,6 @@ namespace Shard
             // Re-binding things:
             GL.BindVertexArray(VertexArrayObject);
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-            //GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
             if(texture is not null)
                 texture.Use();
 
