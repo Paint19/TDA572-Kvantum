@@ -13,7 +13,9 @@ namespace Shard
         Cube aube, bube, cube, dube;
         Teapot teapot;
         SpriteTest spriteTest;
+        
         Cheese cheese;
+        Player player;
 
 
         // CAMERA
@@ -26,7 +28,7 @@ namespace Shard
         private Vector3 up = Vector3.UnitY;
         private Vector3 front = -Vector3.UnitZ;
         private Vector3 right = Vector3.UnitX;
-        private float speed = 4f;
+        private float speed = 2f;
         private Vector3 camPos;
 
         private Camera camera;
@@ -35,7 +37,7 @@ namespace Shard
         private float pitch;
         private float yaw = -90.0f;
         private bool firstMove = true;
-        private float sensitivity = 10f;
+        private float sensitivity = 1f;
         private Vector2 lastPos;
         private float deltaX;
         private float deltaY;
@@ -49,6 +51,7 @@ namespace Shard
 
             Bootstrap.getWindow().setActiveCamera(camera);                                    
             
+            /*
             // Game objects
             rat = new Rat(new Vector3(0.5f, 0,0), new Vector3(-0.001f, 0,0));
             rat.setPhysicsEnabled();
@@ -59,8 +62,11 @@ namespace Shard
             rat1.MyBody.addColliderCube();
             
             spriteTest = new SpriteTest(1,1, "spritesheet.png");
+            */
 
             cheese = new Cheese(new Vector3(0.5f, 0, 0));
+            player = new Player(new Vector3(-0.5f, 0, 0));
+            
 
         }
 

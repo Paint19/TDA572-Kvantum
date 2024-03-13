@@ -18,6 +18,7 @@ namespace Shard
             this.Transform.Translation = startLocation;
             setPhysicsEnabled();
             MyBody.addColliderCube();
+            addTag("cheese");
         }
         public override void initialize()
         {
