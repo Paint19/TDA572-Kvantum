@@ -1,5 +1,8 @@
 using OpenTK.Mathematics;
 using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
 
 namespace Shard
 {
@@ -10,6 +13,8 @@ namespace Shard
 
         public Rat(Vector3 startLocation, Vector3 direction)
         {
+            this.Transform.SpritePath = "white.png";
+            this.Transform.InitialColor = new Vector3(1.0f, 0.0f, 0.0f);
             this.Transform.initRenderer("rat.obj");
             this.Transform.scale(0.001f);
             this.Transform.Translation = startLocation;

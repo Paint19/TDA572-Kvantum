@@ -19,6 +19,9 @@ namespace Shard
         private int ElementBufferObject;
         private int VertexArrayObject;
         private int textureVBO;
+        private int colorVBO;
+
+        private float[] color;
 
         private bool initialized = false;
         private float[] vertices, originalVertices;
@@ -26,7 +29,7 @@ namespace Shard
 
         Texture texture;
 
-        public ObjectRenderer(float[] vertices, float[] textCoords, string texturePath)
+        public ObjectRenderer(float[] vertices, float[] textCoords, string texturePath, float[] colors)
         {
             originalVertices = vertices.Select(it => it).ToArray();
             this.vertices = vertices;
@@ -50,7 +53,6 @@ namespace Shard
             // The first parameter is the location of the vertex attribute. Defined in shader.vert.
             // Dynamically retrieving shader layout would require some changes.
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
-
             GL.EnableVertexAttribArray(0);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
@@ -69,6 +71,18 @@ namespace Shard
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
             GL.EnableVertexArrayAttrib(VertexArrayObject, texCoordLocation);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            // -- Color -- 
+            colorVBO = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, colorVBO);
+
+            GL.BufferData(BufferTarget.ArrayBuffer, colors.Length * sizeof(float), colors, BufferUsageHint.StaticDraw);
+            int colorLocation = 2;
+            // GL.EnableVertexAttribArray(1);
+            GL.VertexAttribPointer(colorLocation, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.EnableVertexArrayAttrib(VertexArrayObject, colorLocation);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            
 
             initialized = true;
         }
@@ -90,7 +104,6 @@ namespace Shard
 
             // Unbinding buffers
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
             GL.BindVertexArray(0);
         }
 
@@ -107,7 +120,6 @@ namespace Shard
                 if (initialized)
                 {
                     GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-                    GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
                     GL.DeleteBuffer(VertexBufferObject);
 
                     initialized = false;
@@ -127,6 +139,15 @@ namespace Shard
             textureCoordinates = textCoords;
             GL.BindBuffer(BufferTarget.ArrayBuffer, textureVBO);
             GL.BufferSubData(BufferTarget.ArrayBuffer, 0, textureCoordinates.Length * sizeof(float), textureCoordinates);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+        }
+
+        public void setColor(float[] col) // Not tested yet
+        {
+            color = col;
+            GL.BindBuffer(BufferTarget.ArrayBuffer, colorVBO);
+            GL.BufferSubData(BufferTarget.ArrayBuffer, 0, color.Length * sizeof(float), color);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
     }
 

@@ -21,6 +21,7 @@ namespace Shard
         private float[] calculatedVertices;
         private Vector3 lastLocation;
         private string spritePath;
+        private Vector3 initialColor; // Sets the initial solid color
         private ObjectFileParser objParser;
         private ObjectRenderer renderer;
         public ObjectFileParser getObjParser() { return objParser; }
@@ -29,7 +30,8 @@ namespace Shard
 
         public void initRenderer(float[] vertices, float[] textCoords, string spritePath)
         {
-            renderer = new ObjectRenderer(vertices, textCoords, spritePath);
+            float[] color = returnSolidColor(initialColor, vertices);
+            renderer = new ObjectRenderer(vertices, textCoords, spritePath, color);
             calculateVertices();
         }
 
@@ -61,8 +63,16 @@ namespace Shard
             else
                 textureCoordinates = textCoords.SelectMany(nVec => new float[] { nVec[0], nVec[1] }).ToArray();
 
-            renderer = new ObjectRenderer(vertices, textureCoordinates, SpritePath);
+            float[] color = returnSolidColor(initialColor, vertices);
+            renderer = new ObjectRenderer(vertices, textureCoordinates, SpritePath, color);
             calculateVertices();
+        }
+
+        private float[] returnSolidColor(Vector3 solidColor, float[] vertArray)
+        {
+            return vertArray
+                .Chunk(3)
+                .SelectMany(vec => new float[] { solidColor.X, solidColor.Y, solidColor.Z }).ToArray();
         }
         public Transform()
         {
@@ -180,5 +190,7 @@ namespace Shard
         public float[] Vertices { get => calculatedVertices; }
 
         public string SpritePath { get => spritePath; set => spritePath = value; }
+
+        public Vector3 InitialColor { get => initialColor; set => initialColor = value; }
     }
 }

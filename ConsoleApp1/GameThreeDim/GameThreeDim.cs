@@ -11,6 +11,7 @@ namespace Shard
         Cube aube, bube, cube, dube;
         Teapot teapot;
         SpriteTest spriteTest;
+        Penguin penguin;
 
         private float time;
 
@@ -53,8 +54,12 @@ namespace Shard
             spriteTest = new SpriteTest(1,1, "spritesheet.png");*/
 
             rat = new Rat(new Vector3(0, 0, 0), new Vector3(0, 0, 0));
-            rat1 = new Rat(new Vector3(1, 1, 0), new Vector3(0, 0, 0));
+            rat.Transform.translate(new Vector3(-1, 1, 0));
+
+            rat1 = new Rat(new Vector3(1, 1, 0), new Vector3(0, 0, 0)); // Light source rat
             rat1.Transform.scale(0.5f);
+
+            penguin = new Penguin();
         }
 
         public override void update()
