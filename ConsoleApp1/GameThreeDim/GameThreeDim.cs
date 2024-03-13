@@ -2,6 +2,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using Shard.Shard;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Shard
@@ -15,8 +16,10 @@ namespace Shard
         SpriteTest spriteTest;
         
         MainCamera mainCamera;
-        Cheese cheese;
         Player player;
+        List<Cheese> cheeses = new List<Cheese>();
+
+        private bool gameCleared = false;
 
         public override void initialize()
         {
@@ -32,10 +35,10 @@ namespace Shard
             rat1.setPhysicsEnabled();
             rat1.MyBody.addColliderCube();
             
-            spriteTest = new SpriteTest(1,1, "spritesheet.png");
             */
 
-            cheese = new Cheese(new Vector3(0.5f, 0, 0));
+            cheeses.Add(new Cheese(new Vector3(0.5f, 0, 0), this));
+            cheeses.Add(new Cheese(new Vector3(0.5f, 0f, 1f), this));
             player = new Player(new Vector3(-0.5f, 0, 0));
             
 
@@ -44,6 +47,23 @@ namespace Shard
         public override void update()
         {
             mainCamera.update();
+            if (cheeses.Count() == 0 && gameCleared == false)
+            {
+                gameWon();
+            }
+        }
+
+        public void cheeseGotEaten(Cheese ch)
+        {
+            cheeses.Remove(ch);
+            Console.WriteLine(cheeses.Count() + " cheeses left!");
+        }
+
+        private void gameWon()
+        {
+            gameCleared = true;
+            Console.WriteLine("You won!!!!!");
+            spriteTest = new SpriteTest(1, 1, "rat_spritesheet.png");
         }
     }
 }

@@ -161,12 +161,12 @@ namespace Shard
 
         public virtual void onCollisionExit(PhysicsBody x)
         {
-            Console.WriteLine("Finally free from " + x.ToString());
+            Console.WriteLine("Finally free from collison");
         }
 
         public virtual void onCollisionStay(PhysicsBody x)
         {
-            Console.WriteLine("still colliding with " + x.ToString());
+            //Console.WriteLine("still colliding with " + x.ToString());
         }
     }
 }
