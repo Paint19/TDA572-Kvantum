@@ -57,7 +57,6 @@ namespace Shard.Shard
 
         public void crop(float cropX, float cropY, float cropH, float cropW)
         {
-            //Console.WriteLine("Cropped!");
             textCoords =
             [
                 1- cropX,           1- cropY,

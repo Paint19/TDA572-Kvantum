@@ -20,13 +20,13 @@ namespace Shard
     class ObjectRenderer : IDisposable
     {
         private int VertexBufferObject;
-        private int ElementBufferObject;
         private int VertexArrayObject;
         private int textureVBO;
 
         private bool initialized = false;
         private float[] vertices, originalVertices;
         private float[] textureCoordinates;
+        private string spritePath;
 
         Texture texture;
 
@@ -69,7 +69,7 @@ namespace Shard
 
             // Put the texture Coordinates in slot 1 of the VAO
             int texCoordLocation = 1;
-            //GL.EnableVertexAttribArray(1);
+            GL.EnableVertexAttribArray(1);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
             GL.EnableVertexArrayAttrib(VertexArrayObject, texCoordLocation);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
@@ -90,11 +90,10 @@ namespace Shard
 
         public void Render()
         {
-            GL.DrawArrays(PrimitiveType.Triangles, 0, vertices.Length);
+            GL.DrawArrays(PrimitiveType.Triangles, 0, vertices.Length / 3);
 
             // Unbinding buffers
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
             GL.BindVertexArray(0);
         }
 
@@ -111,7 +110,6 @@ namespace Shard
                 if (initialized)
                 {
                     GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-                    GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
                     GL.DeleteBuffer(VertexBufferObject);
 
                     initialized = false;
@@ -131,6 +129,12 @@ namespace Shard
             textureCoordinates = textCoords;
             GL.BindBuffer(BufferTarget.ArrayBuffer, textureVBO);
             GL.BufferSubData(BufferTarget.ArrayBuffer, 0, textureCoordinates.Length * sizeof(float), textureCoordinates);
+        }
+
+        public void setSpritePath(String path)
+        {
+            this.spritePath = path;
+            texture = new Texture(Bootstrap.getAssetManager().getAssetPath(path));
         }
     }
 
