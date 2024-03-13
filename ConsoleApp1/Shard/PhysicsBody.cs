@@ -61,6 +61,8 @@ namespace Shard
         private float[] minAndMaxY;
         private float[] minAndMaxZ;
 
+        private List<string> tags = new List<string>();
+
         public void applyGravity(float modifier, Vector3 dir)
         {
 
@@ -69,7 +71,9 @@ namespace Shard
             addForce(gf);
 
         }
-
+        
+        public void setTags(List<string> tags) { this.tags = tags; }
+        public bool checkTag(string tag) { return tags.Contains(tag); }
         public Vector3 AngularDrag { get => angularDrag; set => angularDrag = value; }
         public float Drag { get => drag; set => drag = value; }
         internal GameObject Parent { get => parent; set => parent = value; }

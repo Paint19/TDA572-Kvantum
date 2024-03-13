@@ -13,10 +13,10 @@ namespace Shard
     class SpriteTest : Sprite
     {
 
-        public SpriteTest(float h, float w, String spritePath) : base(h, w, 0,0,1,1, spritePath)
+        public SpriteTest(float h, float w, int nFrames, String spritePath) : base(h, w, 0,0,1,1, spritePath)
         {
             //Bootstrap.getDisplay().addToDraw(this.Transform.getRenderer());
-            Animation = new Animation(26, 10, 0, false);
+            Animation = new Animation(nFrames, 10, 0, false);
             //crop(0, 0, 0.5f, 0.5f);
         }
         public override void initialize()

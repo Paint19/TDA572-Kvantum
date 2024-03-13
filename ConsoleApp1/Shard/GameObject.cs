@@ -32,11 +32,13 @@ namespace Shard
             }
 
             tags.Add(str);
+            myBody.setTags(tags);
         }
 
         public void removeTag(string str)
         {
             tags.Remove(str);
+            myBody.setTags(tags);
         }
 
         public bool checkTag(string tag)

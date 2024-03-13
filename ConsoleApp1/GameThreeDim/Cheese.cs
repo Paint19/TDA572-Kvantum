@@ -10,10 +10,8 @@ namespace Shard
 {
     internal class Cheese : GameObject
     {
-        GameThreeDim game;
-        public Cheese(Vector3 startLocation, GameThreeDim game)
+        public Cheese(Vector3 startLocation)
         {
-            this.game = game;
             this.Transform.SpritePath = "cheese.jpg";
             this.Transform.initRenderer("cheese.obj");
             this.Transform.scale(0.03f);
@@ -36,9 +34,12 @@ namespace Shard
 
         public override void onCollisionEnter(PhysicsBody x)
         {
-            Console.WriteLine("Rat Attack!!!");
-            game.cheeseGotEaten(this);
-            ToBeDestroyed = true;
+            if (x.checkTag("player"))
+            {
+                Console.WriteLine("Rat Attack!!!");
+                ((GameThreeDim)Bootstrap.getRunningGame()).cheeseGotEaten(this);
+                ToBeDestroyed = true;
+            }
         }
     }
 }

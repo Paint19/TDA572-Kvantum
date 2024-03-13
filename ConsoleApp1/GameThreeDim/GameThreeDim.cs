@@ -9,14 +9,11 @@ namespace Shard
 {
     class GameThreeDim : Game
     {
-        Rat rat;
-        Rat rat1;
-        Cube aube, bube, cube, dube;
-        Teapot teapot;
         SpriteTest spriteTest;
         
         MainCamera mainCamera;
         Player player;
+        Penguin penguin;
         List<Cheese> cheeses = new List<Cheese>();
 
         private bool gameCleared = false;
@@ -37,10 +34,11 @@ namespace Shard
             
             */
 
-            cheeses.Add(new Cheese(new Vector3(0.5f, 0, 0), this));
-            cheeses.Add(new Cheese(new Vector3(0.5f, 0f, 1f), this));
+            cheeses.Add(new Cheese(new Vector3(0.5f, 0, 0)));
+            cheeses.Add(new Cheese(new Vector3(0.5f, 0f, 1f)));
             player = new Player(new Vector3(-0.5f, 0, 0));
-            
+            penguin = new Penguin(new Vector3(-1f, 0, 0));
+
 
         }
 
@@ -61,13 +59,28 @@ namespace Shard
             Console.WriteLine(cheeses.Count() + " cheeses left!");
         }
 
+        public void playerGotCaught()
+        {
+            Console.WriteLine("Player got Caught!");
+            gameLost();
+        }
+
         private void gameWon()
         {
             gameCleared = true;
             Console.WriteLine("You won!!!!!");
             Bootstrap.getInput().removeListener(mainCamera);
             mainCamera.getCamera().setVectors(Vector3.UnitY, -Vector3.UnitZ);
-            spriteTest = new SpriteTest(1, 1, "rat_spritesheet.png");
+            spriteTest = new SpriteTest(1, 1, 26, "rat_spritesheet.png");
+        }
+
+        private void gameLost()
+        {
+            gameCleared = true;
+            Console.WriteLine("You Lost!!!");
+            Bootstrap.getInput().removeListener(mainCamera);
+            mainCamera.getCamera().setVectors(Vector3.UnitY, -Vector3.UnitZ);
+            spriteTest = new SpriteTest(0.8f, 1, 19, "ded_spritesheet.png");
         }
     }
 }
