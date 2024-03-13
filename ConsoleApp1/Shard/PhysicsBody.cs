@@ -132,7 +132,7 @@ namespace Shard
             Mass = 1;
             MaxForce = 10;
             MaxTorque = 2;
-            usesGravity = false;
+            usesGravity = true;
             stopOnCollision = true;
             reflectOnCollision = false;
 

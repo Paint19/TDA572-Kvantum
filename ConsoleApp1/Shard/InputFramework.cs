@@ -26,7 +26,7 @@ namespace Shard
 
         double tick, timeInterval;
 
-        List<MouseMoveEventArgs> mouseMouseMoveEvents = new List<MouseMoveEventArgs>();
+        List<MouseMoveEventArgs> mouseMoveEvents = new List<MouseMoveEventArgs>();
         List<MouseButtonEventArgs> mouseButtonEvents = new List<MouseButtonEventArgs>();
         List<MouseWheelEventArgs> wheelEvents = new List<MouseWheelEventArgs>();
         List<KeyboardKeyEventArgs> keyDownEvents = new List<KeyboardKeyEventArgs>();
@@ -49,14 +49,14 @@ namespace Shard
 
                 ie = new InputEvent();
 
-                foreach(var mot in mouseMouseMoveEvents)
+                foreach(var mot in mouseMoveEvents)
                 {
                     ie.X = (int) mot.X;
                     ie.Y = (int) mot.Y;
 
                     informListeners(ie, "MouseMotion");
                 }
-                mouseMouseMoveEvents.Clear();
+                mouseMoveEvents.Clear();
 
                 foreach (var butt in mouseButtonEvents)
                 {
@@ -136,8 +136,8 @@ namespace Shard
 
         private void window_MouseMove(MouseMoveEventArgs obj)
         {
-            mouseMouseMoveEvents.Clear();
-            MouseMoveEventArgs mouseMoveEventArgs = (MouseMoveEventArgs)obj;
+            mouseMoveEvents.Clear();
+            mouseMoveEvents.Add(obj);
         }
 
         private void window_KeyUp(KeyboardKeyEventArgs obj)

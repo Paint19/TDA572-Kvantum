@@ -13,6 +13,7 @@ namespace Shard
         Cube aube, bube, cube, dube;
         Teapot teapot;
         SpriteTest spriteTest;
+        Cheese cheese;
 
 
         // CAMERA
@@ -30,6 +31,17 @@ namespace Shard
 
         private Camera camera;
 
+        // First person shooter style camera controls
+        private float pitch;
+        private float yaw = -90.0f;
+        private bool firstMove = true;
+        private float sensitivity = 10f;
+        private Vector2 lastPos;
+        private float deltaX;
+        private float deltaY;
+
+        private float time;
+
         public override void initialize()
         {
             Bootstrap.getInput().addListener(this);
@@ -45,13 +57,16 @@ namespace Shard
             rat1 = new Rat(new Vector3(-0.5f,0,0), new Vector3(0.001f,0,0));
             rat1.setPhysicsEnabled();
             rat1.MyBody.addColliderCube();
+            
             spriteTest = new SpriteTest(1,1, "spritesheet.png");
+
+            cheese = new Cheese(new Vector3(0.5f, 0, 0));
 
         }
 
         public override void update()
         {
-            float time = Bootstrap.getWindow().getEventArgsTime();
+            time = Bootstrap.getWindow().getEventArgsTime();
 
             camPos = camera.getPosition();
 
@@ -81,6 +96,7 @@ namespace Shard
             }
 
             camera.setPosition(camPos);
+            camera.setVectors(up, front); // updates looking direction
         }
 
         public void handleInput(InputEvent inp, string eventType)
@@ -92,7 +108,39 @@ namespace Shard
             else if (eventType == "KeyUp")
                 configMovement(inp, false);
 
+            if (eventType == "MouseMotion")
+            {
+                if (firstMove)
+                {
+                    lastPos = new Vector2(inp.X, inp.Y);
+                    firstMove = false;
+                }
+                else
+                {
+                    deltaX = inp.X - lastPos.X;
+                    deltaY = inp.Y - lastPos.Y;
+                    lastPos = new Vector2(inp.X, inp.Y);
 
+                    // Looking direction:
+                    yaw += deltaX * sensitivity * time;
+                    pitch -= deltaY * sensitivity * time;
+                }
+
+                if (pitch > 89.0f)
+                {
+                    pitch = 89.0f;
+                }
+                if (pitch < -89.0f)
+                {
+                    pitch = -89.0f;
+                }
+                front.X = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Cos(MathHelper.DegreesToRadians(yaw));
+                front.Y = MathF.Sin(MathHelper.DegreesToRadians(pitch));
+                front.Z = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Sin(MathHelper.DegreesToRadians(yaw));
+                front = Vector3.Normalize(front);
+                right = Vector3.Normalize(Vector3.Cross(front, Vector3.UnitY));
+                up = Vector3.Normalize(Vector3.Cross(right, front));
+            }
         }
 
         private void configMovement(InputEvent inp, bool isTrue)
