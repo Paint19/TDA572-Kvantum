@@ -40,13 +40,13 @@ namespace Shard
                 Bootstrap.getDisplay().addToDraw(Transform.getRenderer());
         }
 
-        public void activateLight()
+        public void activateLight() // This is so bad
         {
             IsLightSource = true;
             Bootstrap.getWindow().addLight(this.Transform);
         }
 
-        public void deactivateLight() // Perhaps shouldn't be here
+        public void deactivateLight() // This is so bad
         {
             IsLightSource = false;
             Bootstrap.getWindow().removeLight();

@@ -18,12 +18,13 @@ namespace Shard
     public class ObjectRenderer : IDisposable
     {
         private int VertexBufferObject;
-        private int ElementBufferObject;
         private int VertexArrayObject;
         private int textureVBO;
         private int colorVBO;
+        private int normalVBO;
 
         private float[] color;
+        private float[] normals;
 
         private bool initialized = false;
         private float[] vertices, originalVertices;
@@ -49,8 +50,6 @@ namespace Shard
             // Copy our vertices array in a buffer for OpenGL to use:
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
 
-            // stuff about indices
-
             // Set our vertex attributes pointers
             // Takes data from the latest bound VBO (memory buffer) bound to ArrayBuffer.
             // The first parameter is the location of the vertex attribute. Defined in shader.vert.
@@ -59,13 +58,14 @@ namespace Shard
             GL.EnableVertexAttribArray(0);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
+            BufferUsageHint bufferUsageHint = BufferUsageHint.StaticDraw;
 
             // -- Texture -- 
 
             // Generate a vertice object buffer for the texture coordinates
             textureVBO = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, textureVBO);
-            GL.BufferData(BufferTarget.ArrayBuffer, textureCoordinates.Length * sizeof(float), textureCoordinates, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, textureCoordinates.Length * sizeof(float), textureCoordinates, bufferUsageHint);
 
 
             // Put the texture Coordinates in slot 1 of the VAO
@@ -79,13 +79,23 @@ namespace Shard
             colorVBO = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, colorVBO);
 
-            GL.BufferData(BufferTarget.ArrayBuffer, colors.Length * sizeof(float), colors, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, colors.Length * sizeof(float), colors, bufferUsageHint);
             int colorLocation = 2;
-            // GL.EnableVertexAttribArray(1);
             GL.VertexAttribPointer(colorLocation, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
             GL.EnableVertexArrayAttrib(VertexArrayObject, colorLocation);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-            
+
+            // -- Normals -- 
+            calculateNormals();
+            normalVBO = GL.GenBuffer();
+            GL.BindBuffer(BufferTarget.ArrayBuffer, normalVBO);
+
+            GL.BufferData(BufferTarget.ArrayBuffer, normals.Length * sizeof(float), normals, bufferUsageHint);
+            int normalLocation = 3;
+            GL.VertexAttribPointer(normalLocation, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.EnableVertexArrayAttrib(VertexArrayObject, normalLocation);
+            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
 
             initialized = true;
         }
@@ -99,6 +109,11 @@ namespace Shard
                 texture.Use();
 
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
+
+            GL.BindBuffer(BufferTarget.ArrayBuffer, normalVBO);
+            // For the normals. Might be wrong :)
+            calculateNormals(); 
+            GL.BufferData(BufferTarget.ArrayBuffer, normals.Length * sizeof(float), normals, BufferUsageHint.DynamicDraw);
         }
 
         public void Render()
@@ -124,10 +139,45 @@ namespace Shard
                 {
                     GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
                     GL.DeleteBuffer(VertexBufferObject);
+                    GL.DeleteBuffer(textureVBO);
+                    GL.DeleteBuffer(colorVBO);
+                    GL.DeleteBuffer(normalVBO);
 
                     initialized = false;
                 }
             }
+        }
+
+        private void calculateNormals() // THIS COULD BE VERY WRONG IDK
+        {
+            Vector3[] verts = 
+                vertices
+                .Chunk(3)
+                .Select(vec => new Vector3(vec[0], vec[1], vec[2])).ToArray();
+
+            Vector3[] normalList = new Vector3[verts.Length];
+
+            // Compute normals for each face.
+            // Assumes vertices are in the order of their indices.
+            // Every 3 consecutive vertices make one triangle in verts.
+            for (int i = 0; i < verts.Length; i += 3)
+            {
+                Vector3 v1 = verts[i];
+                Vector3 v2 = verts[i + 1];
+                Vector3 v3 = verts[i + 2];
+
+                // The normal is the cross product of two sides of the triangle
+                normalList[i] += Vector3.Cross(v2 - v1, v3 - v1);
+                normalList[i + 1] += Vector3.Cross(v2 - v1, v3 - v1);
+                normalList[i + 2] += Vector3.Cross(v2 - v1, v3 - v1);
+            }
+
+            for (int i = 0; i < normalList.Length; i++)
+            {
+                normalList[i] = normalList[i].Normalized();
+            }
+
+            normals = normalList.SelectMany(vec => new float[] { vec[0], vec[1], vec[2] }).ToArray();
         }
 
         public float[] getVertices() { return vertices; }

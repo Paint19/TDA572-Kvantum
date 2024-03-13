@@ -169,8 +169,12 @@ namespace Shard
                 Matrix4 projection = activeCamera.GetProjectionMatrix();
                 setLightShaderMVP(model, view, projection);
             }
+
+            lightSource = null; // reset lightSource
+
             // Display what has been rendering. Must be last. Double-buffering avoids screen tearing.
             SwapBuffers();
+
         }
 
         // Runs (only once) when GameWindow loads the window
