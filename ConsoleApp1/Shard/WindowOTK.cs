@@ -37,7 +37,8 @@ namespace Shard
         }
 
         public void setIndicesLength(int length) { indicesLength = length; }
-        public void setActiveCamera(Camera cam) {  activeCamera = cam; }    
+        public void setActiveCamera(Camera cam) {  activeCamera = cam; }  
+        public Camera getActiveCamera() { return activeCamera;}
         public void setShaderMVP(Matrix4 model, Matrix4 view, Matrix4 projection)
         {
             shader.SetMatrix4("model", model);

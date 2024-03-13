@@ -46,8 +46,10 @@ namespace Shard
 
         public override void update()
         {
-            mainCamera.update();
-            if (cheeses.Count() == 0 && gameCleared == false)
+            if(!gameCleared)
+                mainCamera.update();
+
+            if (cheeses.Count() == 0 && !gameCleared)
             {
                 gameWon();
             }
@@ -63,6 +65,8 @@ namespace Shard
         {
             gameCleared = true;
             Console.WriteLine("You won!!!!!");
+            Bootstrap.getInput().removeListener(mainCamera);
+            mainCamera.getCamera().setVectors(Vector3.UnitY, -Vector3.UnitZ);
             spriteTest = new SpriteTest(1, 1, "rat_spritesheet.png");
         }
     }

@@ -4,6 +4,7 @@ using Shard.Shard.Animation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,6 +27,10 @@ namespace Shard
         public override void update()
         {
             base.update();
+            Vector3 camPos = Bootstrap.getWindow().getActiveCamera().getPosition();
+            this.Transform.Translation = camPos + new Vector3(0f, 0f, -2f);
+            this.Transform.calculateVertices();
+            this.Transform.setCalculatedVerticesToRender();
             Bootstrap.getAnimationSystem().addToAnimate(this);
             Bootstrap.getDisplay().addToDraw(this.Transform.getRenderer());
         }

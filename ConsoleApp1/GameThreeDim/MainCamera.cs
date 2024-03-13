@@ -146,5 +146,10 @@ namespace Shard
                     break;
             }
         }
+
+        public Camera getCamera()
+        {
+            return camera;
+        }
     }
 }
