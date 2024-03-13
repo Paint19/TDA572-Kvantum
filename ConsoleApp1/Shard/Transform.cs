@@ -15,7 +15,7 @@ using System.Linq;
 
 namespace Shard
 {
-    class Transform
+    public class Transform
     {
         private Matrix4 matrix;
         private float[] calculatedVertices;

@@ -43,21 +43,14 @@ namespace Shard
             camera = new Camera(Bootstrap.getDisplay().getWidth(), Bootstrap.getDisplay().getHeight(), new Vector3(0, 0, 5));
             Bootstrap.getWindow().setActiveCamera(camera);
 
-            // Game objects
-            /*rat = new Rat(new Vector3(0.5f, 0,0), new Vector3(-0.001f, 0,0));
-            rat.setPhysicsEnabled();
-            rat.MyBody.addColliderCube();
+             rat = new Rat(new Vector3(0, 0, 0), new Vector3(0, 0, 0));
+             rat.Transform.translate(new Vector3(-1, 1, 0));
 
-            rat1 = new Rat(new Vector3(-0.5f,0,0), new Vector3(0.001f,0,0));
-            rat1.setPhysicsEnabled();
-            rat1.MyBody.addColliderCube();
-            spriteTest = new SpriteTest(1,1, "spritesheet.png");*/
-
-            rat = new Rat(new Vector3(0, 0, 0), new Vector3(0, 0, 0));
-            rat.Transform.translate(new Vector3(-1, 1, 0));
+            rat.Transform.getRenderer().setSolidColor(new Vector3(0.0f, 1.0f, 0.0f));
 
             rat1 = new Rat(new Vector3(1, 1, 0), new Vector3(0, 0, 0)); // Light source rat
             rat1.Transform.scale(0.5f);
+            rat1.activateLight();
 
             penguin = new Penguin();
         }

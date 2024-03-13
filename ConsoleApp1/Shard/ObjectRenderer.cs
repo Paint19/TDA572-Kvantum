@@ -1,6 +1,8 @@
 ﻿using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using Shard.Shard;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 /*
@@ -13,7 +15,7 @@ using System.Linq;
 
 namespace Shard
 {
-    class ObjectRenderer : IDisposable
+    public class ObjectRenderer : IDisposable
     {
         private int VertexBufferObject;
         private int ElementBufferObject;
@@ -31,6 +33,7 @@ namespace Shard
 
         public ObjectRenderer(float[] vertices, float[] textCoords, string texturePath, float[] colors)
         {
+            color = colors;
             originalVertices = vertices.Select(it => it).ToArray();
             this.vertices = vertices;
             this.textureCoordinates = textCoords;
@@ -142,13 +145,29 @@ namespace Shard
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
-        public void setColor(float[] col) // Not tested yet
+        public void setColor(float[] col) // Requires an array with a float value for each vertice of the object
         {
             color = col;
             GL.BindBuffer(BufferTarget.ArrayBuffer, colorVBO);
             GL.BufferSubData(BufferTarget.ArrayBuffer, 0, color.Length * sizeof(float), color);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
+
+        // Ugly but it works. Input an RGB value and the entire object will get that color.
+        public void setSolidColor(Vector3 col) 
+        {
+            int len = color.Length / 3;
+            List<float> tmpList = new List<float>();
+            for (int i = 0; i < len; i++)
+            {
+                tmpList.Add(col.X);
+                tmpList.Add(col.Y);
+                tmpList.Add(col.Z);
+            }
+            setColor(tmpList.ToArray());
+        }
+
+        public float[] getColor() { return color; }
     }
 
 }

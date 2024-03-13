@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Shard.Shard
 {
-    class ObjectFileParser
+    public class ObjectFileParser
     {
         /*
          *  parseFile takes a file name (file must be placed in Asset-folder) and 

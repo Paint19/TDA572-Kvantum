@@ -14,17 +14,24 @@ namespace Shard
     public class WindowOTK : GameWindow
     {
 
-        private static int VertexBufferObject;
-        private static int ElementBufferObject;
-        private static int VertexArrayObject;
+        private int VertexBufferObject;
+        private int ElementBufferObject;
+        private int VertexArrayObject;
 
-        private static int indicesLength;
+        private int indicesLength;
 
-        private static Shader shader;
+        private Shader shader;
+        private Shader shaderLightSource;
 
         private Camera activeCamera;
 
         private float eventArgsTime;
+
+        // TODO: fundera på om detta är rimligt
+        // Currently only supports one light source
+        private Vector3 LIGHT_COLOR = new Vector3(1.0f, 1.0f, 1.0f);
+        private Transform lightSource = new Transform(); 
+
         public WindowOTK(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
         {
         }
@@ -37,6 +44,16 @@ namespace Shard
             shader.SetMatrix4("view", view);
             shader.SetMatrix4("projection", projection);
         }
+
+        public void setLightShaderMVP(Matrix4 model, Matrix4 view, Matrix4 projection)
+        {
+            shaderLightSource.SetMatrix4("model", model);
+            shaderLightSource.SetMatrix4("view", view);
+            shaderLightSource.SetMatrix4("projection", projection);
+        }
+
+        public void addLight(Transform trans) { lightSource = trans; }
+        public void removeLight() { lightSource = null; }
 
         public float getEventArgsTime() { return eventArgsTime; }
         protected override void OnUpdateFrame(FrameEventArgs args) // Runs when GameWindow updates frame
@@ -96,10 +113,7 @@ namespace Shard
             }
 
             Bootstrap.getAnimationSystem().update();
-
             Bootstrap.getRunningGame().update();
-
-
 
             timeInMillisecondsEnd = Bootstrap.getCurrentMillis();
             Bootstrap.setDeltaTime((timeInMillisecondsEnd - timeInMillisecondsStart) / 1000.0f); // Dunno if this is right. Not sure what deltaTime should be
@@ -113,19 +127,47 @@ namespace Shard
             // Clear screen before re-rendering
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
+            // ---- GAME OBJECTS
+            
             shader.Use();
 
-            // Display.display() renders all game objects
+            // Renders all game objects
             Bootstrap.getDisplay().display();
 
             // transformation matrices
             if (activeCamera != null)
             {
+                // Shader.vert
                 Matrix4 model = Matrix4.Identity;
                 Matrix4 view = activeCamera.GetViewMatrix();
                 Matrix4 projection = activeCamera.GetProjectionMatrix();
-
                 setShaderMVP(model, view, projection);
+
+                // Shader.frag
+                shader.SetVector3("viewPos", activeCamera.position); // Är Translation senaste positionen?
+            }
+
+            if(lightSource != null)
+            {
+                // Shader.frag
+                shader.SetVector3("lightColor", LIGHT_COLOR); // Nu är alla ljus vita. Går att ta färg från t.renderer
+                shader.SetVector3("lightPos", lightSource.Translation); // Är Translation senaste positionen?
+            }
+
+            //  ---- LIGHT
+
+            shaderLightSource.Use();
+
+            // Render lights:
+            Bootstrap.getDisplay().displayLightSource();
+
+            if (activeCamera != null)
+            {
+                // Shader.vert
+                Matrix4 model = Matrix4.Identity;
+                Matrix4 view = activeCamera.GetViewMatrix();
+                Matrix4 projection = activeCamera.GetProjectionMatrix();
+                setLightShaderMVP(model, view, projection);
             }
             // Display what has been rendering. Must be last. Double-buffering avoids screen tearing.
             SwapBuffers();
@@ -151,6 +193,8 @@ namespace Shard
             Bootstrap.getDisplay().initialize();
 
             shader = new Shader("../../../Shard/shader.vert", "../../../Shard/shader.frag");
+            shaderLightSource = new Shader("../../../Shard/shader.vert", "../../../Shard/shaderLightSource.frag");
+
 
             CursorState = CursorState.Grabbed;
 
@@ -161,6 +205,7 @@ namespace Shard
             base.OnUnload();
             Bootstrap.getDisplay().dispose();
             shader.Dispose();
+            shaderLightSource.Dispose();
         }
 
     }

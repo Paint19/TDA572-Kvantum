@@ -237,5 +237,10 @@ namespace Shard
         {
             throw new NotImplementedException();
         }
+
+        public override void displayLightSource()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
