@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenTK.Mathematics;
+using System;
 using System.Collections.Generic;
 
 namespace Shard.Shard
@@ -16,6 +17,7 @@ namespace Shard.Shard
         public Sprite(float h, float w, float cropX, float cropY, float cropH, float cropW, String spritePath)
         {
             this.spritePath = spritePath;
+            this.Transform.InitialColor = new Vector3(1);
 
             float xOf = w / 2;
             float yOf = h / 2;
