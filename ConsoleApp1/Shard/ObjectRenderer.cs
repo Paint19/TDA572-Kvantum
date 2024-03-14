@@ -32,14 +32,14 @@ namespace Shard
 
         Texture texture;
 
-        public ObjectRenderer(float[] vertices, float[] textCoords, string texturePath, float[] colors)
+        public ObjectRenderer(float[] vertices, float[] textCoords, string texturePath, Vector3 colors)
         {
-            color = colors;
             originalVertices = vertices.Select(it => it).ToArray();
             this.vertices = vertices;
             this.textureCoordinates = textCoords;
             if (texturePath is not null)
                 texture = new Texture(Bootstrap.getAssetManager().getAssetPath(texturePath));
+            setSolidColor(colors);
 
             VertexBufferObject = GL.GenBuffer();
             VertexArrayObject = GL.GenVertexArray();
@@ -79,7 +79,7 @@ namespace Shard
             colorVBO = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, colorVBO);
 
-            GL.BufferData(BufferTarget.ArrayBuffer, colors.Length * sizeof(float), colors, bufferUsageHint);
+            GL.BufferData(BufferTarget.ArrayBuffer, color.Length * sizeof(float), color, bufferUsageHint);
             int colorLocation = 2;
             GL.VertexAttribPointer(colorLocation, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
             GL.EnableVertexArrayAttrib(VertexArrayObject, colorLocation);
@@ -148,7 +148,7 @@ namespace Shard
             }
         }
 
-        private void calculateNormals() // THIS COULD BE VERY WRONG IDK
+        private void calculateNormals()
         {
             Vector3[] verts = 
                 vertices
@@ -203,18 +203,14 @@ namespace Shard
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
-        // Ugly but it works. Input an RGB value and the entire object will get that color.
-        public void setSolidColor(Vector3 col) 
+        public void setSolidColor(Vector3 solidColor)
         {
-            int len = color.Length / 3;
-            List<float> tmpList = new List<float>();
-            for (int i = 0; i < len; i++)
-            {
-                tmpList.Add(col.X);
-                tmpList.Add(col.Y);
-                tmpList.Add(col.Z);
-            }
-            setColor(tmpList.ToArray());
+            Console.WriteLine("Vertices Length: " + vertices.Length);
+            float[] tmpColor = 
+                vertices
+                .Chunk(3)
+                .SelectMany(vec => new float[] { solidColor.X, solidColor.Y, solidColor.Z }).ToArray();
+            setColor(tmpColor);
         }
 
         public float[] getColor() { return color; }

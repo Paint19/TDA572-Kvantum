@@ -30,8 +30,7 @@ namespace Shard
 
         public void initRenderer(float[] vertices, float[] textCoords, string spritePath)
         {
-            float[] color = returnSolidColor(initialColor, vertices);
-            renderer = new ObjectRenderer(vertices, textCoords, spritePath, color);
+            renderer = new ObjectRenderer(vertices, textCoords, spritePath, initialColor);
             calculateVertices();
         }
 
@@ -63,17 +62,10 @@ namespace Shard
             else
                 textureCoordinates = textCoords.SelectMany(nVec => new float[] { nVec[0], nVec[1] }).ToArray();
 
-            float[] color = returnSolidColor(initialColor, vertices);
-            renderer = new ObjectRenderer(vertices, textureCoordinates, SpritePath, color);
+            renderer = new ObjectRenderer(vertices, textureCoordinates, SpritePath, initialColor);
             calculateVertices();
         }
 
-        private float[] returnSolidColor(Vector3 solidColor, float[] vertArray)
-        {
-            return vertArray
-                .Chunk(3)
-                .SelectMany(vec => new float[] { solidColor.X, solidColor.Y, solidColor.Z }).ToArray();
-        }
         public Transform()
         {
             this.matrix = Matrix4.Identity;
