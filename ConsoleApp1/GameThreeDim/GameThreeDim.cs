@@ -28,6 +28,9 @@ namespace Shard
             cheeses.Add(new Cheese(new Vector3(0.5f, 0f, 1f)));
             player = new Player(new Vector3(-0.5f, 0, 0));
             penguin = new Penguin(new Vector3(-1f, 0, 0));
+
+            penguin.GoForward = true;
+            penguin.GoRight = true;
         }
 
         public override void update()

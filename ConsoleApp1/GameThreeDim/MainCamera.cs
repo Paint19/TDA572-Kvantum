@@ -20,7 +20,7 @@ namespace Shard
         private Vector3 up = Vector3.UnitY;
         private Vector3 front = -Vector3.UnitZ;
         private Vector3 right = Vector3.UnitX;
-        private float speed = 2f;
+        private float speed = 3f;
         private Vector3 camPos;
 
         private Camera camera;
