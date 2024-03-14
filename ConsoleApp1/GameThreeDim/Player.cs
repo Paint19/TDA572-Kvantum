@@ -45,6 +45,17 @@ namespace Shard
 
             Vector3 pos = this.Transform.Translation;
 
+            
+            if (goForward)
+            {
+                dir = 1;
+                pos += front * speed * time;
+            }
+            if (goBack)
+            {
+                dir = -1;
+                pos -= front * speed * time;
+            }
             if (goLeft)
             {
                 changeDirection(dir * speed * time);
@@ -53,17 +64,8 @@ namespace Shard
             {
                 changeDirection(dir * -speed * time);
             }
-            if (goForward)
-            {
-                pos += front * speed * time;
-            }
-            if (goBack)
-            {
-                dir = -1;
-                pos -= front * speed * time;
-            }
-
             dir = 1;
+
             this.Transform.Translation = pos;
             this.Transform.calculateVertices();
             this.Transform.setCalculatedVerticesToRender();
