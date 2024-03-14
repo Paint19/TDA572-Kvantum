@@ -32,24 +32,7 @@ namespace Shard
             this.Transform.translate(moveDirection);
             this.Transform.calculateVertices();
             this.Transform.setCalculatedVerticesToRender();
-
-            // Perhaps addToDraw and addLight should be in GameObject?
-            if (IsLightSource)
-                Bootstrap.getDisplay().addLightToDraw(Transform.getRenderer());
-            else
-                Bootstrap.getDisplay().addToDraw(Transform.getRenderer());
-        }
-
-        public void activateLight() // This is so bad
-        {
-            IsLightSource = true;
-            Bootstrap.getWindow().addLight(this.Transform);
-        }
-
-        public void deactivateLight() // This is so bad
-        {
-            IsLightSource = false;
-            Bootstrap.getWindow().removeLight();
+            Bootstrap.getDisplay().addToDraw(Transform.getRenderer());
         }
 
         public override void onCollisionEnter(PhysicsBody x)

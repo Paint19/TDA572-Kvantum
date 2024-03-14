@@ -12,6 +12,7 @@ namespace Shard
         Teapot teapot;
         SpriteTest spriteTest;
         Penguin penguin;
+        Sphere sphere;
 
         private float time;
 
@@ -45,12 +46,11 @@ namespace Shard
 
              rat = new Rat(new Vector3(0, 0, 0), new Vector3(0, 0, 0));
              rat.Transform.translate(new Vector3(-1, 1, 0));
-
             rat.Transform.getRenderer().setSolidColor(new Vector3(0.0f, 1.0f, 0.0f));
 
-            rat1 = new Rat(new Vector3(1, 1, 0), new Vector3(0, 0, 0)); // Light source rat
-            rat1.Transform.scale(0.5f);
-            rat1.activateLight();
+            sphere = new Sphere(new Vector3(1, 1, 0), new Vector3(-0.01f, 0, 0));
+            sphere.Transform.scale(0.5f);
+            sphere.activateLight();// Light source sphere
 
             penguin = new Penguin();
         }

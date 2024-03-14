@@ -144,14 +144,14 @@ namespace Shard
                 setShaderMVP(model, view, projection);
 
                 // Shader.frag
-                shader.SetVector3("viewPos", activeCamera.position); // Är Translation senaste positionen?
+                shader.SetVector3("viewPos", activeCamera.position);
             }
 
-            if(lightSource != null)
+            if(lightSource is not null)
             {
                 // Shader.frag
-                shader.SetVector3("lightColor", LIGHT_COLOR); // Nu är alla ljus vita. Går att ta färg från t.renderer
-                shader.SetVector3("lightPos", lightSource.Translation); // Är Translation senaste positionen?
+                shader.SetVector3("lightColor", LIGHT_COLOR);
+                shader.SetVector3("lightPos", lightSource.Translation); 
             }
 
             //  ---- LIGHT

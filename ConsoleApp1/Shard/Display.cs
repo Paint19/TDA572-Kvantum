@@ -12,8 +12,8 @@ namespace Shard
 {
     abstract class Display
     {
-        protected int _height = 1280;
-        protected int _width = 1280;
+        protected int _height = 1080;
+        protected int _width = 1920;
 
 
         public virtual void drawShape(float[] v, uint[] i, float[] tc) { }
