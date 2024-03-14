@@ -31,10 +31,7 @@ namespace Shard
 
             // Perhaps addToDraw and addLight should be in GameObject?
             if (IsLightSource)
-            { 
                 Bootstrap.getDisplay().addLightToDraw(Transform.getRenderer());
-                Bootstrap.getWindow().addLight(this.Transform); // Must be added every update to ensure the light position changes
-            }
             else
                 Bootstrap.getDisplay().addToDraw(Transform.getRenderer());
         }

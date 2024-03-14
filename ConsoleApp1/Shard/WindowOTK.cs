@@ -170,8 +170,6 @@ namespace Shard
                 setLightShaderMVP(model, view, projection);
             }
 
-            lightSource = null; // reset lightSource
-
             // Display what has been rendering. Must be last. Double-buffering avoids screen tearing.
             SwapBuffers();
 
