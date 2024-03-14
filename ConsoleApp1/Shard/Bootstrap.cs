@@ -35,24 +35,28 @@ namespace Shard
         private static int targetFrameRate;
         private static double deltaTime;
         private static string baseDir;
-        private static Dictionary<string,string> enVars;
+        private static Dictionary<string, string> enVars;
 
         private static long timeStarted;
 
-        public static bool checkEnvironmentalVariable (string id) {
-            return enVars.ContainsKey (id);
+        public static bool checkEnvironmentalVariable(string id)
+        {
+            return enVars.ContainsKey(id);
         }
 
-        
-        public static string getEnvironmentalVariable (string id) {
-            if (checkEnvironmentalVariable (id)) {
+
+        public static string getEnvironmentalVariable(string id)
+        {
+            if (checkEnvironmentalVariable(id))
+            {
                 return enVars[id];
             }
 
             return null;
         }
 
-        public static string getBaseDir() {
+        public static string getBaseDir()
+        {
             return baseDir;
         }
 
@@ -67,17 +71,18 @@ namespace Shard
 
         }
 
-        public static void setupEnvironmentalVariables (String path) {
-                Console.WriteLine("Path is " + path);
+        public static void setupEnvironmentalVariables(String path)
+        {
+            Console.WriteLine("Path is " + path);
 
-                Dictionary<string, string> config = BaseFunctionality.getInstance().readConfigFile(path);
+            Dictionary<string, string> config = BaseFunctionality.getInstance().readConfigFile(path);
 
-                enVars = new Dictionary<string,string>();
+            enVars = new Dictionary<string, string>();
 
-                foreach (KeyValuePair<string, string> kvp in config)
-                {
-                    enVars[kvp.Key] = kvp.Value;
-                }
+            foreach (KeyValuePair<string, string> kvp in config)
+            {
+                enVars[kvp.Key] = kvp.Value;
+            }
         }
         public static double getDeltaTime()
         {
@@ -105,7 +110,8 @@ namespace Shard
             return input;
         }
 
-        public static AssetManagerBase getAssetManager() {
+        public static AssetManagerBase getAssetManager()
+        {
             return asset;
         }
 
@@ -125,7 +131,7 @@ namespace Shard
 
         public static void setup(string path)
         {
-            Console.WriteLine ("Path is " + path);
+            Console.WriteLine("Path is " + path);
 
             Dictionary<string, string> config = BaseFunctionality.getInstance().readConfigFile(path);
             Type t;
@@ -205,7 +211,7 @@ namespace Shard
                 Environment.Exit(0);
             }
         }
-        
+
         public static long getCurrentMillis()
         {
             return DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
@@ -215,14 +221,14 @@ namespace Shard
         {
             return (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - timeStarted;
         }
-        public static WindowOTK getWindow(){ return window; }   // sus
+        public static WindowOTK getWindow() { return window; }   // sus
 
         static void Main(string[] args)
         {
             // Setup the engine.
             setup();
-            
-            
+
+
 
             phys.GravityModifier = 0.1f;
 
@@ -238,7 +244,7 @@ namespace Shard
 
             gws.UpdateFrequency = 60;
 
-            nws.Size = new Vector2i( displayEngine.getWidth(), displayEngine.getHeight());
+            nws.Size = new Vector2i(displayEngine.getWidth(), displayEngine.getHeight());
             nws.Title = "Hello wOrld!";
             nws.Vsync = VSyncMode.On;
 

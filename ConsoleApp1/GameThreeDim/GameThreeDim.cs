@@ -1,8 +1,6 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using Shard.Shard;
 using System;
-using System.Linq;
 
 namespace Shard
 {
@@ -13,64 +11,83 @@ namespace Shard
         Cube aube, bube, cube, dube;
         Teapot teapot;
         SpriteTest spriteTest;
+        Penguin penguin;
+        Sphere sphere;
 
+        private float time;
 
         // CAMERA
         private bool goRight = false;
         private bool goLeft = false;
+        private bool goForward = false;
+        private bool goBack = false;
         private bool goUp = false;
         private bool goDown = false;
         private Vector3 up = Vector3.UnitY;
         private Vector3 front = -Vector3.UnitZ;
         private Vector3 right = Vector3.UnitX;
-        private float speed = 4f;
-        private Vector3 position;
-
+        private float speed = 2f;
+        private Vector3 camPos;
         private Camera camera;
+        // First person shooter style camera controls
+        private float pitch;
+        private float yaw = -90.0f;
+        private bool firstMove = true;
+        private float sensitivity = 2f;
+        private Vector2 lastPos;
+        private float deltaX;
+        private float deltaY;
 
         public override void initialize()
         {
             Bootstrap.getInput().addListener(this);
             camera = new Camera(Bootstrap.getDisplay().getWidth(), Bootstrap.getDisplay().getHeight(), new Vector3(0, 0, 5));
+            Bootstrap.getWindow().setActiveCamera(camera);
 
-            Bootstrap.getWindow().setActiveCamera(camera);                                    
-            
-            // Game objects
-            rat = new Rat(new Vector3(0.5f, 0,0), new Vector3(-0.001f, 0,0));
-            rat.setPhysicsEnabled();
-            rat.MyBody.addColliderCube();
+             rat = new Rat(new Vector3(0, 0, 0), new Vector3(0, 0, 0));
+             rat.Transform.translate(new Vector3(-1, 1, 0));
+            rat.Transform.getRenderer().setSolidColor(new Vector3(0.0f, 1.0f, 0.0f));
 
-            rat1 = new Rat(new Vector3(-0.5f,0,0), new Vector3(0.001f,0,0));
-            rat1.setPhysicsEnabled();
-            rat1.MyBody.addColliderCube();
-            spriteTest = new SpriteTest(1,1, "spritesheet.png");
+            sphere = new Sphere(new Vector3(1, 1, 0), new Vector3(-0.01f, 0, 0));
+            sphere.Transform.scale(0.5f);
+            sphere.activateLight();// Light source sphere
 
+            penguin = new Penguin();
         }
 
         public override void update()
         {
-            float time = Bootstrap.getWindow().getEventArgsTime();
+            time = Bootstrap.getWindow().getEventArgsTime();
 
-            position = camera.getPosition();
+            camPos = camera.getPosition();
 
             if (goLeft)
             {
-                position -= right * speed * time;
+                camPos -= right * speed * time;
             }
             if (goRight)
             {
-                position += right * speed * time;
+                camPos += right * speed * time;
+            }
+            if (goForward)
+            {
+                camPos += front * speed * time;
+            }
+            if (goBack)
+            {
+                camPos -= front * speed * time;
             }
             if (goUp)
             {
-                position += front * speed * time;
+                camPos += up * speed * time;
             }
             if (goDown)
             {
-                position -= front * speed * time;
+                camPos -= up * speed * time;
             }
+            camera.setPosition(camPos);
+            camera.setVectors(up, front); // updates looking direction
 
-            camera.setPosition(position);
         }
 
         public void handleInput(InputEvent inp, string eventType)
@@ -78,41 +95,71 @@ namespace Shard
 
             if (eventType == "KeyDown")
             {
-
-                if (inp.Key == (int)Keys.D)
-                {
-                    goRight = true;
-                }
-
-                if (inp.Key == (int)Keys.A)
-                {
-                    goLeft = true;
-                }
-                if (inp.Key == (int)Keys.S)
-                {
-                    goDown = true;
-                }
-
+                configMovement(inp, true);
             }
             else if (eventType == "KeyUp")
             {
-
-
-                if (inp.Key == (int)Keys.D)
-                {
-                    goRight = false;
-                }
-                if (inp.Key == (int)Keys.A)
-                {
-                    goLeft = false;
-                }
-                if (inp.Key == (int)Keys.S)
-                {
-                    goDown = false;
-                }
+                configMovement(inp, false);
             }
 
+            if (eventType == "MouseMotion")
+            {
+                if (firstMove)
+                {
+                    lastPos = new Vector2(inp.X, inp.Y);
+                    firstMove = false;
+                }
+                else
+                {
+                    deltaX = inp.X - lastPos.X;
+                    deltaY = inp.Y - lastPos.Y;
+                    lastPos = new Vector2(inp.X, inp.Y);
 
+                    // Looking direction:
+                    yaw += deltaX * sensitivity * time;
+                    pitch -= deltaY * sensitivity * time;
+                }
+
+                if (pitch > 89.0f)
+                {
+                    pitch = 89.0f;
+                }
+                if (pitch < -89.0f)
+                {
+                    pitch = -89.0f;
+                }
+                front.X = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Cos(MathHelper.DegreesToRadians(yaw));
+                front.Y = MathF.Sin(MathHelper.DegreesToRadians(pitch));
+                front.Z = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Sin(MathHelper.DegreesToRadians(yaw));
+                front = Vector3.Normalize(front);
+                right = Vector3.Normalize(Vector3.Cross(front, Vector3.UnitY));
+                up = Vector3.Normalize(Vector3.Cross(right, front));
+            }
+        }
+
+        private void configMovement(InputEvent inp, bool isTrue)
+        {
+            switch (inp.Key)
+            {
+                case (int)Keys.D:
+                    goRight = isTrue;
+                    break;
+                case (int)Keys.A:
+                    goLeft = isTrue;
+                    break;
+                case (int)Keys.W:
+                    goForward = isTrue;
+                    break;
+                case (int)Keys.S:
+                    goBack = isTrue;
+                    break;
+                case (int)Keys.E:
+                    goUp = isTrue;
+                    break;
+                case (int)Keys.Q:
+                    goDown = isTrue;
+                    break;
+            }
         }
     }
 }

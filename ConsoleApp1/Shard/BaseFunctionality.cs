@@ -50,12 +50,14 @@ namespace Shard
             foreach (string line in lines)
             {
                 // Don't read blank lines.
-                if (line.Length == 0) {
+                if (line.Length == 0)
+                {
                     continue;
                 }
 
                 // Don't read comments.
-                if (line[0] == '#') {
+                if (line[0] == '#')
+                {
                     continue;
                 }
 
@@ -64,7 +66,7 @@ namespace Shard
                 key = bits[0].Trim();
                 value = bits[1].Trim();
 
-                value = value.Replace ("%BASE_DIR%", Bootstrap.getBaseDir());
+                value = value.Replace("%BASE_DIR%", Bootstrap.getBaseDir());
 
                 configEntries[key] = value;
 

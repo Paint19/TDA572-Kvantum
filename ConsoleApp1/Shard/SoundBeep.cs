@@ -21,7 +21,7 @@ namespace Shard
             uint length, dev;
             IntPtr buffer;
 
-            
+
             file = Bootstrap.getAssetManager().getAssetPath(file);
 
 

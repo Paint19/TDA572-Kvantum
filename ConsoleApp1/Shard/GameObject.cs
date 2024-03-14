@@ -23,6 +23,7 @@ namespace Shard
         private PhysicsBody myBody;
         private Animation animation;
         private List<string> tags;
+        private bool isLightSource;
 
         public void addTag(string str)
         {
@@ -91,8 +92,7 @@ namespace Shard
         public bool ToBeDestroyed { get => toBeDestroyed; set => toBeDestroyed = value; }
         internal PhysicsBody MyBody { get => myBody; set => myBody = value; }
 
-       
-
+        public bool IsLightSource { get => isLightSource; set => isLightSource = value; }
 
         public virtual void initialize()
         {

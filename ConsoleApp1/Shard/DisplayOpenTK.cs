@@ -1,9 +1,5 @@
-using OpenTK.Graphics.OpenGL4;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shard
 {
@@ -11,6 +7,7 @@ namespace Shard
     {
 
         List<ObjectRenderer> toDraw = new List<ObjectRenderer>();
+        List<ObjectRenderer> toDrawLights = new List<ObjectRenderer>();
         int vao;
 
         public override void addToDraw(ObjectRenderer gob)
@@ -18,9 +15,15 @@ namespace Shard
             toDraw.Add(gob);
         }
 
+        public override void addLightToDraw(ObjectRenderer gob)
+        {
+            toDrawLights.Add(gob);
+        }
+
         public override void clearDisplay()
         {
             toDraw.Clear();
+            toDrawLights.Clear();
         }
 
         public override void dispose()
@@ -28,14 +31,29 @@ namespace Shard
             toDraw.RemoveAll(it => it == null);
             toDraw.ForEach(it => it.Dispose());
             toDraw.Clear();
+
+            toDrawLights.RemoveAll(it => it == null);
+            toDrawLights.ForEach(it => it.Dispose());
+            toDrawLights.Clear();
         }
 
 
-        
+
         public override void display()
         {
             toDraw.RemoveAll(it => it == null);
-            toDraw.ForEach(it => {
+            toDraw.ForEach(it =>
+            {
+                it.Bind();
+                it.Render();
+            });
+        }
+
+        public override void displayLightSource()
+        {
+            toDrawLights.RemoveAll(it => it == null);
+            toDrawLights.ForEach(it =>
+            {
                 it.Bind();
                 it.Render();
             });

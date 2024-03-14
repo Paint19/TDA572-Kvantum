@@ -1,9 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shard
 {
@@ -12,8 +7,12 @@ namespace Shard
         Matrix3 skewMatrix = Matrices.getInstance().getRotationMatrix3(0.0f, 0.0f, 0.250f);
         Matrix3 persistentRotationMatrix3 = Matrices.getInstance().getRotationMatrix3(0.0f, 0.01f, 0.0f);
         Vector3 movementDirection = new Vector3(0, 0, 0);
-        public Penguin() {
+        public Penguin()
+        {
             this.Transform.SpritePath = "penguin.png";
+            // Colors must be set to white for each vertex if only texture is to be shown
+            this.Transform.InitialColor = new Vector3(1.0f, 1.0f, 1.0f);
+
             this.Transform.initRenderer("penguin.obj");
             this.Transform.scale(0.5f);
             this.Transform.rotate(skewMatrix);

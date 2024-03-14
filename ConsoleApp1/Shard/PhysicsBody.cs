@@ -26,11 +26,10 @@
 *   
 */
 
+using OpenTK.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using OpenTK.Mathematics;
 
 namespace Shard
 {
@@ -157,7 +156,7 @@ namespace Shard
 
             if (torque.Length > MaxTorque)
             {
-                torque.Normalize(); 
+                torque.Normalize();
                 torque = torque * MaxTorque;
             }
         }
@@ -189,7 +188,7 @@ namespace Shard
         {
             Vector3 reflect = new Vector3(0, 0, 0);
 
-            Debug.Log ("Reflecting " + impulse);
+            Debug.Log("Reflecting " + impulse);
 
             // We're being pushed to the right, so we must have collided with the right.
             if (impulse.X > 0)
@@ -220,11 +219,13 @@ namespace Shard
 
         }
 
-        public void reduceForces(float prop) {
+        public void reduceForces(float prop)
+        {
             force *= prop;
         }
 
-        public void addForce(Vector3 dir, float force) {
+        public void addForce(Vector3 dir, float force)
+        {
             addForce(dir * force);
         }
 
@@ -307,7 +308,7 @@ namespace Shard
         public ColliderSphere addColliderSphere()
         {
             ColliderSphere cSphere = new ColliderSphere((CollisionHandler)parent, parent.Transform);
-            
+
             addCollider(cSphere);
 
             return cSphere;
@@ -346,7 +347,7 @@ namespace Shard
         {
             Vector3? d;
 
-//            Debug.Log("Checking collision with " + other);
+            //            Debug.Log("Checking collision with " + other);
             foreach (Collider3D c in myColliders)
             {
                 d = c.checkCollision(other);

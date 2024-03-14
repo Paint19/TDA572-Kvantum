@@ -1,7 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using System;
 
 namespace Shard
 {
@@ -39,7 +36,13 @@ namespace Shard
             position = pos;
         }
 
-        public Vector3 getPosition() {  return position; }  
+        public void setVectors(Vector3 up, Vector3 front)
+        {
+            this.up = up;
+            this.front = front;
+        }
+
+        public Vector3 getPosition() { return position; }
 
     }
 }

@@ -2,10 +2,6 @@
 using Shard.Shard;
 using Shard.Shard.Animation;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shard
 {
@@ -14,7 +10,7 @@ namespace Shard
         Matrix3 persistentRotationMatrix3 = Matrices.getInstance().getRotationMatrix3(0.0f, 0.01f, 0.0f);
         float moveDirection;
 
-        public SpriteTest(float h, float w, String spritePath) : base(h, w, 0,0,1,1, spritePath)
+        public SpriteTest(float h, float w, String spritePath) : base(h, w, 0, 0, 1, 1, spritePath)
         {
             Bootstrap.getDisplay().addToDraw(this.Transform.getRenderer());
             //this.Transform.tmpChangeSize(0.1f);

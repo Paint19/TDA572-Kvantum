@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Shard.pathfinding
 {
@@ -46,7 +42,8 @@ namespace Shard.pathfinding
                     } while (current != null);
                     return route;
                 }
-                graph.getConnections(next.getCurrent().getId()).ForEach(connection => {
+                graph.getConnections(next.getCurrent().getId()).ForEach(connection =>
+                {
                     RouteNode<T> nextNode = allNodes.GetValueOrDefault(connection, new RouteNode<T>(connection));
                     allNodes.Add(connection, nextNode);
 
@@ -60,7 +57,7 @@ namespace Shard.pathfinding
                     }
                 });
             }
-            
+
 
             throw new Exception("No route found");
         }

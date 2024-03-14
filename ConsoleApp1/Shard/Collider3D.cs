@@ -3,9 +3,9 @@
  * @version 1.0
  */
 
+using OpenTK.Mathematics;
 using System;
 using System.Drawing;
-using OpenTK.Mathematics;
 
 namespace Shard
 {
@@ -18,14 +18,14 @@ namespace Shard
         public Collider3D(CollisionHandler gob)
         {
             gameObject = gob;
-            
+
             minDimensions = new Vector3(0, 0, 0);
             maxDimensions = new Vector3(0, 0, 0);
 
         }
 
         internal CollisionHandler GameObject { get => gameObject; set => gameObject = value; }
-        
+
         public bool RotateAtOffset { get => rotateAtOffset; set => rotateAtOffset = value; }
 
 
