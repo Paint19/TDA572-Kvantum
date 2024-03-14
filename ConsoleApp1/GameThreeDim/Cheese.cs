@@ -13,6 +13,7 @@ namespace Shard
         public Cheese(Vector3 startLocation)
         {
             this.Transform.SpritePath = "cheese.jpg";
+            this.Transform.InitialColor = new Vector3(1.0f, 1.0f, 1.0f);
             this.Transform.initRenderer("cheese.obj");
             this.Transform.scale(0.03f);
             this.Transform.Translation = startLocation;

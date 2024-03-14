@@ -12,8 +12,6 @@
 
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Shard
@@ -51,8 +49,8 @@ namespace Shard
 
                 foreach(var mot in mouseMoveEvents)
                 {
-                    ie.X = (int) mot.X;
-                    ie.Y = (int) mot.Y;
+                    ie.X = (int)mot.X;
+                    ie.Y = (int)mot.Y;
 
                     informListeners(ie, "MouseMotion");
                 }
@@ -78,12 +76,12 @@ namespace Shard
                 wheelEvents.Clear();
 
 
-                foreach(var ev in keyDownEvents)
+                foreach (var ev in keyDownEvents)
                 {
                     if (!ev.IsRepeat)
                     {
-                    ie.Key = (int)ev.Key;
-                    informListeners(ie, "KeyDown");
+                        ie.Key = (int)ev.Key;
+                        informListeners(ie, "KeyDown");
                     }
                 }
                 keyDownEvents.Clear();

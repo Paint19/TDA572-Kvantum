@@ -1,10 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shard
 {
@@ -12,6 +6,9 @@ namespace Shard
     {
         public Penguin(Vector3 startLocation) {
             this.Transform.SpritePath = "penguin.png";
+            // Colors must be set to white for each vertex if only texture is to be shown
+            this.Transform.InitialColor = new Vector3(1.0f, 1.0f, 1.0f);
+
             this.Transform.initRenderer("penguin.obj");
             this.Transform.scale(0.5f);
             this.Transform.Translation = startLocation;

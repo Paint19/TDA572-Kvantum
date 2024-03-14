@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Shard.pathfinding
 {
-    class Graph<T> where T:GraphNode
+    class Graph<T> where T : GraphNode
     {
         private List<T> nodes;
         private Dictionary<string, List<string>> connections;
@@ -16,7 +13,8 @@ namespace Shard.pathfinding
             return nodes.Find(n => n.getId() == id);
         }
 
-        public List<T> getConnections(string id) {
+        public List<T> getConnections(string id)
+        {
             return connections[id].Select(it => getNode(it)).ToList();
         }
     }

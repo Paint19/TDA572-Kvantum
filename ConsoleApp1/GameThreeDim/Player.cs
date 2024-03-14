@@ -23,7 +23,8 @@ namespace Shard
         private float speed = 2f;
         public Player(Vector3 startLocation)
         {
-            this.Transform.SpritePath = "penguin.png";
+            this.Transform.SpritePath = "white.png";
+            this.Transform.InitialColor = new Vector3(1.0f, 0.1f, 0.55f);
             this.Transform.initRenderer("rat.obj");
             this.Transform.scale(0.001f);
             this.Transform.Translation = startLocation;
