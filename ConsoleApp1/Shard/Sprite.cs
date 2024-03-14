@@ -22,29 +22,17 @@ namespace Shard.Shard
             vertices =
             [
                 //Position          
-                xOf,
-                yOf,
-                0.0f,  // top right
-                xOf,
-                -yOf,
-                0.0f,  // bottom right
-                -xOf,
-                -yOf,
-                0.0f,  // bottom left
-                -xOf,
-                yOf,
-                0.0f  // top left
+                xOf, yOf, 0.0f,  // top right
+                xOf, -yOf, 0.0f,  // bottom right
+                -xOf, -yOf, 0.0f,  // bottom left
+                -xOf, yOf, 0.0f  // top left
             ];
             textCoords =
             [
-                1 - cropX,
-                1 - cropY,
-                1 - cropX,
-                1 - cropH,
-                1 - cropW,
-                1 - cropH,
-                1 - cropW,
-                1 - cropY
+                1 - cropX, 1 - cropY,
+                1 - cropX, 1 - cropH,
+                1 - cropW, 1 - cropH,
+                1 - cropW, 1 - cropY
             ];
             indices = [0, 1, 2, 2, 3, 0];
 
@@ -69,14 +57,10 @@ namespace Shard.Shard
             //Console.WriteLine("Cropped!");
             textCoords =
             [
-                1 - cropX,
-                1 - cropY,
-                1 - cropX,
-                1 - cropY - cropH,
-                1 - cropX - cropW,
-                1 - cropY - cropH,
-                1 - cropX - cropW,
-                1 - cropY
+                1 - cropX, 1 - cropY,
+                1 - cropX, 1 - cropY - cropH,
+                1 - cropX - cropW, 1 - cropY - cropH,
+                1 - cropX - cropW, 1 - cropY
             ];
 
             List<float> text = new List<float>();
