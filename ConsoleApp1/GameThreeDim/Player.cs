@@ -21,6 +21,7 @@ namespace Shard
         private Vector3 front = -Vector3.UnitZ;
         private Vector3 right = Vector3.UnitX;
         private float speed = 2f;
+        private int dir = 1;
         public Player(Vector3 startLocation)
         {
             this.Transform.SpritePath = "white.png";
@@ -46,11 +47,11 @@ namespace Shard
 
             if (goLeft)
             {
-                pos -= right * speed * time;
+                changeDirection(dir * speed * time);
             }
             if (goRight)
             {
-                pos += right * speed * time;
+                changeDirection(dir * -speed * time);
             }
             if (goForward)
             {
@@ -58,8 +59,11 @@ namespace Shard
             }
             if (goBack)
             {
+                dir = -1;
                 pos -= front * speed * time;
             }
+
+            dir = 1;
             this.Transform.Translation = pos;
             this.Transform.calculateVertices();
             this.Transform.setCalculatedVerticesToRender();
@@ -98,6 +102,13 @@ namespace Shard
                     goBack = isTrue;
                     break;
             }
+        }
+
+        private void changeDirection(float diff)
+        {
+            Matrix3 rotMatrix = Matrices.getInstance().getRotationMatrix3(0.0f, 2*diff, 0.0f);
+            this.Transform.rotate(rotMatrix);
+            front *= Matrix3.Invert(rotMatrix);
         }
     }
 }
