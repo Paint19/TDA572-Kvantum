@@ -211,7 +211,6 @@ namespace Shard
 
         public void setSolidColor(Vector3 solidColor)
         {
-            Console.WriteLine("Vertices Length: " + vertices.Length);
             float[] tmpColor = 
                 vertices
                 .Chunk(3)

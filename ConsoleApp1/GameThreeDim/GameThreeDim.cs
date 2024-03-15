@@ -14,6 +14,7 @@ namespace Shard
         Player player;
         Penguin penguin;
         List<Cheese> cheeses = new List<Cheese>();
+        List<Cube> cubes = new List<Cube>();
         Sphere lightSource;
 
         private bool gameCleared = false;
@@ -21,14 +22,24 @@ namespace Shard
         public override void initialize()
         {
             mainCamera = new MainCamera();
+
+            // Objekt mellan ca -3 och 3 i både X och Z-led syns inom kamerans startposition
             lightSource = new Sphere(new Vector3(0.5f, 2.0f, 0.0f), new Vector3(0));
             lightSource.activateLight();
-
-            cheeses.Add(new Cheese(new Vector3(0.5f, 0, 0)));
-            cheeses.Add(new Cheese(new Vector3(0.5f, 0f, 1f)));
             player = new Player(new Vector3(-0.5f, 0, 0));
             penguin = new Penguin(new Vector3(-1f, 0, 0));
 
+            int nrCheeses = 5;
+            for (int i = 0; i < nrCheeses; i++)
+                cheeses.Add(new Cheese(getRandomPosition(-3, 3)));
+
+            int nrCubes = 3;
+            for (int i = 0; i < nrCubes; i++) { 
+                cubes.Add(new Cube());
+                cubes[i].Transform.translate(new Vector3(getRandomPosition(-3, 3)));
+            }
+
+            // Hårdkodat: Pingvinen åker runt i en cirkel
             penguin.GoForward = true;
             penguin.GoRight = true;
         }
@@ -42,6 +53,16 @@ namespace Shard
             {
                 gameWon();
             }
+        }
+
+        private Vector3 getRandomPosition(float min,  float max)
+        {
+            Random rand = new Random();
+            int maxCoord = (int)(max * 100);
+            int minCoord = (int)(min * 100);
+            float xPos = rand.Next(minCoord, maxCoord) * 0.01f;
+            float zPos = rand.Next(minCoord, maxCoord) * 0.01f;
+            return new Vector3(xPos, 0.0f, zPos);
         }
 
         public void cheeseGotEaten(Cheese ch)

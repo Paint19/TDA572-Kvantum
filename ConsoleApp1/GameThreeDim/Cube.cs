@@ -1,4 +1,5 @@
 ﻿using OpenTK.Mathematics;
+using System;
 
 namespace Shard
 {
@@ -10,32 +11,39 @@ namespace Shard
 
         public Cube()
         {
-            this.Transform.initRenderer("cube.obj");
-            this.Transform.scale(0.5f);
-            this.Transform.rotate(skewMatrix);
+            initCube();
         }
         public Cube(Matrix3 rotation)
         {
-            this.Transform.initRenderer("cube.obj");
-            this.Transform.scale(0.5f);
-            this.Transform.rotate(skewMatrix);
+            initCube();
             this.persistentRotationMatrix3 = rotation;
         }
         public Cube(Vector3 movementDirection)
         {
-            this.Transform.initRenderer("cube.obj");
-            this.Transform.scale(0.5f);
-            this.Transform.rotate(skewMatrix);
+            initCube();
             this.movementDirection = movementDirection;
         }
         public Cube(Vector3 movementDirection, Matrix3 rotation)
         {
-            this.Transform.initRenderer("cube.obj");
-            this.Transform.scale(0.5f);
-            this.Transform.rotate(skewMatrix);
+            initCube();
             this.persistentRotationMatrix3 = rotation;
             this.movementDirection = movementDirection;
         }
+
+        private void initCube()
+        {
+            Random rand = new Random();
+            float r = rand.Next(0, 100) * 0.01f;
+            float g = rand.Next(0, 100) * 0.01f;
+            float b = rand.Next(0, 100) * 0.01f;
+            this.Transform.SpritePath = "white.png";
+            this.Transform.InitialColor = new Vector3(r, g, b);
+            this.Transform.initRenderer("cube.obj");
+
+            setPhysicsEnabled();
+            MyBody.addColliderCube();
+        }
+
         public override void initialize()
         {
             base.initialize();
@@ -44,7 +52,7 @@ namespace Shard
         public override void update()
         {
             base.update();
-            this.Transform.rotate(persistentRotationMatrix3);
+            // this.Transform.rotate(persistentRotationMatrix3);
             this.Transform.translate(movementDirection);
             this.Transform.calculateVertices();
             this.Transform.setCalculatedVerticesToRender();

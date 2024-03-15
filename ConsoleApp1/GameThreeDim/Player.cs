@@ -22,6 +22,9 @@ namespace Shard
         private Vector3 right = Vector3.UnitX;
         private float speed = 2f;
         private int dir = 1;
+        private bool isCollidingForward = false;
+        private bool isCollidingBackward = false;
+
         public Player(Vector3 startLocation)
         {
             this.Transform.SpritePath = "white.png";
@@ -49,20 +52,24 @@ namespace Shard
             if (goForward)
             {
                 dir = 1;
-                pos += front * speed * time;
+                if(!isCollidingForward)
+                    pos += front * speed * time;
             }
             if (goBack)
             {
                 dir = -1;
-                pos -= front * speed * time;
+                if (!isCollidingBackward)
+                    pos -= front * speed * time;
             }
             if (goLeft)
             {
-                changeDirection(dir * speed * time);
+                if (!isCollidingBackward && !isCollidingForward)
+                    changeDirection(dir * speed * time);
             }
             if (goRight)
             {
-                changeDirection(dir * -speed * time);
+                if (!isCollidingBackward && !isCollidingForward)
+                    changeDirection(dir * -speed * time);
             }
             dir = 1;
 
@@ -72,9 +79,25 @@ namespace Shard
             Bootstrap.getDisplay().addToDraw(Transform.getRenderer());
         }
 
-        public override void onCollisionEnter(PhysicsBody x)
+        // Player is too fast and ends up inside cube :)
+        public override void onCollisionEnter(PhysicsBody x) 
         {
-            Console.WriteLine("Rat Attack!!!");
+            if (dir == 1)
+            {
+                isCollidingForward = true;
+                isCollidingBackward = false;
+            }
+            else if (dir == -1)
+            {
+                isCollidingForward = false;
+                isCollidingBackward = true;
+            }
+        }
+
+        public override void onCollisionExit(PhysicsBody x)
+        {
+            isCollidingForward = false;
+            isCollidingBackward = false;
         }
 
         public void handleInput(InputEvent inp, string eventType)

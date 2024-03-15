@@ -26,7 +26,7 @@ namespace Shard
         private Camera camera;
 
         // First person shooter style camera controls
-        private float pitch;
+        private float pitch = -40f;
         private float yaw = -90.0f;
         private bool firstMove = true;
         private float sensitivity = 1f;
@@ -38,9 +38,10 @@ namespace Shard
 
         public MainCamera()
         {
-            camera = new Camera(Bootstrap.getDisplay().getWidth(), Bootstrap.getDisplay().getHeight(), new Vector3(0, 0, 5));
+            camera = new Camera(Bootstrap.getDisplay().getWidth(), Bootstrap.getDisplay().getHeight(), new Vector3(0, 7, 8));
             Bootstrap.getWindow().setActiveCamera(camera);
             Bootstrap.getInput().addListener(this);
+            updateDirection();
         }
 
         public void update()
@@ -113,13 +114,18 @@ namespace Shard
                 {
                     pitch = -89.0f;
                 }
-                front.X = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Cos(MathHelper.DegreesToRadians(yaw));
-                front.Y = MathF.Sin(MathHelper.DegreesToRadians(pitch));
-                front.Z = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Sin(MathHelper.DegreesToRadians(yaw));
-                front = Vector3.Normalize(front);
-                right = Vector3.Normalize(Vector3.Cross(front, Vector3.UnitY));
-                up = Vector3.Normalize(Vector3.Cross(right, front));
+                updateDirection();
             }
+        }
+
+        private void updateDirection()
+        {
+            front.X = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Cos(MathHelper.DegreesToRadians(yaw));
+            front.Y = MathF.Sin(MathHelper.DegreesToRadians(pitch));
+            front.Z = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Sin(MathHelper.DegreesToRadians(yaw));
+            front = Vector3.Normalize(front);
+            right = Vector3.Normalize(Vector3.Cross(front, Vector3.UnitY));
+            up = Vector3.Normalize(Vector3.Cross(right, front));
         }
 
         private void configMovement(InputEvent inp, bool isTrue)
