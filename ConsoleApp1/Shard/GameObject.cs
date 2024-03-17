@@ -158,12 +158,12 @@ namespace Shard
 
         public virtual void onCollisionEnter(PhysicsBody x)
         {
-            throw new NotImplementedException();
+            // throw new NotImplementedException();
         }
 
         public virtual void onCollisionExit(PhysicsBody x)
         {
-            Console.WriteLine("Finally free from collison");
+            // Console.WriteLine("Finally free from collison");
         }
 
         public virtual void onCollisionStay(PhysicsBody x)
