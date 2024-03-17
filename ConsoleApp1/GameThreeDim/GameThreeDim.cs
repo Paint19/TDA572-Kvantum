@@ -1,5 +1,4 @@
 using OpenTK.Mathematics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +26,7 @@ namespace Shard
             lightSource = new Sphere(new Vector3(0.5f, 2.0f, 0.0f), new Vector3(0));
             lightSource.activateLight();
             player = new Player(new Vector3(-0.5f, 0, 0));
-            penguin = new Penguin(new Vector3(-1f, 0, 0));
+            penguin = new Penguin(new Vector3(-3f, 0, 0), player.Transform.Translation);
 
             int nrCheeses = 5;
             for (int i = 0; i < nrCheeses; i++)
@@ -38,14 +37,12 @@ namespace Shard
                 cubes.Add(new Cube());
                 cubes[i].Transform.translate(new Vector3(getRandomPosition(-3, 3)));
             }
-
-            // Hårdkodat: Pingvinen åker runt i en cirkel
-            penguin.GoForward = true;
-            penguin.GoRight = true;
         }
 
         public override void update()
         {
+            penguin.setTarget(player.Transform.Translation);
+
             if(!gameCleared)
                 mainCamera.update();
 
