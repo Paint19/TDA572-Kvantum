@@ -29,6 +29,7 @@ namespace Shard
         private bool initialized = false;
         private float[] vertices, originalVertices;
         private float[] textureCoordinates;
+        private string spritePath;
 
         Texture texture;
 
@@ -70,7 +71,7 @@ namespace Shard
 
             // Put the texture Coordinates in slot 1 of the VAO
             int texCoordLocation = 1;
-            //GL.EnableVertexAttribArray(1);
+            GL.EnableVertexAttribArray(1);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 2 * sizeof(float), 0);
             GL.EnableVertexArrayAttrib(VertexArrayObject, texCoordLocation);
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
@@ -118,7 +119,7 @@ namespace Shard
 
         public void Render()
         {
-            GL.DrawArrays(PrimitiveType.Triangles, 0, vertices.Length);
+            GL.DrawArrays(PrimitiveType.Triangles, 0, vertices.Length / 3);
 
             // Unbinding buffers
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
@@ -195,6 +196,11 @@ namespace Shard
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
         }
 
+        public void setSpritePath(String path)
+        {
+            this.spritePath = path;
+            texture = new Texture(Bootstrap.getAssetManager().getAssetPath(path));
+        }
         public void setColor(float[] col) // Requires an array with a float value for each vertice of the object
         {
             color = col;
@@ -205,7 +211,6 @@ namespace Shard
 
         public void setSolidColor(Vector3 solidColor)
         {
-            Console.WriteLine("Vertices Length: " + vertices.Length);
             float[] tmpColor = 
                 vertices
                 .Chunk(3)

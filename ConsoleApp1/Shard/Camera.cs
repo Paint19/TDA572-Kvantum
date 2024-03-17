@@ -9,8 +9,8 @@ namespace Shard
 
         public Vector3 position;
 
-        Vector3 up = Vector3.UnitY;
-        Vector3 front = -Vector3.UnitZ;
+        private Vector3 up = Vector3.UnitY;
+        private Vector3 front = -Vector3.UnitZ;
 
 
         public Vector2 lastPos;
@@ -42,7 +42,7 @@ namespace Shard
             this.front = front;
         }
 
-        public Vector3 getPosition() { return position; }
+        public Vector3 getPosition() { return position; }  
 
     }
 }

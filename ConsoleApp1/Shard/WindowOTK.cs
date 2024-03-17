@@ -3,6 +3,7 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using Shard.Shard;
+using System;
 
 /*
  *  Here we have a lot of OpenTK magic. 
@@ -30,14 +31,16 @@ namespace Shard
         // TODO: fundera på om detta är rimligt
         // Currently only supports one light source
         private Vector3 LIGHT_COLOR = new Vector3(1.0f, 1.0f, 1.0f);
-        private Transform lightSource = new Transform(); 
+        private Transform lightSource;
 
         public WindowOTK(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings) : base(gameWindowSettings, nativeWindowSettings)
         {
         }
 
         public void setIndicesLength(int length) { indicesLength = length; }
-        public void setActiveCamera(Camera cam) { activeCamera = cam; }
+        public void setActiveCamera(Camera cam) {  activeCamera = cam; }  
+        public Camera getActiveCamera() { return activeCamera;}
+
         public void setShaderMVP(Matrix4 model, Matrix4 view, Matrix4 projection)
         {
             shader.SetMatrix4("model", model);

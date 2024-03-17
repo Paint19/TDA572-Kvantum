@@ -16,14 +16,15 @@ uniform sampler2D texture0;
 
 void main()
 {
-    float ambientStrength = 0.1;
+    float ambientStrength = 0.2;
+    vec3 ambientColor = vec3(1.0f);
 
     // Lighting calculations:
     vec3 norm = normalize(normal);
     vec3 lightDir = normalize(lightPos - FragPos);  
     float diff = max(dot(norm, lightDir), 0.0);
     vec3 diffuse = diff * lightColor;
-    vec3 ambient = ambientStrength * lightColor;
+    vec3 ambient = ambientStrength * ambientColor;
     
     vec3 result = (ambient + diffuse) * objectColor;
     outputColor = texture(texture0, texCoord) * vec4(result, 1.0f);

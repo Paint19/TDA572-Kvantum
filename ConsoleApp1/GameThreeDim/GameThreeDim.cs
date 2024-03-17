@@ -1,165 +1,98 @@
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Shard
 {
-    class GameThreeDim : Game, InputListener
+    class GameThreeDim : Game
     {
-        Rat rat;
-        Rat rat1;
-        Cube aube, bube, cube, dube;
-        Teapot teapot;
         SpriteTest spriteTest;
+        
+        MainCamera mainCamera;
+        Player player;
         Penguin penguin;
-        Sphere sphere;
+        List<Cheese> cheeses = new List<Cheese>();
+        List<Cube> cubes = new List<Cube>();
+        Sphere lightSource;
 
-        private float time;
-
-        // CAMERA
-        private bool goRight = false;
-        private bool goLeft = false;
-        private bool goForward = false;
-        private bool goBack = false;
-        private bool goUp = false;
-        private bool goDown = false;
-        private Vector3 up = Vector3.UnitY;
-        private Vector3 front = -Vector3.UnitZ;
-        private Vector3 right = Vector3.UnitX;
-        private float speed = 2f;
-        private Vector3 camPos;
-        private Camera camera;
-        // First person shooter style camera controls
-        private float pitch;
-        private float yaw = -90.0f;
-        private bool firstMove = true;
-        private float sensitivity = 2f;
-        private Vector2 lastPos;
-        private float deltaX;
-        private float deltaY;
+        private bool gameCleared = false;
 
         public override void initialize()
         {
-            Bootstrap.getInput().addListener(this);
-            camera = new Camera(Bootstrap.getDisplay().getWidth(), Bootstrap.getDisplay().getHeight(), new Vector3(0, 0, 5));
-            Bootstrap.getWindow().setActiveCamera(camera);
+            mainCamera = new MainCamera();
 
-             rat = new Rat(new Vector3(0, 0, 0), new Vector3(0, 0, 0));
-             rat.Transform.translate(new Vector3(-1, 1, 0));
-            rat.Transform.getRenderer().setSolidColor(new Vector3(0.0f, 1.0f, 0.0f));
+            // Objekt mellan ca -3 och 3 i både X och Z-led syns inom kamerans startposition
+            lightSource = new Sphere(new Vector3(0.5f, 2.0f, 0.0f), new Vector3(0));
+            lightSource.activateLight();
+            player = new Player(new Vector3(-0.5f, 0, 0));
+            penguin = new Penguin(new Vector3(-1f, 0, 0));
 
-            sphere = new Sphere(new Vector3(1, 1, 0), new Vector3(-0.01f, 0, 0));
-            sphere.Transform.scale(0.5f);
-            sphere.activateLight();// Light source sphere
+            int nrCheeses = 5;
+            for (int i = 0; i < nrCheeses; i++)
+                cheeses.Add(new Cheese(getRandomPosition(-3, 3)));
 
-            penguin = new Penguin();
+            int nrCubes = 3;
+            for (int i = 0; i < nrCubes; i++) { 
+                cubes.Add(new Cube());
+                cubes[i].Transform.translate(new Vector3(getRandomPosition(-3, 3)));
+            }
+
+            // Hårdkodat: Pingvinen åker runt i en cirkel
+            penguin.GoForward = true;
+            penguin.GoRight = true;
         }
 
         public override void update()
         {
-            time = Bootstrap.getWindow().getEventArgsTime();
+            if(!gameCleared)
+                mainCamera.update();
 
-            camPos = camera.getPosition();
-
-            if (goLeft)
+            if (cheeses.Count() == 0 && !gameCleared)
             {
-                camPos -= right * speed * time;
-            }
-            if (goRight)
-            {
-                camPos += right * speed * time;
-            }
-            if (goForward)
-            {
-                camPos += front * speed * time;
-            }
-            if (goBack)
-            {
-                camPos -= front * speed * time;
-            }
-            if (goUp)
-            {
-                camPos += up * speed * time;
-            }
-            if (goDown)
-            {
-                camPos -= up * speed * time;
-            }
-            camera.setPosition(camPos);
-            camera.setVectors(up, front); // updates looking direction
-
-        }
-
-        public void handleInput(InputEvent inp, string eventType)
-        {
-
-            if (eventType == "KeyDown")
-            {
-                configMovement(inp, true);
-            }
-            else if (eventType == "KeyUp")
-            {
-                configMovement(inp, false);
-            }
-
-            if (eventType == "MouseMotion")
-            {
-                if (firstMove)
-                {
-                    lastPos = new Vector2(inp.X, inp.Y);
-                    firstMove = false;
-                }
-                else
-                {
-                    deltaX = inp.X - lastPos.X;
-                    deltaY = inp.Y - lastPos.Y;
-                    lastPos = new Vector2(inp.X, inp.Y);
-
-                    // Looking direction:
-                    yaw += deltaX * sensitivity * time;
-                    pitch -= deltaY * sensitivity * time;
-                }
-
-                if (pitch > 89.0f)
-                {
-                    pitch = 89.0f;
-                }
-                if (pitch < -89.0f)
-                {
-                    pitch = -89.0f;
-                }
-                front.X = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Cos(MathHelper.DegreesToRadians(yaw));
-                front.Y = MathF.Sin(MathHelper.DegreesToRadians(pitch));
-                front.Z = MathF.Cos(MathHelper.DegreesToRadians(pitch)) * MathF.Sin(MathHelper.DegreesToRadians(yaw));
-                front = Vector3.Normalize(front);
-                right = Vector3.Normalize(Vector3.Cross(front, Vector3.UnitY));
-                up = Vector3.Normalize(Vector3.Cross(right, front));
+                gameWon();
             }
         }
 
-        private void configMovement(InputEvent inp, bool isTrue)
+        private Vector3 getRandomPosition(float min,  float max)
         {
-            switch (inp.Key)
-            {
-                case (int)Keys.D:
-                    goRight = isTrue;
-                    break;
-                case (int)Keys.A:
-                    goLeft = isTrue;
-                    break;
-                case (int)Keys.W:
-                    goForward = isTrue;
-                    break;
-                case (int)Keys.S:
-                    goBack = isTrue;
-                    break;
-                case (int)Keys.E:
-                    goUp = isTrue;
-                    break;
-                case (int)Keys.Q:
-                    goDown = isTrue;
-                    break;
-            }
+            Random rand = new Random();
+            int maxCoord = (int)(max * 100);
+            int minCoord = (int)(min * 100);
+            float xPos = rand.Next(minCoord, maxCoord) * 0.01f;
+            float zPos = rand.Next(minCoord, maxCoord) * 0.01f;
+            return new Vector3(xPos, 0.0f, zPos);
+        }
+
+        public void cheeseGotEaten(Cheese ch)
+        {
+            cheeses.Remove(ch);
+            Console.WriteLine(cheeses.Count() + " cheeses left!");
+        }
+
+        public void playerGotCaught()
+        {
+            Console.WriteLine("Player got Caught!");
+            gameLost();
+        }
+
+        private void gameWon()
+        {
+            gameCleared = true;
+            Console.WriteLine("You won!!!!!");
+            Bootstrap.getInput().removeListener(mainCamera);
+            mainCamera.getCamera().setVectors(Vector3.UnitY, -Vector3.UnitZ);
+            spriteTest = new SpriteTest(1, 1, 26, "rat_spritesheet.png");
+        }
+
+        private void gameLost()
+        {
+            gameCleared = true;
+            Console.WriteLine("You Lost!!!");
+            Bootstrap.getInput().removeListener(mainCamera);
+            mainCamera.getCamera().setVectors(Vector3.UnitY, -Vector3.UnitZ);
+            spriteTest = new SpriteTest(0.8f, 1, 19, "ded_spritesheet.png");
         }
     }
 }

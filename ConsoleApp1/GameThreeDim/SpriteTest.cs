@@ -7,16 +7,9 @@ namespace Shard
 {
     class SpriteTest : Sprite
     {
-        Matrix3 persistentRotationMatrix3 = Matrices.getInstance().getRotationMatrix3(0.0f, 0.01f, 0.0f);
-        float moveDirection;
-
-        public SpriteTest(float h, float w, String spritePath) : base(h, w, 0, 0, 1, 1, spritePath)
+        public SpriteTest(float h, float w, int nFrames, String spritePath) : base(h, w, 0,0,1,1, spritePath)
         {
-            Bootstrap.getDisplay().addToDraw(this.Transform.getRenderer());
-            //this.Transform.tmpChangeSize(0.1f);
-            this.moveDirection = 1;
-            Animation = new Animation(6, 10, 0, false);
-            //crop(0, 0, 0.5f, 0.5f);
+            Animation = new Animation(nFrames, 10, 0, false);
         }
         public override void initialize()
         {
@@ -26,9 +19,11 @@ namespace Shard
         public override void update()
         {
             base.update();
+            Vector3 camPos = Bootstrap.getWindow().getActiveCamera().getPosition();
+            this.Transform.Translation = camPos + new Vector3(0f, 0f, -2f);
+            this.Transform.calculateVertices();
+            this.Transform.setCalculatedVerticesToRender();
             Bootstrap.getAnimationSystem().addToAnimate(this);
-            //this.Transform.rotateVertices(persistentRotationMatrix3);
-            //this.Transform.tmpMove(moveDirection);
             Bootstrap.getDisplay().addToDraw(this.Transform.getRenderer());
         }
     }
